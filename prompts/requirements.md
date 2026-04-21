@@ -12,7 +12,7 @@ The game ends when a player or team reaches the required number of points.
 The game must track and display which player is up next and how many dashes they have.
 In the case of a team game, the team’s score must be displayed.
 
-The application will be written in Angular, latest version.
+The application will be written in Angular, the latest version.
 The application will be optimized for mobile phones.
 After entering players/teams, the information is saved to the application store.
 The game state is also saved to the store so that it can be loaded from the store after the page is reloaded.
@@ -22,3 +22,6 @@ In the case of a team game, it would be helpful to display the number of points 
 
 In the beginning, allow setting minimum points per turn; the default value is 350.
 
+Players don't have to sit according to their teams, so before the game starts, there is needed to have the possibility to set the order of players around the table.
+The first player on the list starts the game.
+This should be done as a list of all players (regardless of their team) with drag and drop functionality to reorder players.

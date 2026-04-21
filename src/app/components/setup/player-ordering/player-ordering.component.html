@@ -1,0 +1,22 @@
+<div class="setup-section">
+  <h3>Set Player Order</h3>
+  <p>Drag and drop players to set their order around the table. The first player starts the game.</p>
+  <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
+    @for (player of orderedPlayers(); track player.id) {
+      <mat-list-item cdkDrag>
+        <mat-icon matListItemIcon cdkDragHandle>drag_handle</mat-icon>
+        <span matListItemTitle>{{ player.name }}</span>
+        @if (gameMode() === 'team') {
+           <span class="team-hint">({{ getTeamName(player.id) }})</span>
+        }
+      </mat-list-item>
+    }
+  </mat-list>
+</div>
+
+<div class="actions">
+  <button mat-button (click)="onBack()">BACK</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()">
+    START GAME
+  </button>
+</div>
