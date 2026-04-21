@@ -43,3 +43,7 @@ find out all constants (10000, 350, 500) and move them to the constant’s file.
 
 Add a button to set zero points for the current player.
 Disable the "RECORD" button if the "pointsInput" input is less than minPointsPerTurn.
+
+---
+
+In case that game mode is "teams", do not show dashes of the current player. Show team dashes instead; just next to the team name.

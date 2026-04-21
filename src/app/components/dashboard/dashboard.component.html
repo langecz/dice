@@ -41,20 +41,31 @@
         </mat-card-title>
         <mat-card-subtitle>
           @if (gameMode() === 'team') {
-            Team: {{ currentTeam()?.name }}
+            <div class="team-info-header">
+              Team: {{ currentTeam()?.name }}
+              <div class="dashes inline-dashes">
+                @for (i of [1,2,3]; track i) {
+                  <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''">
+                    {{ (currentTeam()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
+                  </mat-icon>
+                }
+              </div>
+            </div>
           }
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="player-info">
           <h2>{{ currentPlayer()?.name }}</h2>
-          <div class="dashes">
-            @for (i of [1,2,3]; track i) {
-              <mat-icon [color]="(currentPlayer()?.dashes || 0) >= i ? 'warn' : ''">
-                {{ (currentPlayer()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
-              </mat-icon>
-            }
-          </div>
+          @if (gameMode() === 'individual') {
+            <div class="dashes">
+              @for (i of [1,2,3]; track i) {
+                <mat-icon [color]="(currentPlayer()?.dashes || 0) >= i ? 'warn' : ''">
+                  {{ (currentPlayer()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
+                </mat-icon>
+              }
+            </div>
+          }
         </div>
 
         <mat-form-field>
@@ -93,7 +104,6 @@
               @for (pid of team.playerIds; track pid) {
                 <mat-list-item [class.current]="getPlayer(pid)?.id === currentPlayer()?.id">
                   <span matListItemTitle>{{ getPlayer(pid)?.name }}</span>
-                  <span matListItemLine>Dashes: {{ getPlayer(pid)?.dashes }}</span>
                 </mat-list-item>
               }
             </mat-list>
