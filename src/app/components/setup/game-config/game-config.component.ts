@@ -11,6 +11,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 import { form } from '@angular/forms/signals';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
+import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../constants/game.constants';
 
 @Component({
   selector: 'app-game-config',
@@ -34,8 +35,8 @@ export class GameConfigComponent {
   initialTeams = input<Team[]>([]);
   initialConfig = input<{ gameMode: GameMode; targetPoints: number; minPointsPerTurn: number }>({
     gameMode: 'individual',
-    targetPoints: 10000,
-    minPointsPerTurn: 350
+    targetPoints: DEFAULT_TARGET_POINTS,
+    minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN
   });
 
   configComplete = output<{
@@ -49,8 +50,8 @@ export class GameConfigComponent {
 
   setupModel = signal({
     gameMode: 'individual' as GameMode,
-    targetPoints: 10000,
-    minPointsPerTurn: 350
+    targetPoints: DEFAULT_TARGET_POINTS,
+    minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN
   });
 
   setupForm = form(this.setupModel);

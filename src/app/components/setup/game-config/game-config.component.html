@@ -8,7 +8,7 @@
 
 <div class="setup-section">
   <h3>Target Points</h3>
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Points to win</mat-label>
     <input matInput type="number" [value]="setupForm.targetPoints().value()" (input)="setupForm.targetPoints().value.set($any($event.target).value)" aria-label="Target points to win">
   </mat-form-field>
@@ -16,7 +16,7 @@
 
 <div class="setup-section">
   <h3>Minimum Points per Turn</h3>
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Minimum points</mat-label>
     <input matInput type="number" [value]="setupForm.minPointsPerTurn().value()" (input)="setupForm.minPointsPerTurn().value.set($any($event.target).value)" aria-label="Minimum points per turn">
   </mat-form-field>
@@ -26,7 +26,7 @@
   <h3>{{ setupForm.gameMode().value() === 'individual' ? 'Players' : 'Teams & Players' }}</h3>
 
   <div class="add-player-form">
-    <mat-form-field appearance="outline">
+    <mat-form-field>
       <mat-label>{{ setupForm.gameMode().value() === 'individual' ? 'Player Name' : 'Team Name' }}</mat-label>
       <input matInput #nameInput (keyup.enter)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Enter Player Name' : 'Enter Team Name'">
     </mat-form-field>

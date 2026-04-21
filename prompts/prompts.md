@@ -34,3 +34,7 @@ Implement the following rule: in case that a player reaches 1000 points, the res
 ---
 
 When the game finishes, except the winner, show also the list of the rest players/teams with their points; ordered by points. 
+
+---
+
+find out all constants (10000, 350, 500) and move them to the constant’s file.

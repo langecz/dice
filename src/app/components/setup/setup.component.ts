@@ -6,6 +6,7 @@ import { GameMode, Player, Team } from '../../models/game.models';
 import { Router } from '@angular/router';
 import { GameConfigComponent } from './game-config/game-config.component';
 import { PlayerOrderingComponent } from './player-ordering/player-ordering.component';
+import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../constants/game.constants';
 
 @Component({
   selector: 'app-setup',
@@ -29,8 +30,8 @@ export class SetupComponent {
   teams = signal<Team[]>([]);
   config = signal({
     gameMode: 'individual' as GameMode,
-    targetPoints: 10000,
-    minPointsPerTurn: 350
+    targetPoints: DEFAULT_TARGET_POINTS,
+    minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN
   });
 
   onConfigComplete(data: {

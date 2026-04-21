@@ -1,3 +1,5 @@
+import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../constants/game.constants';
+
 export type GameMode = 'individual' | 'team';
 
 export interface Player {
@@ -39,8 +41,8 @@ export interface GameState {
 
 export const INITIAL_GAME_STATE: GameState = {
   gameMode: 'individual',
-  targetPoints: 10000,
-  minPointsPerTurn: 350,
+  targetPoints: DEFAULT_TARGET_POINTS,
+  minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN,
   players: [],
   teams: [],
   currentPlayerIndex: 0,

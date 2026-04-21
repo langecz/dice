@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
-import { GameState, INITIAL_GAME_STATE, Player, Team, GameMode } from '../models/game.models';
+import { GameState, INITIAL_GAME_STATE, Player, Team} from '../models/game.models';
+import { DASHES_FOR_PENALTY, PENALTY_POINTS } from '../constants/game.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -77,8 +78,8 @@ export class GameStore {
         player.score += points;
       }
 
-      if (player.dashes === 3) {
-        player.score -= 500;
+      if (player.dashes === DASHES_FOR_PENALTY) {
+        player.score -= PENALTY_POINTS;
         player.dashes = 0;
       }
 
@@ -95,7 +96,7 @@ export class GameStore {
 
       const nextPlayerIndex = (s.currentPlayerIndex + 1) % players.length;
 
-      // If last round was started and we are back to the first player (index 0), then game is over
+      // If last round was started, and we are back to the first player (index 0), then game is over
       if (lastRoundStarted && nextPlayerIndex === 0) {
         isGameOver = true;
         // Find the player with the highest score
@@ -144,16 +145,17 @@ export class GameStore {
         team.score += points;
       }
 
-      if (player.dashes === 3) {
-        // Individual penalty still applies? Req 7 says "If a player rolls 0 points three times in a row ... 500 points are deducted"
+      if (player.dashes === DASHES_FOR_PENALTY) {
+        // Individual penalty still applies? "If a player rolls 0 points DASHES_FOR_PENALTY times in a row
+        // ... PENALTY_POINTS points are deducted"
         // In team play, does it deduct from team score? Likely yes.
-        team.score -= 500;
+        team.score -= PENALTY_POINTS;
         player.dashes = 0;
       }
 
-      if (team.dashes === 3) {
+      if (team.dashes === DASHES_FOR_PENALTY) {
         // Team penalty: 3 players in a row roll 0
-        team.score -= 500;
+        team.score -= PENALTY_POINTS;
         team.dashes = 0;
       }
 
@@ -216,14 +218,6 @@ export class GameStore {
     } else {
       this.stateSignal.set(INITIAL_GAME_STATE);
     }
-  }
-
-  updatePlayerOrder(players: Player[]) {
-    this.stateSignal.update(s => ({ ...s, players }));
-  }
-
-  updateTeamOrder(teams: Team[]) {
-    this.stateSignal.update(s => ({ ...s, teams }));
   }
 
   private loadFromStorage(): GameState {
