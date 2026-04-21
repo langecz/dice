@@ -17,6 +17,11 @@ export interface Team {
   history: number[];
 }
 
+export interface Winner {
+  name: string;
+  score: number;
+}
+
 export interface GameState {
   gameMode: GameMode;
   targetPoints: number;
@@ -29,6 +34,7 @@ export interface GameState {
   isGameOver: boolean;
   winnerId: string | null;
   winnerType: 'player' | 'team' | null;
+  lastRoundStarted: boolean;
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -43,4 +49,5 @@ export const INITIAL_GAME_STATE: GameState = {
   isGameOver: false,
   winnerId: null,
   winnerType: null,
+  lastRoundStarted: false,
 };

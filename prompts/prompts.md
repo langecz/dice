@@ -22,3 +22,15 @@ This should be done as a list of all players (regardless of their team) with dra
 ---
 
 separate setting of the teams and players ordering to two separate components.
+
+---
+
+There are warnings in the `ng build` command. Fix them. 
+
+---
+
+Implement the following rule: in case that a player reaches 1000 points, the rest players of the round can finish their turns.
+
+---
+
+When the game finishes, except the winner, show also the list of the rest players/teams with their points; ordered by points. 

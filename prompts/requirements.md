@@ -8,6 +8,8 @@ If a player rolls 0 points three times in a row (has three marks), 500 points ar
 In team play, 500 points are deducted if three players in a row on the same team roll 0 points.
 
 The game ends when a player or team reaches the required number of points.
+There is also a rule that in case that a player reaches 1000 points, the rest players of the round can finish their turns.
+So the game finishes when all players in the last round finish their turns.
 
 The game must track and display which player is up next and how many dashes they have.
 In the case of a team game, the team’s score must be displayed.
@@ -25,3 +27,4 @@ In the beginning, allow setting minimum points per turn; the default value is 35
 Players don't have to sit according to their teams, so before the game starts, there is needed to have the possibility to set the order of players around the table.
 The first player on the list starts the game.
 This should be done as a list of all players (regardless of their team) with drag and drop functionality to reorder players.
+

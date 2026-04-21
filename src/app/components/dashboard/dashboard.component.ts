@@ -1,4 +1,13 @@
-import { Component, inject, signal, computed, ViewChild, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  ViewChild,
+  TemplateRef,
+  ChangeDetectionStrategy,
+  Signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +20,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GameStore } from '../../services/game.store';
 import { Router } from '@angular/router';
+import { Player, Winner } from '../../models/game.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -44,6 +54,7 @@ export class DashboardComponent {
   currentPlayer = this.store.currentPlayer;
   currentTeam = this.store.currentTeam;
   minPointsPerTurn = computed(() => this.state().minPointsPerTurn);
+  lastRoundStarted = computed(() => this.state().lastRoundStarted);
 
   winnerName = computed(() => {
     const s = this.state();
@@ -52,6 +63,33 @@ export class DashboardComponent {
       return s.players.find(p => p.id === s.winnerId)?.name || '';
     } else {
       return s.teams.find(t => t.id === s.winnerId)?.name || '';
+    }
+  });
+
+  winner: Signal<Winner | null> = computed(() => {
+    const s = this.state();
+    if (!s.winnerId) return null;
+    if (s.winnerType === 'player') {
+      const winner = s.players.find(p => p.id === s.winnerId);
+      return winner ? this.getWinnerInfo(winner) : null;
+    } else {
+      const winner = s.teams.find(p => p.id === s.winnerId);
+      return winner ? this.getWinnerInfo(winner) : null;
+    }
+  });
+
+  rankedResults = computed(() => {
+    const s = this.state();
+    if (!s.isGameOver) return [];
+
+    if (s.gameMode === 'individual') {
+      return [...s.players]
+        .filter(p => p.id !== s.winnerId)
+        .sort((a, b) => b.score - a.score);
+    } else {
+      return [...s.teams]
+        .filter(t => t.id !== s.winnerId)
+        .sort((a, b) => b.score - a.score);
     }
   });
 
@@ -91,5 +129,9 @@ export class DashboardComponent {
     if (!keepPlayers) {
       this.router.navigate(['/setup']);
     }
+  }
+
+  private getWinnerInfo(winner: {name: string, score: number}): Winner {
+    return { name: winner.name, score: winner.score };
   }
 }

@@ -11,7 +11,20 @@
         <mat-card-title>Game Over!</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <h2>Winner: {{ winnerName() }}</h2>
+        <h2>Winner: {{ winner()?.name }}</h2>
+        <h3>Score: {{ winner()?.score }}</h3>
+
+        <div class="rankings">
+          <h3>Final Rankings</h3>
+          <mat-list>
+            @for (result of rankedResults(); track result.id; let i = $index) {
+              <mat-list-item>
+                <span matListItemTitle>{{ i + 2 }}. {{ result.name }}</span>
+                <span matListItemLine>{{ result.score }} points</span>
+              </mat-list-item>
+            }
+          </mat-list>
+        </div>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" (click)="onNewGame()">PLAY AGAIN</button>
@@ -20,7 +33,12 @@
   } @else {
     <mat-card class="current-turn-card">
       <mat-card-header>
-        <mat-card-title>Current Turn</mat-card-title>
+        <mat-card-title>
+          Current Turn
+          @if (lastRoundStarted()) {
+            <span class="last-round-badge">LAST ROUND</span>
+          }
+        </mat-card-title>
         <mat-card-subtitle>
           @if (gameMode() === 'team') {
             Team: {{ currentTeam()?.name }}
