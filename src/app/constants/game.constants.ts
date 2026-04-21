@@ -2,4 +2,3 @@ export const DEFAULT_TARGET_POINTS = 10000;
 export const DEFAULT_MIN_POINTS_PER_TURN = 350;
 export const PENALTY_POINTS = 500;
 export const DASHES_FOR_PENALTY = 3;
-export const ROUND_FINISH_THRESHOLD = 1000;

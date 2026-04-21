@@ -50,14 +50,14 @@ export class GameStore {
   }
 
   addPoints(points: number) {
-    const s = this.stateSignal();
-    if (s.isGameOver) return;
+    const gameState = this.stateSignal();
+    if (gameState.isGameOver) return;
 
-    if (points > 0 && points < s.minPointsPerTurn) {
+    if (points > 0 && points < gameState.minPointsPerTurn) {
       points = 0;
     }
 
-    if (s.gameMode === 'individual') {
+    if (gameState.gameMode === 'individual') {
       this.recordIndividualPoints(points);
     } else {
       this.recordTeamPoints(points);

@@ -38,3 +38,8 @@ When the game finishes, except the winner, show also the list of the rest player
 ---
 
 find out all constants (10000, 350, 500) and move them to the constant’s file.
+
+---
+
+Add a button to set zero points for the current player.
+Disable the "RECORD" button if the "pointsInput" input is less than minPointsPerTurn.

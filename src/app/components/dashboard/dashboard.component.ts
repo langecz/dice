@@ -83,7 +83,16 @@ export class DashboardComponent {
     const points = input.valueAsNumber;
     if (isNaN(points)) return;
 
+    const gameState = this.state();
+    if (points < gameState.minPointsPerTurn) return;
+
     this.store.addPoints(points);
+    input.value = '';
+    input.focus();
+  }
+
+  setZeroPoints(input: HTMLInputElement) {
+    this.store.addPoints(0);
     input.value = '';
     input.focus();
   }
