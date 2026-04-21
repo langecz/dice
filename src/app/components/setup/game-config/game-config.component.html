@@ -38,8 +38,7 @@
   @if (setupForm.gameMode().value() === 'individual') {
     <mat-list cdkDropList (cdkDropListDropped)="dropPlayer($event)">
       @for (player of players(); track player.id) {
-        <mat-list-item cdkDrag>
-          <mat-icon matListItemIcon cdkDragHandle>drag_handle</mat-icon>
+        <mat-list-item>
           <span matListItemTitle>{{ player.name }}</span>
           <button mat-icon-button (click)="removeItem(player.id)">
             <mat-icon>delete</mat-icon>
@@ -66,8 +65,7 @@
           </div>
           <mat-list cdkDropList (cdkDropListDropped)="dropPlayerInTeam(team.id, $event)">
             @for (pid of team.playerIds; track pid) {
-              <mat-list-item cdkDrag>
-                <mat-icon matListItemIcon cdkDragHandle>drag_handle</mat-icon>
+              <mat-list-item>
                 <span>{{ getPlayer(pid)?.name }}</span>
                 <button mat-icon-button (click)="removePlayerFromTeam(team.id, pid)">
                   <mat-icon>close</mat-icon>
