@@ -58,7 +58,7 @@
         </mat-card-header>
         <mat-card-content>
           <div class="add-player-to-team">
-            <mat-form-field appearance="outline" compact>
+            <mat-form-field appearance="outline">
               <mat-label>Player Name</mat-label>
               <input matInput #pInput (keyup.enter)="addPlayerToTeam(team.id, pInput.value); pInput.value = ''">
             </mat-form-field>

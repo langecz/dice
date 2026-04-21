@@ -29,7 +29,7 @@ export class PlayerOrderingComponent implements OnInit {
 
   orderedPlayers = signal<Player[]>([]);
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.gameMode() === 'individual') {
       this.orderedPlayers.set([...this.players()]);
     } else {
@@ -44,21 +44,21 @@ export class PlayerOrderingComponent implements OnInit {
     }
   }
 
-  dropOrderedPlayer(event: CdkDragDrop<Player[]>) {
+  dropOrderedPlayer(event: CdkDragDrop<Player[]>): void {
     const p = [...this.orderedPlayers()];
     moveItemInArray(p, event.previousIndex, event.currentIndex);
     this.orderedPlayers.set(p);
   }
 
-  getTeamName(playerId: string) {
+  getTeamName(playerId: string): string {
     return this.teams().find(t => t.playerIds.includes(playerId))?.name || '';
   }
 
-  onBack() {
+  onBack(): void {
     this.backToConfig.emit();
   }
 
-  onConfirm() {
+  onConfirm(): void {
     this.orderConfirmed.emit(this.orderedPlayers());
   }
 }

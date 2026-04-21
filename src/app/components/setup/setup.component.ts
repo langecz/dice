@@ -37,18 +37,18 @@ export class SetupComponent {
     players: Player[];
     teams: Team[];
     config: { gameMode: GameMode; targetPoints: number; minPointsPerTurn: number };
-  }) {
+  }): void {
     this.players.set(data.players);
     this.teams.set(data.teams);
     this.config.set(data.config);
     this.isOrdering.set(true);
   }
 
-  backToSetup() {
+  backToSetup(): void {
     this.isOrdering.set(false);
   }
 
-  startGame(orderedPlayers: Player[]) {
+  startGame(orderedPlayers: Player[]): void {
     this.store.setupGame({
       gameMode: this.config().gameMode,
       targetPoints: this.config().targetPoints,
@@ -56,6 +56,6 @@ export class SetupComponent {
       players: orderedPlayers,
       teams: this.teams()
     });
-    this.router.navigate(['/game']);
+    void this.router.navigate(['/game']);
   }
 }

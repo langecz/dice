@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy, output, input } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, output, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
@@ -60,7 +60,7 @@ export class GameConfigComponent {
     // Using an effect or ngOnInit to sync might be better but for simplicity in this pass:
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.initialPlayers().length > 0) this.players.set(this.initialPlayers());
     if (this.initialTeams().length > 0) this.teams.set(this.initialTeams());
     this.setupModel.set(this.initialConfig());
@@ -74,7 +74,7 @@ export class GameConfigComponent {
     }
   });
 
-  addItem(name: string) {
+  addItem(name: string): void {
     if (!name) return;
     if (this.setupForm.gameMode().value() === 'individual') {
       const newPlayer: Player = {
@@ -98,7 +98,7 @@ export class GameConfigComponent {
     }
   }
 
-  removeItem(id: string) {
+  removeItem(id: string): void {
     if (this.setupForm.gameMode().value() === 'individual') {
       this.players.update(p => p.filter(x => x.id !== id));
     } else {
@@ -111,7 +111,7 @@ export class GameConfigComponent {
     }
   }
 
-  addPlayerToTeam(teamId: string, playerName: string) {
+  addPlayerToTeam(teamId: string, playerName: string): void {
     if (!playerName) return;
     const newPlayer: Player = {
       id: generateUniqueId(),
@@ -126,14 +126,14 @@ export class GameConfigComponent {
     ));
   }
 
-  removePlayerFromTeam(teamId: string, playerId: string) {
+  removePlayerFromTeam(teamId: string, playerId: string): void {
     this.teams.update(teams => teams.map(t =>
       t.id === teamId ? { ...t, playerIds: t.playerIds.filter(pid => pid !== playerId) } : t
     ));
     this.players.update(p => p.filter(x => x.id !== playerId));
   }
 
-  getPlayer(id: string) {
+  getPlayer(id: string): Player | undefined {
     return this.players().find(p => p.id === id);
   }
 
