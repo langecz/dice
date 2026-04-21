@@ -16,7 +16,6 @@ export class GameStore {
   readonly players = computed(() => this.stateSignal().players);
   readonly teams = computed(() => this.stateSignal().teams);
   readonly gameMode = computed(() => this.stateSignal().gameMode);
-  readonly isStarted = computed(() => this.stateSignal().isStarted);
   readonly isGameOver = computed(() => this.stateSignal().isGameOver);
   readonly currentPlayer = computed<Player | null>(() => {
     const s = this.stateSignal();

@@ -2,10 +2,10 @@ import {
   Component,
   inject,
   computed,
-  ViewChild,
   TemplateRef,
   ChangeDetectionStrategy,
-  Signal
+  Signal,
+  viewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -42,6 +42,8 @@ export class DashboardComponent {
   router = inject(Router);
   dialog = inject(MatDialog);
 
+  newGameDialogTemplate = viewChild.required('newGameDialog', { read: TemplateRef });
+
   state = this.store.state;
   players = this.store.players;
   teams = this.store.teams;
@@ -53,13 +55,13 @@ export class DashboardComponent {
   lastRoundStarted = computed(() => this.state().lastRoundStarted);
 
   winner: Signal<Winner | null> = computed(() => {
-    const s = this.state();
-    if (!s.winnerId) return null;
-    if (s.winnerType === 'player') {
-      const winner = s.players.find(p => p.id === s.winnerId);
+    const gameState = this.state();
+    if (!gameState.winnerId) return null;
+    if (gameState.winnerType === 'player') {
+      const winner = gameState.players.find(p => p.id === gameState.winnerId);
       return winner ? this.getWinnerInfo(winner) : null;
     } else {
-      const winner = s.teams.find(p => p.id === s.winnerId);
+      const winner = gameState.teams.find(p => p.id === gameState.winnerId);
       return winner ? this.getWinnerInfo(winner) : null;
     }
   });
@@ -101,10 +103,8 @@ export class DashboardComponent {
     return this.players().find(p => p.id === id);
   }
 
-  @ViewChild('newGameDialog') newGameDialogTemplate!: TemplateRef<any>;
-
   onNewGame() {
-    this.dialog.open(this.newGameDialogTemplate);
+    this.dialog.open(this.newGameDialogTemplate());
   }
 
   resetGame(keepPlayers: boolean) {
