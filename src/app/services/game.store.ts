@@ -51,6 +51,10 @@ export class GameStore {
     const s = this.stateSignal();
     if (s.isGameOver) return;
 
+    if (points > 0 && points < s.minPointsPerTurn) {
+      points = 0;
+    }
+
     if (s.gameMode === 'individual') {
       this.recordIndividualPoints(points);
     } else {
@@ -186,6 +190,7 @@ export class GameStore {
         ...INITIAL_GAME_STATE,
         gameMode: s.gameMode,
         targetPoints: s.targetPoints,
+        minPointsPerTurn: s.minPointsPerTurn,
         players: s.players.map(p => ({ ...p, score: 0, dashes: 0, history: [] })),
         teams: s.teams.map(t => ({ ...t, score: 0, dashes: 0, history: [] })),
       }));

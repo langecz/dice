@@ -20,6 +20,7 @@ export interface Team {
 export interface GameState {
   gameMode: GameMode;
   targetPoints: number;
+  minPointsPerTurn: number;
   players: Player[];
   teams: Team[];
   currentPlayerIndex: number;
@@ -33,6 +34,7 @@ export interface GameState {
 export const INITIAL_GAME_STATE: GameState = {
   gameMode: 'individual',
   targetPoints: 10000,
+  minPointsPerTurn: 350,
   players: [],
   teams: [],
   currentPlayerIndex: 0,

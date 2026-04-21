@@ -20,3 +20,5 @@ When the "New Game" button is clicked, the user can either keep the existing lis
 
 In the case of a team game, it would be helpful to display the number of points for each team and the number of dashes.
 
+In the beginning, allow setting minimum points per turn; the default value is 350.
+
