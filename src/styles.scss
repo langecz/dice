@@ -16,7 +16,62 @@ $dice-theme: mat.define-theme((
   ),
 ));
 
+$color-accent: #fbc02d;
+$color-success: #63920e;
+$color-warn: #ae1111;
+$color-white: #ffffffff;
+
+$filled-button-opacity: 0.55;
+$filled-button-shape: 8px;
+$fab-button-opacity: 0.2;
+//$fab-button-hover-color: #c4cf97;
+
+
+
 @include mat.all-component-themes($dice-theme);
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.btn-warn {
+  @include mat.button-overrides((
+    filled-container-color: $color-warn,
+  ));
+  @include mat.icon-button-overrides((
+    icon-color: $color-warn,
+  ));
+}
+
+.btn-accent {
+  @include mat.button-overrides((
+    filled-container-color: $color-accent,
+  ))
+}
+
+.btn-success {
+  @include mat.button-overrides((
+    filled-container-color: $color-success,
+  ));
+  @include mat.fab-overrides((
+    foreground-color: $color-white,
+    container-color: $color-success,
+    ))
+}
+
+button[matButton] {
+    @include mat.button-overrides((
+      filled-container-shape: $filled-button-shape,
+      outlined-container-shape: $filled-button-shape,
+      protected-container-shape: $filled-button-shape,
+      text-container-shape: $filled-button-shape,
+      tonal-container-shape: $filled-button-shape,
+
+      filled-hover-state-layer-opacity: $filled-button-opacity,
+    ))
+}
+
+button[matFab] {
+  @include mat.fab-overrides((
+    hover-state-layer-opacity: $fab-button-opacity,
+  ))
+}

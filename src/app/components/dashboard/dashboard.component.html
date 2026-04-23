@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
   <span>Dice Game</span>
   <span class="spacer"></span>
-  <button mat-button (click)="onNewGame()">New Game</button>
+  <button matButton="filled" (click)="onNewGame()">New Game</button>
 </mat-toolbar>
 
 <div class="dashboard-container">
@@ -27,7 +27,7 @@
         </div>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="onNewGame()">PLAY AGAIN</button>
+        <button matButton="filled" (click)="onNewGame()">PLAY AGAIN</button>
       </mat-card-actions>
     </mat-card>
   } @else {
@@ -74,8 +74,8 @@
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-button color="warn" (click)="setZeroPoints(pointsInput)">ZERO</button>
-        <button mat-raised-button color="primary" (click)="submitPoints(pointsInput)" [disabled]="pointsInput.valueAsNumber < minPointsPerTurn() || !pointsInput.value">RECORD</button>
+        <button matButton="filled" class="btn-warn" (click)="setZeroPoints(pointsInput)">ZERO</button>
+        <button matButton="filled" (click)="submitPoints(pointsInput)" [disabled]="pointsInput.valueAsNumber < minPointsPerTurn() || !pointsInput.value">RECORD</button>
       </mat-card-actions>
     </mat-card>
   }
@@ -120,8 +120,8 @@
     Would you like to keep the current players or start fresh?
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button (click)="dialog.closeAll()">Cancel</button>
-    <button mat-button color="warn" (click)="resetGame(false)">New Players</button>
-    <button mat-raised-button color="primary" (click)="resetGame(true)">Keep Players</button>
+    <button matButton="filled" class="btn-warn" (click)="dialog.closeAll()">Cancel</button>
+    <button matButton="filled" class="btn-success" (click)="resetGame(false)">New Players</button>
+    <button matButton="filled" (click)="resetGame(true)">Keep Players</button>
   </mat-dialog-actions>
 </ng-template>

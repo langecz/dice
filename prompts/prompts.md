@@ -47,3 +47,5 @@ Disable the "RECORD" button if the "pointsInput" input is less than minPointsPer
 ---
 
 In case that game mode is "teams", do not show dashes of the current player. Show team dashes instead; just next to the team name.
+
+---

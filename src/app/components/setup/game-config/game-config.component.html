@@ -30,7 +30,7 @@
       <mat-label>{{ setupForm.gameMode().value() === 'individual' ? 'Player Name' : 'Team Name' }}</mat-label>
       <input matInput #nameInput (keyup.enter)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Enter Player Name' : 'Enter Team Name'">
     </mat-form-field>
-    <button mat-mini-fab color="primary" (click)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Add Player' : 'Add Team'">
+    <button matFab class="btn-success" (click)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Add Player' : 'Add Team'">
       <mat-icon>add</mat-icon>
     </button>
   </div>
@@ -40,7 +40,7 @@
       @for (player of players(); track player.id) {
         <mat-list-item>
           <span matListItemTitle>{{ player.name }}</span>
-          <button mat-icon-button (click)="removeItem(player.id)">
+          <button matIconButton  class="btn-warn" (click)="removeItem(player.id)">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-list-item>
@@ -51,7 +51,7 @@
       <mat-card class="team-card">
         <mat-card-header>
           <mat-card-title>{{ team.name }}</mat-card-title>
-          <button mat-icon-button (click)="removeItem(team.id)">
+          <button matIconButton class="btn-warn" (click)="removeItem(team.id)">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-card-header>
@@ -61,14 +61,14 @@
               <mat-label>Player Name</mat-label>
               <input matInput #pInput (keyup.enter)="addPlayerToTeam(team.id, pInput.value); pInput.value = ''">
             </mat-form-field>
-            <button mat-button (click)="addPlayerToTeam(team.id, pInput.value); pInput.value = ''">Add</button>
+            <button matButton="filled" (click)="addPlayerToTeam(team.id, pInput.value); pInput.value = ''">Add</button>
           </div>
           <mat-list cdkDropList (cdkDropListDropped)="dropPlayerInTeam(team.id, $event)">
             @for (pid of team.playerIds; track pid) {
               <mat-list-item>
                 <span>{{ getPlayer(pid)?.name }}</span>
-                <button mat-icon-button (click)="removePlayerFromTeam(team.id, pid)">
-                  <mat-icon>close</mat-icon>
+                <button matIconButton class="btn-warn" (click)="removePlayerFromTeam(team.id, pid)">
+                  <mat-icon>delete</mat-icon>
                 </button>
               </mat-list-item>
             }
@@ -80,7 +80,7 @@
 </div>
 
 <div class="actions">
-  <button mat-raised-button color="primary" [disabled]="!canNext()" (click)="onNext()">
+  <button matButton="filled" [disabled]="!canNext()" (click)="onNext()">
     NEXT: SET ORDER
   </button>
 </div>
