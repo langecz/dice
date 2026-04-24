@@ -6,21 +6,31 @@
   </mat-radio-group>
 </div>
 
-<div class="setup-section">
-  <h3>Target Points</h3>
-  <mat-form-field>
-    <mat-label>Points to win</mat-label>
-    <input matInput type="number" [value]="setupForm.targetPoints().value()" (input)="setupForm.targetPoints().value.set($any($event.target).value)" aria-label="Target points to win">
-  </mat-form-field>
-</div>
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Points settings
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
-<div class="setup-section">
-  <h3>Minimum Points per Turn</h3>
-  <mat-form-field>
-    <mat-label>Minimum points</mat-label>
-    <input matInput type="number" [value]="setupForm.minPointsPerTurn().value()" (input)="setupForm.minPointsPerTurn().value.set($any($event.target).value)" aria-label="Minimum points per turn">
-  </mat-form-field>
-</div>
+    <div class="setup-section">
+      <h3>Target Points</h3>
+      <mat-form-field>
+        <mat-label>Points to win</mat-label>
+        <input matInput type="number" [value]="setupForm.targetPoints().value()" (input)="setupForm.targetPoints().value.set($any($event.target).value)" aria-label="Target points to win">
+      </mat-form-field>
+    </div>
+
+    <div class="setup-section">
+      <h3>Minimum Points per Turn</h3>
+      <mat-form-field>
+        <mat-label>Minimum points</mat-label>
+        <input matInput type="number" [value]="setupForm.minPointsPerTurn().value()" (input)="setupForm.minPointsPerTurn().value.set($any($event.target).value)" aria-label="Minimum points per turn">
+      </mat-form-field>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
 
 <div class="setup-section">
   <h3>{{ setupForm.gameMode().value() === 'individual' ? 'Players' : 'Teams & Players' }}</h3>
@@ -36,7 +46,7 @@
   </div>
 
   @if (setupForm.gameMode().value() === 'individual') {
-    <mat-list cdkDropList (cdkDropListDropped)="dropPlayer($event)">
+    <mat-list>
       @for (player of players(); track player.id) {
         <mat-list-item>
           <span matListItemTitle>{{ player.name }}</span>
@@ -57,16 +67,22 @@
         </mat-card-header>
         <mat-card-content>
           <div class="add-player-to-team">
-            <mat-form-field appearance="outline">
+            <mat-form-field>
               <mat-label>Player Name</mat-label>
-              <input matInput #pInput (keyup.enter)="addPlayerToTeam(team.id, pInput.value); pInput.value = ''">
+              <input
+                matInput
+                #playerInput
+                (keyup.enter)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''">
             </mat-form-field>
-            <button matButton="filled" (click)="addPlayerToTeam(team.id, pInput.value); pInput.value = ''">Add</button>
+            <button matFab class="btn-success" (click)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''">
+              <mat-icon>add</mat-icon>
+            </button>
+
           </div>
-          <mat-list cdkDropList (cdkDropListDropped)="dropPlayerInTeam(team.id, $event)">
+          <mat-list>
             @for (pid of team.playerIds; track pid) {
               <mat-list-item>
-                <span>{{ getPlayer(pid)?.name }}</span>
+                <span matListItemTitle>{{ getPlayer(pid)?.name }}</span>
                 <button matIconButton class="btn-warn" (click)="removePlayerFromTeam(team.id, pid)">
                   <mat-icon>delete</mat-icon>
                 </button>

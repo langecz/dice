@@ -1,13 +1,14 @@
 import { Component, signal, computed, ChangeDetectionStrategy, output, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { form } from '@angular/forms/signals';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
@@ -18,6 +19,7 @@ import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../con
   imports: [
     CommonModule,
     MatCardModule,
+    MatExpansionModule,
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,
@@ -136,23 +138,6 @@ export class GameConfigComponent {
 
   getPlayer(id: string): Player | undefined {
     return this.players().find(p => p.id === id);
-  }
-
-  dropPlayer(event: CdkDragDrop<Player[]>) {
-    const p = [...this.players()];
-    moveItemInArray(p, event.previousIndex, event.currentIndex);
-    this.players.set(p);
-  }
-
-  dropPlayerInTeam(teamId: string, event: CdkDragDrop<string[]>) {
-    this.teams.update(teams => teams.map(t => {
-      if (t.id === teamId) {
-        const pids = [...t.playerIds];
-        moveItemInArray(pids, event.previousIndex, event.currentIndex);
-        return { ...t, playerIds: pids };
-      }
-      return t;
-    }));
   }
 
   onNext() {

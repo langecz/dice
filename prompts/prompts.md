@@ -49,3 +49,12 @@ Disable the "RECORD" button if the "pointsInput" input is less than minPointsPer
 In case that game mode is "teams", do not show dashes of the current player. Show team dashes instead; just next to the team name.
 
 ---
+
+/*select add-player-form in the game-config,component.html*/ - 
+fix align of the selection so both input and button are in the same height and are aligned
+
+---
+
+Move "Target points" and "Minimum points per turn" to the expansion panel. Panel is collapsed by default.
+
+---
