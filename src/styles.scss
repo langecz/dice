@@ -24,14 +24,17 @@ $color-white: #ffffffff;
 $filled-button-opacity: 0.55;
 $filled-button-shape: 8px;
 $fab-button-opacity: 0.2;
-//$fab-button-hover-color: #c4cf97;
-
-
 
 @include mat.all-component-themes($dice-theme);
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .btn-warn {
   @include mat.button-overrides((
@@ -55,19 +58,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   @include mat.fab-overrides((
     foreground-color: $color-white,
     container-color: $color-success,
-    ))
+  ))
 }
 
 button[matButton] {
-    @include mat.button-overrides((
-      filled-container-shape: $filled-button-shape,
-      outlined-container-shape: $filled-button-shape,
-      protected-container-shape: $filled-button-shape,
-      text-container-shape: $filled-button-shape,
-      tonal-container-shape: $filled-button-shape,
-
-      filled-hover-state-layer-opacity: $filled-button-opacity,
-    ))
+  margin-right: 5px;
+  @include mat.button-overrides((
+    filled-container-shape: $filled-button-shape,
+    outlined-container-shape: $filled-button-shape,
+    protected-container-shape: $filled-button-shape,
+    text-container-shape: $filled-button-shape,
+    tonal-container-shape: $filled-button-shape,
+    filled-hover-state-layer-opacity: $filled-button-opacity,
+  ))
 }
 
 button[matFab] {

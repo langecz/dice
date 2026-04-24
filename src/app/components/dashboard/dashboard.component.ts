@@ -5,9 +5,11 @@ import {
   TemplateRef,
   ChangeDetectionStrategy,
   Signal,
-  viewChild
+  viewChild,
+  signal,
+  ElementRef,
+  WritableSignal
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,11 +21,11 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GameStore } from '../../services/game.store';
 import { Router } from '@angular/router';
 import { Player, Winner } from '../../models/game.models';
+import { toSignalMap } from '../../utils/signal-map';
 
 @Component({
   selector: 'app-dashboard',
   imports: [
-    CommonModule,
     MatToolbarModule,
     MatCardModule,
     MatFormFieldModule,
@@ -54,6 +56,16 @@ export class DashboardComponent {
   minPointsPerTurn = computed(() => this.state().minPointsPerTurn);
   lastRoundStarted = computed(() => this.state().lastRoundStarted);
 
+  inputPointsElement: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>("inputPointsElement");
+  inputPoints: WritableSignal<number | null> = signal<number | null>(null);
+
+  canRecord: Signal<boolean> = computed(() => {
+    const points = this.inputPoints();
+    if (points === null || isNaN(points)) return false;
+    if (points === 0) return true;
+    return points >= this.minPointsPerTurn();
+  });
+
   winner: Signal<Winner | null> = computed(() => {
     const gameState = this.state();
     if (!gameState.winnerId) return null;
@@ -81,33 +93,27 @@ export class DashboardComponent {
     }
   });
 
-  submitPoints(input: HTMLInputElement) {
-    const points = input.valueAsNumber;
-    if (isNaN(points)) return;
+  playerMap: Signal<Map<string, Player>> = toSignalMap(this.players, player => player.id);
 
-    const gameState = this.state();
-    if (points < gameState.minPointsPerTurn) return;
+  setZeroPoints(): void {
+    this.store.addPoints(0);
+    this.clearInputPoints();
+  }
+
+  submitPoints(): void {
+    if (!this.canRecord()) return;
+    const points = this.inputPoints();
+    if (points == null) return;
 
     this.store.addPoints(points);
-    input.value = '';
-    input.focus();
+    this.clearInputPoints();
   }
 
-  setZeroPoints(input: HTMLInputElement) {
-    this.store.addPoints(0);
-    input.value = '';
-    input.focus();
-  }
-
-  getPlayer(id: string): Player | undefined {
-    return this.players().find(p => p.id === id);
-  }
-
-  onNewGame() {
+  onNewGame(): void {
     this.dialog.open(this.newGameDialogTemplate());
   }
 
-  resetGame(keepPlayers: boolean) {
+  resetGame(keepPlayers: boolean): void {
     this.store.resetGame(keepPlayers);
     this.dialog.closeAll();
     if (!keepPlayers) {
@@ -115,7 +121,21 @@ export class DashboardComponent {
     }
   }
 
+  onPointsInput(value: number | null | undefined): void {
+    const points = Number(value);
+    this.inputPoints.set(Number.isNaN(points) ? null : points);
+  }
+
   private getWinnerInfo(winner: {name: string, score: number}): Winner {
     return { name: winner.name, score: winner.score };
   }
+
+  private clearInputPoints(): void {
+    const element = this.inputPointsElement()?.nativeElement;
+    this.inputPoints.set(null);
+    if (element) {
+      element.focus();
+    }
+  }
+
 }

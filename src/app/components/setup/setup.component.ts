@@ -1,5 +1,4 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { GameStore } from '../../services/game.store';
 import { GameMode, Player, Team } from '../../models/game.models';
@@ -7,11 +6,11 @@ import { Router } from '@angular/router';
 import { GameConfigComponent } from './game-config/game-config.component';
 import { PlayerOrderingComponent } from './player-ordering/player-ordering.component';
 import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../constants/game.constants';
+import { GameConfig } from '../../models/config.model';
 
 @Component({
   selector: 'app-setup',
   imports: [
-    CommonModule,
     MatCardModule,
     GameConfigComponent,
     PlayerOrderingComponent
@@ -37,7 +36,7 @@ export class SetupComponent {
   onConfigComplete(data: {
     players: Player[];
     teams: Team[];
-    config: { gameMode: GameMode; targetPoints: number; minPointsPerTurn: number };
+    config: GameConfig;
   }): void {
     this.players.set(data.players);
     this.teams.set(data.teams);

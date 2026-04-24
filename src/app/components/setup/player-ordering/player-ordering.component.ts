@@ -1,5 +1,12 @@
-import { Component, input, output, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+  InputSignal,
+  OutputEmitterRef, WritableSignal, effect
+} from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +16,6 @@ import { Player, Team, GameMode } from '../../../models/game.models';
 @Component({
   selector: 'app-player-ordering',
   imports: [
-    CommonModule,
     MatListModule,
     MatIconModule,
     MatButtonModule,
@@ -19,29 +25,42 @@ import { Player, Team, GameMode } from '../../../models/game.models';
   styleUrl: './player-ordering.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlayerOrderingComponent implements OnInit {
-  players = input.required<Player[]>();
-  teams = input.required<Team[]>();
-  gameMode = input.required<GameMode>();
+export class PlayerOrderingComponent {
+  players: InputSignal<Player[]> = input.required<Player[]>();
+  teams: InputSignal<Team[]> = input.required<Team[]>();
+  gameMode: InputSignal<GameMode> = input.required<GameMode>();
 
-  orderConfirmed = output<Player[]>();
-  backToConfig = output<void>();
+  orderConfirmed: OutputEmitterRef<Player[]> = output<Player[]>();
+  backToConfig: OutputEmitterRef<void> = output<void>();
 
-  orderedPlayers = signal<Player[]>([]);
+  orderedPlayers: WritableSignal<Player[]> = signal<Player[]>([]);
 
-  ngOnInit(): void {
-    if (this.gameMode() === 'individual') {
-      this.orderedPlayers.set([...this.players()]);
-    } else {
-      const initialOrder: Player[] = [];
-      this.teams().forEach(team => {
-        team.playerIds.forEach(pid => {
-          const p = this.players().find(x => x.id === pid);
-          if (p) initialOrder.push(p);
-        });
-      });
-      this.orderedPlayers.set(initialOrder);
-    }
+  constructor() {
+    effect(() => {
+      const mode = this.gameMode();
+      const players = this.players();
+      const teams = this.teams();
+
+      switch(mode) {
+
+        case 'individual': {
+          this.orderedPlayers.set([...players]);
+          break;
+        }
+
+        case 'team': {
+          const initialOrder: Player[] = [];
+          teams.forEach(team => {
+            team.playerIds.forEach(playerId => {
+              const player = this.players().find(x => x.id === playerId);
+              if (player) initialOrder.push(player);
+            });
+          });
+
+          this.orderedPlayers.set(initialOrder);
+        }
+      }
+    })
   }
 
   dropOrderedPlayer(event: CdkDragDrop<Player[]>): void {

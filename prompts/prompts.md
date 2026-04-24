@@ -58,3 +58,8 @@ fix align of the selection so both input and button are in the same height and a
 Move "Target points" and "Minimum points per turn" to the expansion panel. Panel is collapsed by default.
 
 ---
+
+Disable the RECORD button when points are less than minPointsPerTurn. Set focus the button when zero is set. Move the enabling logic to signal variable.
+
+---
+

@@ -70,12 +70,18 @@
 
         <mat-form-field>
           <mat-label>Points rolled (Min: {{ minPointsPerTurn() }})</mat-label>
-          <input matInput type="number" #pointsInput (keyup.enter)="submitPoints(pointsInput)" (input)="0" aria-label="Enter points rolled">
+          <input matInput
+                 #inputPointsElement
+                 type="number"
+                 [value]="inputPoints() ?? ''"
+                 (keyup.enter)="submitPoints()"
+                 (input)="onPointsInput(inputPointsElement.valueAsNumber)"
+                 aria-label="Enter points rolled">
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button matButton="filled" class="btn-warn" (click)="setZeroPoints(pointsInput)">ZERO</button>
-        <button matButton="filled" (click)="submitPoints(pointsInput)" [disabled]="pointsInput.valueAsNumber < minPointsPerTurn() || !pointsInput.value">RECORD</button>
+        <button matButton="filled" class="btn-warn" (click)="setZeroPoints()">ZERO</button>
+        <button matButton="filled" (click)="submitPoints()" [disabled]="!canRecord()">RECORD</button>
       </mat-card-actions>
     </mat-card>
   }
@@ -101,9 +107,10 @@
           </mat-card-header>
           <mat-card-content>
             <mat-list>
-              @for (pid of team.playerIds; track pid) {
-                <mat-list-item [class.current]="getPlayer(pid)?.id === currentPlayer()?.id">
-                  <span matListItemTitle>{{ getPlayer(pid)?.name }}</span>
+              @for (playerId of team.playerIds; track playerId) {
+                @let player = playerMap().get(playerId);
+                <mat-list-item [class.current]="player?.id === currentPlayer()?.id">
+                  <span matListItemTitle>{{ player?.name }}</span>
                 </mat-list-item>
               }
             </mat-list>

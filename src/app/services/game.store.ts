@@ -12,7 +12,7 @@ export class GameStore {
   private stateSignal = signal<GameState>(this.loadFromStorage());
 
   // Selectors
-  readonly state = computed(() => this.stateSignal());
+  readonly state = this.stateSignal.asReadonly();
   readonly players = computed(() => this.stateSignal().players);
   readonly teams = computed(() => this.stateSignal().teams);
   readonly gameMode = computed(() => this.stateSignal().gameMode);

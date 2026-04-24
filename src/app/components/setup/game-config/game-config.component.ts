@@ -1,5 +1,13 @@
-import { Component, signal, computed, ChangeDetectionStrategy, output, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+  output,
+  input,
+  InputSignal,
+  WritableSignal, effect, Signal
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatRadioModule } from '@angular/material/radio';
@@ -8,16 +16,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { form } from '@angular/forms/signals';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
 import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../constants/game.constants';
+import { GameConfig } from '../../../models/config.model';
+import { toSignalMap } from '../../../utils/signal-map';
 
 @Component({
   selector: 'app-game-config',
   imports: [
-    CommonModule,
     MatCardModule,
     MatExpansionModule,
     MatRadioModule,
@@ -26,16 +34,15 @@ import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../con
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    DragDropModule,
   ],
   templateUrl: './game-config.component.html',
   styleUrl: './game-config.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameConfigComponent {
-  initialPlayers = input<Player[]>([]);
-  initialTeams = input<Team[]>([]);
-  initialConfig = input<{ gameMode: GameMode; targetPoints: number; minPointsPerTurn: number }>({
+  initialPlayers: InputSignal<Player[]> = input<Player[]>([]);
+  initialTeams: InputSignal<Team[]> = input<Team[]>([]);
+  initialConfig: InputSignal<GameConfig> = input<GameConfig>({
     gameMode: 'individual',
     targetPoints: DEFAULT_TARGET_POINTS,
     minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN
@@ -44,11 +51,13 @@ export class GameConfigComponent {
   configComplete = output<{
     players: Player[];
     teams: Team[];
-    config: { gameMode: GameMode; targetPoints: number; minPointsPerTurn: number };
+    config: GameConfig;
   }>();
 
-  players = signal<Player[]>([]);
-  teams = signal<Team[]>([]);
+  players: WritableSignal<Player[]> = signal<Player[]>([]);
+  teams: WritableSignal<Team[]> = signal<Team[]>([]);
+
+  playerMap: Signal<Map<string, Player>> = toSignalMap(this.players, player => player.id);
 
   setupModel = signal({
     gameMode: 'individual' as GameMode,
@@ -59,14 +68,22 @@ export class GameConfigComponent {
   setupForm = form(this.setupModel);
 
   constructor() {
-    // Initialize signals from inputs
-    // Using an effect or ngOnInit to sync might be better but for simplicity in this pass:
-  }
+    effect(() => {
 
-  ngOnInit(): void {
-    if (this.initialPlayers().length > 0) this.players.set(this.initialPlayers());
-    if (this.initialTeams().length > 0) this.teams.set(this.initialTeams());
-    this.setupModel.set(this.initialConfig());
+      const initialPlayers = this.initialPlayers();
+      const initialTeams = this.initialTeams();
+      const initialConfig = this.initialConfig();
+
+      if (initialPlayers?.length > 0) {
+        this.players.set(this.initialPlayers());
+      }
+
+      if (initialTeams?.length > 0) {
+        this.teams.set(this.initialTeams());
+      }
+
+      this.setupModel.set(initialConfig);
+    });
   }
 
   canNext = computed(() => {
@@ -134,10 +151,6 @@ export class GameConfigComponent {
       t.id === teamId ? { ...t, playerIds: t.playerIds.filter(pid => pid !== playerId) } : t
     ));
     this.players.update(p => p.filter(x => x.id !== playerId));
-  }
-
-  getPlayer(id: string): Player | undefined {
-    return this.players().find(p => p.id === id);
   }
 
   onNext() {
