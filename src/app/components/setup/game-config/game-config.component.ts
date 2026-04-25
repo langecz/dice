@@ -6,7 +6,7 @@ import {
   output,
   input,
   InputSignal,
-  WritableSignal, effect, Signal
+  WritableSignal, effect, Signal, inject
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -16,12 +16,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { form } from '@angular/forms/signals';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
 import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../constants/game.constants';
 import { GameConfig } from '../../../models/config.model';
 import { toSignalMap } from '../../../utils/signal-map';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-game-config',
@@ -34,12 +36,16 @@ import { toSignalMap } from '../../../utils/signal-map';
     MatButtonModule,
     MatIconModule,
     MatListModule,
+    MatDialogModule,
   ],
   templateUrl: './game-config.component.html',
   styleUrl: './game-config.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameConfigComponent {
+
+  private readonly dialog: MatDialog = inject(MatDialog);
+
   initialPlayers: InputSignal<Player[]> = input<Player[]>([]);
   initialTeams: InputSignal<Team[]> = input<Team[]>([]);
   initialConfig: InputSignal<GameConfig> = input<GameConfig>({
@@ -119,16 +125,36 @@ export class GameConfigComponent {
   }
 
   removeItem(id: string): void {
-    if (this.setupForm.gameMode().value() === 'individual') {
-      this.players.update(p => p.filter(x => x.id !== id));
-    } else {
-      const team = this.teams().find(t => t.id === id);
-      if (team) {
-        const pids = team.playerIds;
-        this.teams.update(t => t.filter(x => x.id !== id));
-        this.players.update(p => p.filter(x => !pids.includes(x.id)));
+    const isIndividual = this.setupForm.gameMode().value() === 'individual';
+    const item = isIndividual
+      ? this.players().find((p) => p.id === id)
+      : this.teams().find((t) => t.id === id);
+
+    if (!item) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: isIndividual ? 'Delete Player' : 'Delete Team',
+        message: `Are you sure you want to delete ${isIndividual ? 'player' : 'team'} "${item.name}"?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (isIndividual) {
+          this.players.update((p) => p.filter((x) => x.id !== id));
+        } else {
+          const team = this.teams().find((t) => t.id === id);
+          if (team) {
+            const pids = team.playerIds;
+            this.teams.update((t) => t.filter((x) => x.id !== id));
+            this.players.update((p) => p.filter((x) => !pids.includes(x.id)));
+          }
+        }
       }
-    }
+    });
   }
 
   addPlayerToTeam(teamId: string, playerName: string): void {
@@ -147,10 +173,70 @@ export class GameConfigComponent {
   }
 
   removePlayerFromTeam(teamId: string, playerId: string): void {
-    this.teams.update(teams => teams.map(t =>
-      t.id === teamId ? { ...t, playerIds: t.playerIds.filter(pid => pid !== playerId) } : t
-    ));
-    this.players.update(p => p.filter(x => x.id !== playerId));
+    const player = this.players().find((p) => p.id === playerId);
+    if (!player) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete Player',
+        message: `Are you sure you want to delete player "${player.name}"?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.teams.update((teams) =>
+          teams.map((t) =>
+            t.id === teamId ? { ...t, playerIds: t.playerIds.filter((pid) => pid !== playerId) } : t,
+          ),
+        );
+        this.players.update((p) => p.filter((x) => x.id !== playerId));
+      }
+    });
+  }
+
+  editPlayer(playerId: string): void {
+    const player = this.playerMap().get(playerId);
+    if (!player) {
+      return;
+    }
+
+    const editedName = window.prompt('Edit player name', player.name);
+    if (editedName === null) {
+      return;
+    }
+
+    const nextName = editedName.trim();
+    if (!nextName) {
+      return;
+    }
+
+    this.players.update(players =>
+      players.map(p => (p.id === playerId ? { ...p, name: nextName } : p))
+    );
+  }
+
+  editTeam(teamId: string): void {
+    const team = this.teams().find(t => t.id === teamId);
+    if (!team) {
+      return;
+    }
+
+    const editedName = window.prompt('Edit team name', team.name);
+    if (editedName === null) {
+      return;
+    }
+
+    const nextName = editedName.trim();
+    if (!nextName) {
+      return;
+    }
+
+    this.teams.update(teams =>
+      teams.map(t => (t.id === teamId ? { ...t, name: nextName } : t))
+    );
   }
 
   onNext() {

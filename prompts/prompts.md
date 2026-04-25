@@ -67,3 +67,15 @@ Do not count dashes for an individual player in case that game mode is "teams". 
 
 ---
 
+/*edit button added manually*/
+Implement edit team name functionality. There is prepared an edit button for that; with no logic yet.
+
+---
+
+Add a confirmation dialog for the delete team or player functionality.
+
+---
+
+/*open dashboard component template; select mat-dialog-actions section*/
+On the selected code - Show buttons on two lines. The first line will contain "New Players" and "Keep Players" and the second line will contain "Cancel". 
+All buttons will be aligned to the right.   

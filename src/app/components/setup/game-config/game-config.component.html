@@ -61,11 +61,24 @@
   @if (setupForm.gameMode().value() === 'individual') {
     <mat-list>
       @for (player of players(); track player.id) {
-        <mat-list-item>
+        <mat-list-item class="player-item">
           <span matListItemTitle>{{ player.name }}</span>
-          <button matIconButton  class="btn-warn" (click)="removeItem(player.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <span matListItemMeta class="player-actions">
+            <button
+              matIconButton
+              class="btn-accent"
+              aria-label="Edit player"
+              (click)="editPlayer(player.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              matIconButton
+              class="btn-warn"
+              aria-label="Delete player"
+              (click)="removeItem(player.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
         </mat-list-item>
       }
     </mat-list>
@@ -74,9 +87,22 @@
       <mat-card class="team-card">
         <mat-card-header>
           <mat-card-title>{{ team.name }}</mat-card-title>
-          <button matIconButton class="btn-warn" (click)="removeItem(team.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <div>
+            <button
+              matIconButton
+              class="btn-accent"
+              aria-label="Edit team"
+              (click)="editTeam(team.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              matIconButton
+              class="btn-warn"
+              aria-label="Delete team"
+              (click)="removeItem(team.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </mat-card-header>
         <mat-card-content>
           <div class="add-player-to-team">
@@ -94,11 +120,24 @@
           </div>
           <mat-list>
             @for (playerId of team.playerIds; track playerId) {
-              <mat-list-item>
+              <mat-list-item class="player-item">
                 <span matListItemTitle>{{ playerMap().get(playerId)?.name }}</span>
-                <button matIconButton class="btn-warn" (click)="removePlayerFromTeam(team.id, playerId)">
-                  <mat-icon>delete</mat-icon>
-                </button>
+                <span matListItemMeta class="player-actions">
+                  <button
+                    matIconButton
+                    class="btn-accent"
+                    aria-label="Edit player"
+                    (click)="editPlayer(playerId)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    matIconButton
+                    class="btn-warn"
+                    aria-label="Delete player"
+                    (click)="removePlayerFromTeam(team.id, playerId)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </span>
               </mat-list-item>
             }
           </mat-list>
