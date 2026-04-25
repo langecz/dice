@@ -63,3 +63,7 @@ Disable the RECORD button when points are less than minPointsPerTurn. Set focus 
 
 ---
 
+Do not count dashes for an individual player in case that game mode is "teams". It is enough to count just the points of the team.
+
+---
+

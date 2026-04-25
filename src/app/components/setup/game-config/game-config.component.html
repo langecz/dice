@@ -50,7 +50,10 @@
       <mat-label>{{ setupForm.gameMode().value() === 'individual' ? 'Player Name' : 'Team Name' }}</mat-label>
       <input matInput #nameInput (keyup.enter)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Enter Player Name' : 'Enter Team Name'">
     </mat-form-field>
-    <button matFab class="btn-success" (click)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Add Player' : 'Add Team'">
+    <button matFab
+            class="btn-success"
+            (click)="addItem(nameInput.value); nameInput.value = ''; nameInput.focus()"
+            [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Add Player' : 'Add Team'">
       <mat-icon>add</mat-icon>
     </button>
   </div>
@@ -84,7 +87,7 @@
                 #playerInput
                 (keyup.enter)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''">
             </mat-form-field>
-            <button matFab class="btn-success" (click)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''">
+            <button matFab class="btn-success" (click)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''; playerInput.focus()">
               <mat-icon>add</mat-icon>
             </button>
 

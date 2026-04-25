@@ -136,20 +136,10 @@ export class GameStore {
       player.history = [...player.history, points];
 
       if (points === 0) {
-        player.dashes++; // individual dashes still tracked? Req 12 says "display ... how many dashes they have"
         team.dashes++;
       } else {
-        player.dashes = 0;
         team.dashes = 0;
         team.score += points;
-      }
-
-      if (player.dashes === DASHES_FOR_PENALTY) {
-        // Individual penalty still applies? "If a player rolls 0 points DASHES_FOR_PENALTY times in a row
-        // ... PENALTY_POINTS points are deducted"
-        // In team play, does it deduct from team score? Likely yes.
-        team.score -= PENALTY_POINTS;
-        player.dashes = 0;
       }
 
       if (team.dashes === DASHES_FOR_PENALTY) {
