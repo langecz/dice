@@ -125,3 +125,10 @@ the ordering in the ordering list component will keep this, because this is a va
 
 ---
 
+There is a bug in the player order set. The list of players is set: A, B, C, D.
+Then players are reordered by their seating order around the table: D, C, B, A.
+As a player who starts is selected B.
+The order of the turns must be: B starts, then plays A, then D, then C. 
+
+---
+

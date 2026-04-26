@@ -48,7 +48,7 @@ export class GameStore {
         ...mergedConfig,
         teams,
         currentPlayerIndex: 0,
-        currentTeamIndex: mergedConfig.gameMode === 'team' && mergedConfig.players.length > 0
+        currentTeamIndex: mergedConfig.gameMode === 'team' && mergedConfig.players && mergedConfig.players.length > 0
           ? this.getTeamIndexForPlayer(teams, mergedConfig.players[0].id)
           : 0,
         isStarted: true,
