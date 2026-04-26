@@ -1,17 +1,38 @@
 <div class="setup-section">
   <h3>Set Player Order</h3>
-  <p>Drag and drop players to set their order around the table. The first player starts the game.</p>
-  <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
-    @for (player of orderedPlayers(); track player.id) {
-      <mat-list-item cdkDrag>
-        <mat-icon matListItemIcon cdkDragHandle>drag_handle</mat-icon>
-        <span matListItemTitle>{{ player.name }}</span>
-        @if (gameMode() === 'team') {
-           <span class="team-hint">({{ getTeamName(player.id) }})</span>
-        }
-      </mat-list-item>
-    }
-  </mat-list>
+  <p>Drag and drop players to set their order around the table.</p>
+  <p class="description">Select the starting player for the next game using the radio buttons.</p>
+
+  <mat-radio-group [ngModel]="selectedStartingPlayerId()" (ngModelChange)="selectedStartingPlayerId.set($event)">
+    <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
+      @for (player of orderedPlayers(); track player.id) {
+        <mat-list-item cdkDrag class="player-item">
+          <div class="player-item-content">
+
+            <!--drag icon-->
+            <span class="player-control-cell">
+              <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
+            </span>
+
+            <!--selection, which player starts a game-->
+            <span class="player-control-cell">
+              <mat-radio-button [value]="player.id"></mat-radio-button>
+            </span>
+
+            <!--player name/team-->
+            <span class="player-text">
+<!--              <span class="player-name" matListItemTitle>{{ player.name }}</span>-->
+              <span class="player-name">{{ player.name }}</span>
+
+              @if (gameMode() === 'team') {
+                <span class="team-hint" matListItemLine>({{ getTeamName(player.id) }})</span>
+              }
+            </span>
+          </div>
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-radio-group>
 </div>
 
 <div class="actions">

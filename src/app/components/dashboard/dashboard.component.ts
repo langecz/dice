@@ -8,7 +8,7 @@ import {
   viewChild,
   signal,
   ElementRef,
-  WritableSignal
+  WritableSignal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -22,6 +22,8 @@ import { GameStore } from '../../services/game.store';
 import { Router } from '@angular/router';
 import { Player, Winner } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
+import { PlayerOrderingComponent } from '../setup/player-ordering/player-ordering.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +35,9 @@ import { toSignalMap } from '../../utils/signal-map';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatDialogModule
+    MatDialogModule,
+    PlayerOrderingComponent,
+    CommonModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -45,6 +49,7 @@ export class DashboardComponent {
   dialog = inject(MatDialog);
 
   newGameDialogTemplate = viewChild.required('newGameDialog', { read: TemplateRef });
+  isReordering = signal(false);
 
   state = this.store.state;
   players = this.store.players;
@@ -124,6 +129,21 @@ export class DashboardComponent {
   onPointsInput(value: number | null | undefined): void {
     const points = Number(value);
     this.inputPoints.set(Number.isNaN(points) ? null : points);
+  }
+
+  onKeepPlayers(): void {
+    this.dialog.closeAll();
+    this.isReordering.set(true);
+  }
+
+  onOrderConfirmed(orderedPlayers: Player[]): void {
+    this.store.resetGame(true);
+    this.store.reorderPlayers(orderedPlayers);
+    this.isReordering.set(false);
+  }
+
+  getTeamName(playerId: string): string {
+    return this.teams().find(t => t.playerIds.includes(playerId))?.name || '';
   }
 
   private getWinnerInfo(winner: {name: string, score: number}): Winner {

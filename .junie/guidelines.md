@@ -97,12 +97,17 @@ loginForm.email().value.set('alice@wonderland.com');
 Angular Material is the required UI component library for this project. All UI components MUST use Angular Material components instead of custom HTML/CSS implementations unless explicitly approved.
 Use the "Azure & Blue" theme as a default theme.
 
-
-### Buttons
-Generate buttons in way:
-`<button matButton="filled"></button>`
-
 ### Installation
 
 ```bash
 ng add @angular/material
+```
+### Buttons
+Generate buttons in way:
+`<button matButton="filled"></button>`
+
+## General rules
+
+### Testing
+- Add test(s) for any new logic.
+- Run tests by this command: `ng test --watch=false` 

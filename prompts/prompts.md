@@ -90,4 +90,20 @@ But in case that player B reaches `TARGET_POINTS`+n points, player B is the winn
 
 Create tests for the `game.store.ts` file. Focus on the point calculation logic. Consider corner cases.
 Create comments for each test with a proper description.
+
+---
+
+There is also an option: when the game ends and 'Keep Players' is selected,
+it must be possible to either offer to change the player order (player-ordering view)
+or select the player who will start. In this case the player ordering remains unchanged, it is simply shifted, so the chosen player is in the first place.
+(e.g., the current player order is A - B - C - D - E, then D is selected as the player who will start, so the new order is D - E - A - B - C)
+
+---
+
+Let’s change the ordering component. Allow the user to drag and drop players to reorder them as it is now.
+Add a radio-button before the player name; the player with a marked radio-button will start the game.
+By default, the first player in the list will be marked as a starting player.
+Add a description text related to radio buttons.
+The description text should explain that the radio button allows the user to select the starting player for the next game.
+
 ---

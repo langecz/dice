@@ -1,3 +1,5 @@
+@use '../../styles/player-item';
+
 .spacer { flex: 1 1 auto; }
 .dashboard-container {
   padding: 16px;
@@ -65,5 +67,12 @@
     display: flex;
     justify-content: flex-end;
     width: 100%;
+    gap: 8px;
   }
+}
+
+.team-hint {
+  font-size: 0.8em;
+  color: #666;
+  margin-left: 8px;
 }

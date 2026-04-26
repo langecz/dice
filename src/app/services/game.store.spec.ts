@@ -400,4 +400,122 @@ describe('GameStore', () => {
       expect(state.players[0].history).toEqual([]);
     });
   });
+
+  /**
+   * Tests for reordering players and setting starting player.
+   */
+  describe('Post-Game Reordering', () => {
+    beforeEach(() => {
+      const players = [
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] }
+      ];
+      store.setupGame({
+        gameMode: 'individual',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players,
+        teams: []
+      });
+    });
+
+    /**
+     * Test reordering players manually.
+     */
+    it('should reorder players correctly', () => {
+      const originalPlayers = store.state().players;
+      const newOrder = [originalPlayers[1], originalPlayers[2], originalPlayers[0]]; // P2, P3, P1
+
+      store.reorderPlayers(newOrder);
+
+      const players = store.state().players;
+      expect(players[0].id).toBe('2');
+      expect(players[1].id).toBe('3');
+      expect(players[2].id).toBe('1');
+      expect(store.state().currentPlayerIndex).toBe(0);
+    });
+
+    /**
+     * Test shifting player order by selecting a starting player.
+     */
+    it('should shift player order when starting player is selected', () => {
+      // Original: P1, P2, P3. Select P2 to start.
+      store.setStartingPlayer('2');
+
+      const players = store.state().players;
+      // New order: P2, P3, P1
+      expect(players[0].id).toBe('2');
+      expect(players[1].id).toBe('3');
+      expect(players[2].id).toBe('1');
+      expect(store.state().currentPlayerIndex).toBe(0);
+    });
+
+    /**
+     * Test shifting player order with more players.
+     */
+    it('should shift player order correctly with more players', () => {
+      const players = [
+        { id: '1', name: 'A', score: 0, dashes: 0, history: [] },
+        { id: '2', name: 'B', score: 0, dashes: 0, history: [] },
+        { id: '3', name: 'C', score: 0, dashes: 0, history: [] },
+        { id: '4', name: 'D', score: 0, dashes: 0, history: [] },
+        { id: '5', name: 'E', score: 0, dashes: 0, history: [] }
+      ];
+      store.setupGame({
+        gameMode: 'individual',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players,
+        teams: []
+      });
+
+      // Original: A, B, C, D, E. Select D to start.
+      store.setStartingPlayer('4');
+
+      const newPlayers = store.state().players;
+      // New order: D, E, A, B, C
+      expect(newPlayers[0].name).toBe('D');
+      expect(newPlayers[1].name).toBe('E');
+      expect(newPlayers[2].name).toBe('A');
+      expect(newPlayers[3].name).toBe('B');
+      expect(newPlayers[4].name).toBe('C');
+    });
+
+    /**
+     * Test reordering in team mode updates team playerIds order too.
+     */
+    it('should update team playerIds order when reordering in team mode', () => {
+      const players = [
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] },
+        { id: '4', name: 'P4', score: 0, dashes: 0, history: [] }
+      ];
+      const teams = [
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] },
+        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [] }
+      ];
+      store.setupGame({
+        gameMode: 'team',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players,
+        teams
+      });
+
+      // New player order: P2, P4, P1, P3
+      const newOrder = [players[1], players[3], players[0], players[2]];
+      store.reorderPlayers(newOrder);
+
+      const state = store.state();
+      expect(state.players[0].id).toBe('2');
+      // Team 1 order should now be ['2', '1']
+      expect(state.teams[0].playerIds).toEqual(['2', '1']);
+      // Team 2 order should now be ['4', '3']
+      expect(state.teams[1].playerIds).toEqual(['4', '3']);
+      // Current team should be Team 1 because P2 is in Team 1
+      expect(state.currentTeamIndex).toBe(0);
+    });
+  });
 });

@@ -239,6 +239,63 @@ export class GameStore {
     }
   }
 
+  reorderPlayers(players: Player[]) {
+    this.stateSignal.update(s => {
+      // Update team playerIds order if in team mode
+      const teams = s.gameMode === 'team' ? this.updateTeamsPlayerOrder(s.teams, players) : s.teams;
+
+      return {
+        ...s,
+        players: [...players],
+        teams,
+        currentPlayerIndex: 0,
+        currentTeamIndex: s.gameMode === 'team' ? this.getTeamIndexForPlayer(teams, players[0].id) : 0
+      };
+    });
+  }
+
+  setStartingPlayer(playerId: string) {
+    this.stateSignal.update(s => {
+      const players = [...s.players];
+      const playerIndex = players.findIndex(p => p.id === playerId);
+      if (playerIndex === -1) return s;
+
+      // Shift players: chosen player becomes first
+      const newPlayers = [
+        ...players.slice(playerIndex),
+        ...players.slice(0, playerIndex)
+      ];
+
+      const teams = s.gameMode === 'team' ? this.updateTeamsPlayerOrder(s.teams, newPlayers) : s.teams;
+
+      return {
+        ...s,
+        players: newPlayers,
+        teams,
+        currentPlayerIndex: 0,
+        currentTeamIndex: s.gameMode === 'team' ? this.getTeamIndexForPlayer(teams, newPlayers[0].id) : 0
+      };
+    });
+  }
+
+  private updateTeamsPlayerOrder(teams: Team[], orderedPlayers: Player[]): Team[] {
+    // In this game, players of the same team roll in sequence?
+    // Wait, let me check recordTeamPoints logic again.
+    // It seems it just follows the players array order.
+    return teams.map(team => ({
+      ...team,
+      playerIds: team.playerIds.sort((a, b) => {
+        const indexA = orderedPlayers.findIndex(p => p.id === a);
+        const indexB = orderedPlayers.findIndex(p => p.id === b);
+        return indexA - indexB;
+      })
+    }));
+  }
+
+  private getTeamIndexForPlayer(teams: Team[], playerId: string): number {
+    return teams.findIndex(t => t.playerIds.includes(playerId));
+  }
+
   private loadFromStorage(): GameState {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     return stored ? JSON.parse(stored) : INITIAL_GAME_STATE;

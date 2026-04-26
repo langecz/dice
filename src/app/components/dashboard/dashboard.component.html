@@ -5,119 +5,136 @@
 </mat-toolbar>
 
 <div class="dashboard-container">
-  @if (isGameOver()) {
-    <mat-card class="winner-card">
+  @if (isReordering()) {
+    <mat-card>
       <mat-card-header>
-        <mat-card-title>Game Over!</mat-card-title>
+        <mat-card-title>Keep Players</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <h2>Winner: {{ winner()?.name }}</h2>
-        <h3>Score: {{ winner()?.score }}</h3>
-
-        <div class="rankings">
-          <h3>Final Rankings</h3>
-          <mat-list>
-            @for (result of rankedResults(); track result.id; let i = $index) {
-              <mat-list-item>
-                <span matListItemTitle>{{ i + 2 }}. {{ result.name }}</span>
-                <span matListItemLine>{{ result.score }} points</span>
-              </mat-list-item>
-            }
-          </mat-list>
-        </div>
+        <app-player-ordering
+          [players]="players()"
+          [teams]="teams()"
+          [gameMode]="gameMode()"
+          (orderConfirmed)="onOrderConfirmed($event)"
+          (backToConfig)="isReordering.set(false)">
+        </app-player-ordering>
       </mat-card-content>
-      <mat-card-actions>
-        <button matButton="filled" (click)="onNewGame()">PLAY AGAIN</button>
-      </mat-card-actions>
     </mat-card>
   } @else {
-    <mat-card class="current-turn-card">
-      <mat-card-header>
-        <mat-card-title>
-          Current Turn
-          @if (lastRoundStarted()) {
-            <span class="last-round-badge">LAST ROUND</span>
-          }
-        </mat-card-title>
-        <mat-card-subtitle>
-          @if (gameMode() === 'team') {
-            <div class="team-info-header">
-              Team: {{ currentTeam()?.name }}
-              <div class="dashes inline-dashes">
-                @for (i of [1,2,3]; track i) {
-                  <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''">
-                    {{ (currentTeam()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
-                  </mat-icon>
-                }
-              </div>
-            </div>
-          }
-        </mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="player-info">
-          <h2>{{ currentPlayer()?.name }}</h2>
-          @if (gameMode() === 'individual') {
-            <div class="dashes">
-              @for (i of [1,2,3]; track i) {
-                <mat-icon [color]="(currentPlayer()?.dashes || 0) >= i ? 'warn' : ''">
-                  {{ (currentPlayer()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
-                </mat-icon>
-              }
-            </div>
-          }
-        </div>
+    @if (isGameOver()) {
+      <mat-card class="winner-card">
+        <mat-card-header>
+          <mat-card-title>Game Over!</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <h2>Winner: {{ winner()?.name }}</h2>
+          <h3>Score: {{ winner()?.score }}</h3>
 
-        <mat-form-field>
-          <mat-label>Points rolled (Min: {{ minPointsPerTurn() }})</mat-label>
-          <input matInput
-                 #inputPointsElement
-                 type="number"
-                 [value]="inputPoints() ?? ''"
-                 (keyup.enter)="submitPoints()"
-                 (input)="onPointsInput(inputPointsElement.valueAsNumber)"
-                 aria-label="Enter points rolled">
-        </mat-form-field>
-      </mat-card-content>
-      <mat-card-actions align="end">
-        <button matButton="filled" class="btn-warn" (click)="setZeroPoints()">ZERO</button>
-        <button matButton="filled" (click)="submitPoints()" [disabled]="!canRecord()">RECORD</button>
-      </mat-card-actions>
-    </mat-card>
-  }
-
-  <div class="scores-section">
-    <h3>Scores (Target: {{ state().targetPoints }})</h3>
-
-    @if (gameMode() === 'individual') {
-      <mat-list>
-        @for (player of players(); track player.id) {
-          <mat-list-item [class.current]="player.id === currentPlayer()?.id">
-            <span matListItemTitle>{{ player.name }}</span>
-            <span matListItemLine>Points: {{ player.score }} | Dashes: {{ player.dashes }}</span>
-          </mat-list-item>
-        }
-      </mat-list>
-    } @else {
-      @for (team of teams(); track team.id) {
-        <mat-card class="team-score-card" [class.current]="team.id === currentTeam()?.id">
-          <mat-card-header>
-            <mat-card-title>{{ team.name }}: {{ team.score }} pts</mat-card-title>
-            <mat-card-subtitle>Team Dashes: {{ team.dashes }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
+          <div class="rankings">
+            <h3>Final Rankings</h3>
             <mat-list>
-              @for (playerId of team.playerIds; track playerId) {
-                <mat-list-item [class.current]="playerId === currentPlayer()?.id">
-                  <span matListItemTitle>{{ playerMap().get(playerId)?.name }}</span>
+              @for (result of rankedResults(); track result.id; let i = $index) {
+                <mat-list-item>
+                  <span matListItemTitle>{{ i + 2 }}. {{ result.name }}</span>
+                  <span matListItemLine>{{ result.score }} points</span>
                 </mat-list-item>
               }
             </mat-list>
-          </mat-card-content>
-        </mat-card>
-      }
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button matButton="filled" (click)="onNewGame()">PLAY AGAIN</button>
+        </mat-card-actions>
+      </mat-card>
+    } @else {
+      <mat-card class="current-turn-card">
+        <mat-card-header>
+          <mat-card-title>
+            Current Turn
+            @if (lastRoundStarted()) {
+              <span class="last-round-badge">LAST ROUND</span>
+            }
+          </mat-card-title>
+          <mat-card-subtitle>
+            @if (gameMode() === 'team') {
+              <div class="team-info-header">
+                Team: {{ currentTeam()?.name }}
+                <div class="dashes inline-dashes">
+                  @for (i of [1,2,3]; track i) {
+                    <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''">
+                      {{ (currentTeam()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
+                    </mat-icon>
+                  }
+                </div>
+              </div>
+            }
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="player-info">
+            <h2>{{ currentPlayer()?.name }}</h2>
+            @if (gameMode() === 'individual') {
+              <div class="dashes">
+                @for (i of [1,2,3]; track i) {
+                  <mat-icon [color]="(currentPlayer()?.dashes || 0) >= i ? 'warn' : ''">
+                    {{ (currentPlayer()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
+                  </mat-icon>
+                }
+              </div>
+            }
+          </div>
+
+          <mat-form-field>
+            <mat-label>Points rolled (Min: {{ minPointsPerTurn() }})</mat-label>
+            <input matInput
+                   #inputPointsElement
+                   type="number"
+                   [value]="inputPoints() ?? ''"
+                   (keyup.enter)="submitPoints()"
+                   (input)="onPointsInput(inputPointsElement.valueAsNumber)"
+                   aria-label="Enter points rolled">
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button matButton="filled" class="btn-warn" (click)="setZeroPoints()">ZERO</button>
+          <button matButton="filled" (click)="submitPoints()" [disabled]="!canRecord()">RECORD</button>
+        </mat-card-actions>
+      </mat-card>
     }
-  </div>
+
+    <div class="scores-section">
+      <h3>Scores (Target: {{ state().targetPoints }})</h3>
+
+      @if (gameMode() === 'individual') {
+        <mat-list>
+          @for (player of players(); track player.id) {
+            <mat-list-item [class.current]="player.id === currentPlayer()?.id">
+              <span matListItemTitle>{{ player.name }}</span>
+              <span matListItemLine>Points: {{ player.score }} | Dashes: {{ player.dashes }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+      } @else {
+        @for (team of teams(); track team.id) {
+          <mat-card class="team-score-card" [class.current]="team.id === currentTeam()?.id">
+            <mat-card-header>
+              <mat-card-title>{{ team.name }}: {{ team.score }} pts</mat-card-title>
+              <mat-card-subtitle>Team Dashes: {{ team.dashes }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-list>
+                @for (playerId of team.playerIds; track playerId) {
+                  <mat-list-item [class.current]="playerId === currentPlayer()?.id">
+                    <span matListItemTitle>{{ playerMap().get(playerId)?.name }}</span>
+                  </mat-list-item>
+                }
+              </mat-list>
+            </mat-card-content>
+          </mat-card>
+        }
+      }
+    </div>
+  }
 </div>
 
 <ng-template #newGameDialog>
@@ -128,7 +145,7 @@
   <mat-dialog-actions class="dialog-actions-vertical">
     <div class="action-row">
       <button matButton="filled" class="btn-success" (click)="resetGame(false)">New Players</button>
-      <button matButton="filled" (click)="resetGame(true)">Keep Players</button>
+      <button matButton="filled" (click)="onKeepPlayers()">Keep Players</button>
     </div>
     <div class="action-row">
       <button matButton="filled" class="btn-warn" (click)="dialog.closeAll()">Cancel</button>

@@ -1,3 +1,5 @@
+@use '../../../styles/player-item';
+
 .setup-section {
   margin-bottom: 24px;
 }
@@ -71,13 +73,6 @@ mat-accordion {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
-}
-
-mat-list-item.player-item {
-  margin-bottom: 8px;
-  border: 1px solid #d6e8ff;
-  border-radius: 8px;
-  background-color: #edf5ff;
 }
 
 .player-actions {

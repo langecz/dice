@@ -28,3 +28,7 @@ Players don't have to sit according to their teams, so before the game starts, t
 The first player on the list starts the game.
 This should be done as a list of all players (regardless of their team) with drag and drop functionality to reorder players.
 
+There is also an option: when the game ends and 'Keep Players' is selected, 
+it must be possible to either offer to change the player order (player-ordering view)
+or select the player who will start. In this case the player ordering remains unchanged, it is simply shifted, so the chosen player is in the first place.
+(e.g., the current player order is A - B - C - D - E, then D is selected as the player who will start, so the new order is D - E - A - B - C)

@@ -10,7 +10,9 @@ import {
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { FormsModule } from '@angular/forms';
 import { Player, Team, GameMode } from '../../../models/game.models';
 
 @Component({
@@ -19,7 +21,9 @@ import { Player, Team, GameMode } from '../../../models/game.models';
     MatListModule,
     MatIconModule,
     MatButtonModule,
+    MatRadioModule,
     DragDropModule,
+    FormsModule,
   ],
   templateUrl: './player-ordering.component.html',
   styleUrl: './player-ordering.component.scss',
@@ -34,6 +38,7 @@ export class PlayerOrderingComponent {
   backToConfig: OutputEmitterRef<void> = output<void>();
 
   orderedPlayers: WritableSignal<Player[]> = signal<Player[]>([]);
+  selectedStartingPlayerId: WritableSignal<string> = signal<string>('');
 
   constructor() {
     effect(() => {
@@ -41,23 +46,29 @@ export class PlayerOrderingComponent {
       const players = this.players();
       const teams = this.teams();
 
-      switch(mode) {
+      // Only initialize if we don't have an order yet
+      if (this.orderedPlayers().length === 0) {
+        let initialOrder: Player[] = [];
+        switch(mode) {
+          case 'individual': {
+            initialOrder = [...players];
+            break;
+          }
 
-        case 'individual': {
-          this.orderedPlayers.set([...players]);
-          break;
+          case 'team': {
+            teams.forEach(team => {
+              team.playerIds.forEach(playerId => {
+                const player = players.find(x => x.id === playerId);
+                if (player) initialOrder.push(player);
+              });
+            });
+            break;
+          }
         }
 
-        case 'team': {
-          const initialOrder: Player[] = [];
-          teams.forEach(team => {
-            team.playerIds.forEach(playerId => {
-              const player = this.players().find(x => x.id === playerId);
-              if (player) initialOrder.push(player);
-            });
-          });
-
-          this.orderedPlayers.set(initialOrder);
+        this.orderedPlayers.set(initialOrder);
+        if (initialOrder.length > 0 && !this.selectedStartingPlayerId()) {
+          this.selectedStartingPlayerId.set(initialOrder[0].id);
         }
       }
     })
@@ -78,6 +89,18 @@ export class PlayerOrderingComponent {
   }
 
   onConfirm(): void {
-    this.orderConfirmed.emit(this.orderedPlayers());
+    const players = [...this.orderedPlayers()];
+    const startingId = this.selectedStartingPlayerId();
+    const startIndex = players.findIndex(p => p.id === startingId);
+
+    if (startIndex !== -1 && startIndex !== 0) {
+      const rearranged = [
+        ...players.slice(startIndex),
+        ...players.slice(0, startIndex)
+      ];
+      this.orderConfirmed.emit(rearranged);
+    } else {
+      this.orderConfirmed.emit(players);
+    }
   }
 }
