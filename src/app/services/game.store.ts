@@ -101,7 +101,20 @@ export class GameStore {
       // If last round was started, and we are back to the first player (index 0), then game is over
       if (lastRoundStarted && nextPlayerIndex === 0) {
         isGameOver = true;
-        winnerId = firstToReachTargetId;
+
+        // Find the player with the highest score among those who reached targetPoints.
+        // If there's a tie, the one who reached it first (firstToReachTargetId) wins.
+        const playersWithTarget = players.filter(p => p.score >= s.targetPoints);
+        const maxScore = Math.max(...playersWithTarget.map(p => p.score));
+        const playersWithMaxScore = playersWithTarget.filter(p => p.score === maxScore);
+
+        const firstToReach = playersWithMaxScore.find(p => p.id === firstToReachTargetId);
+        if (firstToReach) {
+          winnerId = firstToReach.id;
+        } else {
+          winnerId = playersWithMaxScore[0].id;
+        }
+
         winnerType = 'player';
       }
 
@@ -173,7 +186,20 @@ export class GameStore {
 
       if (lastRoundStarted && nextPlayerIndex === 0) {
         isGameOver = true;
-        winnerId = firstToReachTargetId;
+
+        // Find the team with the highest score among those who reached targetPoints.
+        // If there's a tie, the one who reached it first (firstToReachTargetId) wins.
+        const teamsWithTarget = teams.filter(t => t.score >= s.targetPoints);
+        const maxScore = Math.max(...teamsWithTarget.map(t => t.score));
+        const teamsWithMaxScore = teamsWithTarget.filter(t => t.score === maxScore);
+
+        const firstToReach = teamsWithMaxScore.find(t => t.id === firstToReachTargetId);
+        if (firstToReach) {
+          winnerId = firstToReach.id;
+        } else {
+          winnerId = teamsWithMaxScore[0].id;
+        }
+
         winnerType = 'team';
       }
 

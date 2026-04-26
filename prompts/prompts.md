@@ -84,10 +84,10 @@ All buttons will be aligned to the right.
 
 There is a bug. When player A reaches `TARGET_POINTS` points, the last round starts. Then player B reaches also `TARGET_POINTS` points. 
 As the winner is marked player B, even though player A is the winner (reaches `TARGET_POINTS` points at first). 
+But in case that player B reaches `TARGET_POINTS`+n points, player B is the winner even though player A was the first to reach `TARGET_POINTS`.
 
 ---
 
 Create tests for the `game.store.ts` file. Focus on the point calculation logic. Consider corner cases.
 Create comments for each test with a proper description.
 ---
-

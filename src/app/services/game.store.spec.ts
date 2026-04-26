@@ -199,16 +199,67 @@ describe('GameStore', () => {
     });
 
     /**
-     * Test that the first person to reach the target remains the winner, even if another player surpasses their score in the same final round.
+     * Test that the first person to reach the target remains the winner, if they have the highest score at the end.
      */
-    it('should keep the first player who reached target as winner even if others reach it too', () => {
-      store.addPoints(1000); // P1 reaches target
-      store.addPoints(1100); // P2 also reaches target in the same round
+    it('should keep the first player who reached target as winner if they have highest score', () => {
+      store.addPoints(1100); // P1 reaches target
+      store.addPoints(1000); // P2 also reaches target in the same round, but P1 is higher
 
       const state = store.state();
       expect(state.isGameOver).toBe(true);
       expect(state.winnerId).toBe('1');
-      expect(state.players[1].score).toBe(1100);
+    });
+
+    /**
+     * Test that if player B reaches MORE points than player A (who reached target first), player B wins.
+     */
+    it('should set player B as winner if they reach more points than player A in the last round', () => {
+      store.addPoints(1000); // P1 reaches target
+      store.addPoints(1100); // P2 reaches target with MORE points
+
+      const state = store.state();
+      expect(state.isGameOver).toBe(true);
+      expect(state.winnerId).toBe('2');
+    });
+
+    /**
+     * Test that if both reach the SAME points, the first one who reached it wins.
+     */
+    it('should keep player A as winner if both reach the same points in the last round', () => {
+      store.addPoints(1000); // P1 reaches target
+      store.addPoints(1000); // P2 reaches target with SAME points
+
+      const state = store.state();
+      expect(state.isGameOver).toBe(true);
+      expect(state.winnerId).toBe('1');
+    });
+
+    /**
+     * Test for the reported bug: when player A reaches TARGET_POINTS points, the last round starts.
+     * Then player B reaches also TARGET_POINTS points. A should be the winner.
+     * But if B reaches TARGET_POINTS + n, B should be the winner.
+     */
+    it('should correctly handle winner when multiple players reach target points', () => {
+      // Setup with TARGET_POINTS from constants if possible, but here we used 1000 in beforeEach
+      store.addPoints(1000); // P1 (A) reaches 1000
+      store.addPoints(1000); // P2 (B) reaches 1000
+      expect(store.state().winnerId).toBe('1'); // A reached it first, same points -> A wins
+
+      store.resetGame(true);
+      store.setupGame({
+        gameMode: 'individual',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players: [
+          { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
+          { id: '2', name: 'P2', score: 0, dashes: 0, history: [] }
+        ],
+        teams: []
+      });
+
+      store.addPoints(1000); // P1 (A) reaches 1000
+      store.addPoints(1100); // P2 (B) reaches 1100
+      expect(store.state().winnerId).toBe('2'); // B reached more points -> B wins
     });
   });
 
