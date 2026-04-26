@@ -37,6 +37,7 @@ export interface GameState {
   winnerId: string | null;
   winnerType: 'player' | 'team' | null;
   lastRoundStarted: boolean;
+  firstToReachTargetId: string | null;
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -52,4 +53,5 @@ export const INITIAL_GAME_STATE: GameState = {
   winnerId: null,
   winnerType: null,
   lastRoundStarted: false,
+  firstToReachTargetId: null,
 };

@@ -44,7 +44,8 @@ export class GameStore {
       isGameOver: false,
       winnerId: null,
       winnerType: null,
-      lastRoundStarted: false
+      lastRoundStarted: false,
+      firstToReachTargetId: null
     }));
   }
 
@@ -88,9 +89,11 @@ export class GameStore {
       let winnerId = s.winnerId;
       let winnerType = s.winnerType;
       let lastRoundStarted = s.lastRoundStarted;
+      let firstToReachTargetId = s.firstToReachTargetId;
 
-      if (player.score >= s.targetPoints) {
+      if (player.score >= s.targetPoints && !lastRoundStarted) {
         lastRoundStarted = true;
+        firstToReachTargetId = player.id;
       }
 
       const nextPlayerIndex = (s.currentPlayerIndex + 1) % players.length;
@@ -98,9 +101,7 @@ export class GameStore {
       // If last round was started, and we are back to the first player (index 0), then game is over
       if (lastRoundStarted && nextPlayerIndex === 0) {
         isGameOver = true;
-        // Find the player with the highest score
-        const winner = players.reduce((prev, current) => (prev.score > current.score) ? prev : current);
-        winnerId = winner.id;
+        winnerId = firstToReachTargetId;
         winnerType = 'player';
       }
 
@@ -111,7 +112,8 @@ export class GameStore {
         isGameOver,
         winnerId,
         winnerType,
-        lastRoundStarted
+        lastRoundStarted,
+        firstToReachTargetId
       };
     });
   }
@@ -155,9 +157,11 @@ export class GameStore {
       let winnerId = s.winnerId;
       let winnerType = s.winnerType;
       let lastRoundStarted = s.lastRoundStarted;
+      let firstToReachTargetId = s.firstToReachTargetId;
 
-      if (team.score >= s.targetPoints) {
+      if (team.score >= s.targetPoints && !lastRoundStarted) {
         lastRoundStarted = true;
+        firstToReachTargetId = team.id;
       }
 
       // Next player/team logic:
@@ -169,9 +173,7 @@ export class GameStore {
 
       if (lastRoundStarted && nextPlayerIndex === 0) {
         isGameOver = true;
-        // Find the team with the highest score
-        const winner = teams.reduce((prev, current) => (prev.score > current.score) ? prev : current);
-        winnerId = winner.id;
+        winnerId = firstToReachTargetId;
         winnerType = 'team';
       }
 
@@ -188,7 +190,8 @@ export class GameStore {
         isGameOver,
         winnerId,
         winnerType,
-        lastRoundStarted
+        lastRoundStarted,
+        firstToReachTargetId
       };
     });
   }
@@ -203,6 +206,7 @@ export class GameStore {
         players: s.players.map(p => ({ ...p, score: 0, dashes: 0, history: [] })),
         teams: s.teams.map(t => ({ ...t, score: 0, dashes: 0, history: [] })),
         lastRoundStarted: false,
+        firstToReachTargetId: null,
       }));
     } else {
       this.stateSignal.set(INITIAL_GAME_STATE);

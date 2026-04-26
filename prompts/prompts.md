@@ -50,8 +50,8 @@ In case that game mode is "teams", do not show dashes of the current player. Sho
 
 ---
 
-/*select add-player-form in the game-config,component.html*/ - 
-fix align of the selection so both input and button are in the same height and are aligned
+/*select add-player-form in the game-config.component.html*/ - 
+fix the aligning of the selection so both input and button are in the same height and are aligned
 
 ---
 
@@ -79,3 +79,15 @@ Add a confirmation dialog for the delete team or player functionality.
 /*open dashboard component template; select mat-dialog-actions section*/
 On the selected code - Show buttons on two lines. The first line will contain "New Players" and "Keep Players" and the second line will contain "Cancel". 
 All buttons will be aligned to the right.   
+
+---
+
+There is a bug. When player A reaches `TARGET_POINTS` points, the last round starts. Then player B reaches also `TARGET_POINTS` points. 
+As the winner is marked player B, even though player A is the winner (reaches `TARGET_POINTS` points at first). 
+
+---
+
+Create tests for the `game.store.ts` file. Focus on the point calculation logic. Consider corner cases.
+Create comments for each test with a proper description.
+---
+
