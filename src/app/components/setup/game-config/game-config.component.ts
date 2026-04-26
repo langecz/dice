@@ -6,7 +6,10 @@ import {
   output,
   input,
   InputSignal,
-  WritableSignal, effect, Signal, inject
+  WritableSignal,
+  effect,
+  Signal,
+  inject
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';

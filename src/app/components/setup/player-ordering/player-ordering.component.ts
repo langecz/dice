@@ -12,7 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { FormsModule } from '@angular/forms';
 import { Player, Team, GameMode } from '../../../models/game.models';
 
 @Component({
@@ -23,7 +22,6 @@ import { Player, Team, GameMode } from '../../../models/game.models';
     MatButtonModule,
     MatRadioModule,
     DragDropModule,
-    FormsModule,
   ],
   templateUrl: './player-ordering.component.html',
   styleUrl: './player-ordering.component.scss',

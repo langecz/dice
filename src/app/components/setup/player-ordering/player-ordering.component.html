@@ -3,7 +3,7 @@
   <p>Drag and drop players to set their order around the table.</p>
   <p class="description">Select the starting player for the next game using the radio buttons.</p>
 
-  <mat-radio-group [ngModel]="selectedStartingPlayerId()" (ngModelChange)="selectedStartingPlayerId.set($event)">
+  <mat-radio-group [value]="selectedStartingPlayerId()" (change)="selectedStartingPlayerId.set($event.value)">
     <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
       @for (player of orderedPlayers(); track player.id) {
         <mat-list-item cdkDrag class="player-item">
