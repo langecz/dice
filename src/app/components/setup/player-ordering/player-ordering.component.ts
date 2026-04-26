@@ -56,12 +56,18 @@ export class PlayerOrderingComponent {
           }
 
           case 'team': {
-            teams.forEach(team => {
-              team.playerIds.forEach(playerId => {
-                const player = players.find(x => x.id === playerId);
-                if (player) initialOrder.push(player);
+            // In team mode, if we already have players (e.g. from previous game), keep their order.
+            // Otherwise, group them by teams as a starting point.
+            if (players.length > 0 && players.every(p => teams.some(t => t.playerIds.includes(p.id)))) {
+              initialOrder = [...players];
+            } else {
+              teams.forEach(team => {
+                team.playerIds.forEach(playerId => {
+                  const player = players.find(x => x.id === playerId);
+                  if (player) initialOrder.push(player);
+                });
               });
-            });
+            }
             break;
           }
         }

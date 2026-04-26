@@ -35,18 +35,30 @@ export class GameStore {
 
   // Actions
   setupGame(config: Partial<GameState>) {
-    this.stateSignal.update(s => ({
-      ...s,
-      ...config,
-      currentPlayerIndex: 0,
-      currentTeamIndex: 0,
-      isStarted: true,
-      isGameOver: false,
-      winnerId: null,
-      winnerType: null,
-      lastRoundStarted: false,
-      firstToReachTargetId: null
-    }));
+    this.stateSignal.update(s => {
+      const mergedConfig = { ...s, ...config };
+
+      // Update team playerIds order if in team mode
+      let teams = mergedConfig.teams;
+      if (mergedConfig.gameMode === 'team' && mergedConfig.players.length > 0) {
+        teams = this.updateTeamsPlayerOrder(mergedConfig.teams, mergedConfig.players);
+      }
+
+      return {
+        ...mergedConfig,
+        teams,
+        currentPlayerIndex: 0,
+        currentTeamIndex: mergedConfig.gameMode === 'team' && mergedConfig.players.length > 0
+          ? this.getTeamIndexForPlayer(teams, mergedConfig.players[0].id)
+          : 0,
+        isStarted: true,
+        isGameOver: false,
+        winnerId: null,
+        winnerType: null,
+        lastRoundStarted: false,
+        firstToReachTargetId: null
+      };
+    });
   }
 
   addPoints(points: number) {

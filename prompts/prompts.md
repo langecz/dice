@@ -107,3 +107,21 @@ Add a description text related to radio buttons.
 The description text should explain that the radio button allows the user to select the starting player for the next game.
 
 ---
+
+Change the behavior of the ordering component in case that the game mode is "teams":
+When the order of the player is changed in the ordering list, change the order inside the team list also.
+E.g., team A has defined players A1, A2, A3; team B has defined players B1, B2, B3.
+On the ordering list is shown:
+A1, A2, A3, B1, B2, B3. The order is changed: B3; A3, B2, A2, B1, A1. 
+So in the team list is now shown:
+team A: A3, A2, A1; 
+team B: B3, B2, B1.
+But the order how players play is still as is defined: B3; A3, B2, A2, B1, A1
+
+---
+
+In 'team' game mode; when there already exists a list of players in the store (`players` array), 
+the ordering in the ordering list component will keep this, because this is a valid order of the players around the table.
+
+---
+

@@ -517,5 +517,41 @@ describe('GameStore', () => {
       // Current team should be Team 1 because P2 is in Team 1
       expect(state.currentTeamIndex).toBe(0);
     });
+
+    /**
+     * Test that setupGame correctly updates team playerIds order.
+     */
+    it('should update team playerIds order when setupGame is called in team mode', () => {
+      const players = [
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] },
+        { id: '4', name: 'P4', score: 0, dashes: 0, history: [] }
+      ];
+      const teams = [
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] },
+        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [] }
+      ];
+
+      // New player order: P2, P4, P1, P3
+      const orderedPlayers = [players[1], players[3], players[0], players[2]];
+
+      store.setupGame({
+        gameMode: 'team',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players: orderedPlayers,
+        teams
+      });
+
+      const state = store.state();
+      expect(state.players[0].id).toBe('2');
+      // Team 1 order should now be ['2', '1'] because 2 comes before 1 in orderedPlayers
+      expect(state.teams[0].playerIds).toEqual(['2', '1']);
+      // Team 2 order should now be ['4', '3']
+      expect(state.teams[1].playerIds).toEqual(['4', '3']);
+      // Current team should be Team 1 because P2 (first player) is in Team 1
+      expect(state.currentTeamIndex).toBe(0);
+    });
   });
 });
