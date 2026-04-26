@@ -1,5 +1,5 @@
 Hi, I need to write a web application to keep score for a dice game.
-At the start, users can either create teams and assign players to each team, or create a list of players who play individually.
+At the start, users can either create teams and assign players to each team or create a list of players who play individually.
 Next, users can specify how many points need to be rolled; the default value is 10,000 points.
 Then, the starting player is determined.
 Each player rolls the dice, and the number of points rolled must be recorded.
@@ -8,8 +8,15 @@ If a player rolls 0 points three times in a row (has three marks), 500 points ar
 In team play, 500 points are deducted if three players in a row on the same team roll 0 points.
 
 The game ends when a player or team reaches the required number of points.
-There is also a rule that in case that a player reaches 1000 points, the rest players of the round can finish their turns.
-So the game finishes when all players in the last round finish their turns.
+There is also a rule that in case that a player reaches `TARGET_POINTS` points, the rest players of the round can finish their turns.
+In the case of individual play, the game finishes when all players in the last round finish their turns.
+In the case of team play, the game finishes when the same count of players as in winner teams finishes his round.
+Example: Team A (with players A1, A2, A3), team B (with players B1, B2, B3).
+Player A2 reaches `TARGET_POINTS` (so only two players from team A played in the last round).
+A3 does not play in the last round, because team A already reaches `TARGET_POINTS`.
+The game ends when B1 and B2 players finish their turns (also only two players from team B can play in the last round).
+It means that player B3 do not play in the last round.
+
 
 The game must track and display which player is up next and how many dashes they have.
 In the case of a team game, the team’s score must be displayed.

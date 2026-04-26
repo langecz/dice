@@ -132,3 +132,14 @@ The order of the turns must be: B starts, then plays A, then D, then C.
 
 ---
 
+Implement changed rules for the finishing of the game in case of team mode:
+In the case of team play, the game finishes when the same count of players as in winner teams finishes his round.
+Example: Team A (with players A1, A2, A3), team B (with players B1, B2, B3).
+Player A2 reaches `TARGET_POINTS` (so only two players from team A played in the last round).
+A3 does not play in the last round, because team A already reaches `TARGET_POINTS`. 
+The game ends when B1 and B2 players finish their turns (also only two players from team B can play in the last round).
+It means that player B3 do not play in the last round. 
+
+---
+
+

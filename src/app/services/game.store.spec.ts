@@ -357,6 +357,148 @@ describe('GameStore', () => {
       expect(state.isGameOver).toBe(true);
       expect(state.winnerId).toBe('t1');
     });
+
+    /**
+     * Test the specific requirement:
+     * In the case of team play, the game finishes when the same count of players as in winner teams finishes his round.
+     * Example: Team A (A1, A2, A3), Team B (B1, B2, B3).
+     * A2 reaches TARGET_POINTS. A3 does not play.
+     * Game ends when B1 and B2 finish their turns. B3 does not play.
+     */
+    it('should finish the game when the same count of players as in winner team finishes their turn (3-player teams)', () => {
+      const players = [
+        { id: 'A1', name: 'A1', score: 0, dashes: 0, history: [] },
+        { id: 'A2', name: 'A2', score: 0, dashes: 0, history: [] },
+        { id: 'A3', name: 'A3', score: 0, dashes: 0, history: [] },
+        { id: 'B1', name: 'B1', score: 0, dashes: 0, history: [] },
+        { id: 'B2', name: 'B2', score: 0, dashes: 0, history: [] },
+        { id: 'B3', name: 'B3', score: 0, dashes: 0, history: [] }
+      ];
+      const teams = [
+        { id: 'TA', name: 'Team A', playerIds: ['A1', 'A2', 'A3'], score: 0, dashes: 0, history: [] },
+        { id: 'TB', name: 'Team B', playerIds: ['B1', 'B2', 'B3'], score: 0, dashes: 0, history: [] }
+      ];
+
+      store.setupGame({
+        gameMode: 'team',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players,
+        teams
+      });
+
+      // Round 1: Everyone plays 0 (using points that are below minimum but trigger turn change)
+      // Actually addPoints(0) always works if minPointsPerTurn is handled.
+      // Wait, let's check addPoints logic:
+      // if (points > 0 && points < gameState.minPointsPerTurn) points = 0;
+      // So 0 is always allowed.
+
+      // TA: A1, A2, A3
+      store.addPoints(0); // A1
+      store.addPoints(0); // A2
+      store.addPoints(0); // A3
+      // TB: B1, B2, B3
+      store.addPoints(0); // B1
+      store.addPoints(0); // B2
+      store.addPoints(0); // B3
+
+      // Round 2: A1 plays 0, A2 reaches target
+      store.addPoints(0);    // A1
+      store.addPoints(10000); // A2 reaches target points (high enough to ensure it exceeds target even with penalties)
+
+      const stateAfterA2 = store.state();
+      expect(stateAfterA2.lastRoundStarted).toBe(true);
+      expect(stateAfterA2.winnerTeamPlayerCount).toBe(2);
+      // Next player should be B1, skipping A3
+      expect(stateAfterA2.currentPlayerIndex).toBe(3); // Index of B1
+
+      store.addPoints(400); // B1 plays
+      store.addPoints(400); // B2 plays
+
+      // Now game should be over because 2 players from Team B played (same as Team A)
+      const finalState = store.state();
+      expect(finalState.isGameOver).toBe(true);
+      expect(finalState.winnerId).toBe('TA');
+    });
+
+    /**
+     * Test that if the first player of the winner team reaches the target,
+     * only the first player of other teams plays in the last round.
+     */
+    it('should end game after 1 player each if first player reaches target', () => {
+      store.addPoints(1000); // P1 (Team 1) reaches target. winnerTeamPlayerCount = 1.
+
+      const stateAfterP1 = store.state();
+      expect(stateAfterP1.winnerTeamPlayerCount).toBe(1);
+      // P2 should be skipped. Next is P3 (first of Team 2).
+      expect(stateAfterP1.currentPlayerIndex).toBe(2);
+
+      store.addPoints(500); // P3 (Team 2) plays.
+
+      // Game should end after P3 because quota for Team 2 (1 player) is reached.
+      expect(store.state().isGameOver).toBe(true);
+    });
+
+    /**
+     * Test that if the last player of the winner team reaches target,
+     * then all players of other teams play.
+     */
+    it('should allow all players to play if last player of winner team reaches target', () => {
+      store.addPoints(0);    // P1
+      store.addPoints(1000); // P2 (Team 1) reaches target. winnerTeamPlayerCount = 2.
+
+      const stateAfterP2 = store.state();
+      expect(stateAfterP2.winnerTeamPlayerCount).toBe(2);
+      // Next is P3
+      expect(stateAfterP2.currentPlayerIndex).toBe(2);
+
+      store.addPoints(0); // P3
+      store.addPoints(0); // P4
+
+      expect(store.state().isGameOver).toBe(true);
+    });
+
+    /**
+     * Test tie-breaking: If multiple teams reach target within their quota,
+     * the one who reached it first wins if scores are equal.
+     */
+    it('should handle tie-breaking when multiple teams reach target within quota', () => {
+      store.addPoints(1000); // P1 (Team 1) reaches 1000. Quota = 1.
+      store.addPoints(1000); // P3 (Team 2) reaches 1000.
+
+      const state = store.state();
+      expect(state.isGameOver).toBe(true);
+      expect(state.winnerId).toBe('t1'); // Team 1 reached it first
+    });
+
+    /**
+     * Test that if a later team exceeds the first team's score within their quota, they win.
+     */
+    it('should allow a later team to win if they score more within their quota', () => {
+      store.addPoints(1000); // P1 (Team 1) reaches 1000. Quota = 1.
+      store.addPoints(1100); // P3 (Team 2) reaches 1100.
+
+      const state = store.state();
+      expect(state.isGameOver).toBe(true);
+      expect(state.winnerId).toBe('t2'); // Team 2 has higher score
+    });
+
+    /**
+     * Test game mode switching doesn't leave winnerTeamPlayerCount residue.
+     */
+    it('should reset winnerTeamPlayerCount when setting up a new game', () => {
+      store.addPoints(1000); // Team game
+      store.addPoints(0); store.addPoints(0); store.addPoints(0); // finish
+
+      expect(store.state().winnerTeamPlayerCount).not.toBeNull();
+
+      store.setupGame({
+        gameMode: 'individual',
+        players: [{ id: '1', name: 'P1', score: 0, dashes: 0, history: [] }]
+      });
+
+      expect(store.state().winnerTeamPlayerCount).toBeNull();
+    });
   });
 
   /**

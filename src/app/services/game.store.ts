@@ -56,7 +56,8 @@ export class GameStore {
         winnerId: null,
         winnerType: null,
         lastRoundStarted: false,
-        firstToReachTargetId: null
+        firstToReachTargetId: null,
+        winnerTeamPlayerCount: null
       };
     });
   }
@@ -102,6 +103,7 @@ export class GameStore {
       let winnerType = s.winnerType;
       let lastRoundStarted = s.lastRoundStarted;
       let firstToReachTargetId = s.firstToReachTargetId;
+      let winnerTeamPlayerCount = s.winnerTeamPlayerCount;
 
       if (player.score >= s.targetPoints && !lastRoundStarted) {
         lastRoundStarted = true;
@@ -138,7 +140,8 @@ export class GameStore {
         winnerId,
         winnerType,
         lastRoundStarted,
-        firstToReachTargetId
+        firstToReachTargetId,
+        winnerTeamPlayerCount
       };
     });
   }
@@ -183,20 +186,57 @@ export class GameStore {
       let winnerType = s.winnerType;
       let lastRoundStarted = s.lastRoundStarted;
       let firstToReachTargetId = s.firstToReachTargetId;
+      let winnerTeamPlayerCount = s.winnerTeamPlayerCount;
 
       if (team.score >= s.targetPoints && !lastRoundStarted) {
         lastRoundStarted = true;
         firstToReachTargetId = team.id;
+        // Calculate how many players from THIS team have played in THIS round.
+        const firstPlayerOfTeamIndex = s.players.findIndex(p => team.playerIds.includes(p.id));
+        winnerTeamPlayerCount = s.currentPlayerIndex - firstPlayerOfTeamIndex + 1;
       }
 
-      // Next player/team logic:
-      // Typically in these games, all players of Team A go, then all of Team B?
-      // OR Player 1 of Team A, Player 1 of Team B, Player 2 of Team A...
-      // Let's go with: Player 1 Team A -> Player 2 Team A -> ... -> Player N Team A -> Player 1 Team B ...
-
+      // Next player logic
       let nextPlayerIndex = (s.currentPlayerIndex + 1) % players.length;
 
-      if (lastRoundStarted && nextPlayerIndex === 0) {
+      // Rule: In the case of team play, the game finishes when the same count of players as in winner teams finishes his round.
+      if (lastRoundStarted) {
+        const currentWinnerTeam = teams.find(t => t.id === firstToReachTargetId);
+        if (currentWinnerTeam) {
+          const firstPlayerOfWinnerTeamIndex = s.players.findIndex(p => currentWinnerTeam.playerIds.includes(p.id));
+          const lastPlayerOfWinnerTeamIndex = firstPlayerOfWinnerTeamIndex + (winnerTeamPlayerCount || 0) - 1;
+
+          // If current player IS the last player allowed for the winner team in this round,
+          // then skip the rest of the winner team players.
+          if (s.currentPlayerIndex === lastPlayerOfWinnerTeamIndex) {
+            // Jump to the first player of the NEXT team
+            const nextTeamIndex = (s.currentTeamIndex + 1) % teams.length;
+            if (nextTeamIndex === 0) {
+              // We were at the last team already
+              nextPlayerIndex = 0;
+            } else {
+              const nextTeam = teams[nextTeamIndex];
+              nextPlayerIndex = s.players.findIndex(p => nextTeam.playerIds.includes(p.id));
+            }
+          } else {
+            // Check if we need to end the game because other teams finished their allowed players
+            const firstPlayerOfCurrentTeamIndex = s.players.findIndex(p => team.playerIds.includes(p.id));
+            const playersPlayedInThisTeam = s.currentPlayerIndex - firstPlayerOfCurrentTeamIndex + 1;
+            if (playersPlayedInThisTeam === winnerTeamPlayerCount) {
+              // This team finished its quota for the last round.
+              const nextTeamIndex = (s.currentTeamIndex + 1) % teams.length;
+              if (nextTeamIndex === 0) {
+                isGameOver = true;
+              } else {
+                const nextTeam = teams[nextTeamIndex];
+                nextPlayerIndex = s.players.findIndex(p => nextTeam.playerIds.includes(p.id));
+              }
+            }
+          }
+        }
+      }
+
+      if (isGameOver || (lastRoundStarted && nextPlayerIndex === 0)) {
         isGameOver = true;
 
         // Find the team with the highest score among those who reached targetPoints.
@@ -229,7 +269,8 @@ export class GameStore {
         winnerId,
         winnerType,
         lastRoundStarted,
-        firstToReachTargetId
+        firstToReachTargetId,
+        winnerTeamPlayerCount
       };
     });
   }
@@ -245,6 +286,7 @@ export class GameStore {
         teams: s.teams.map(t => ({ ...t, score: 0, dashes: 0, history: [] })),
         lastRoundStarted: false,
         firstToReachTargetId: null,
+        winnerTeamPlayerCount: null,
       }));
     } else {
       this.stateSignal.set(INITIAL_GAME_STATE);
