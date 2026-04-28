@@ -31,16 +31,25 @@ describe('PlayerOrderingComponent', () => {
     fixture.detectChanges();
   });
 
+  /**
+   * Verifies the component is instantiated successfully.
+   */
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+  /**
+   * Verifies the initial ordered list mirrors the players input.
+   */
   it('should initialize orderedPlayers from players input', () => {
     expect(component.orderedPlayers().length).toBe(2);
     expect(component.orderedPlayers()[0].id).toBe('1');
     expect(component.orderedPlayers()[1].id).toBe('2');
   });
 
+  /**
+   * Verifies a user-defined order is preserved after input signals update.
+   */
   it('should NOT reset orderedPlayers when inputs change if already initialized', () => {
     // Manually change order (simulating drag and drop)
     const reversed = [...mockPlayers].reverse();
@@ -55,11 +64,17 @@ describe('PlayerOrderingComponent', () => {
     expect(component.orderedPlayers()[1].id).toBe('1');
   });
 
+  /**
+   * Verifies selecting a starting player updates the corresponding signal.
+   */
   it('should update selectedStartingPlayerId when radio button changes', () => {
     component.selectedStartingPlayerId.set('2');
     expect(component.selectedStartingPlayerId()).toBe('2');
   });
 
+  /**
+   * Verifies team mode keeps an existing mixed-team order from store state.
+   */
   it('should preserve existing player order in team mode if they already exist in store', () => {
     // Reset component for this test
     fixture = TestBed.createComponent(PlayerOrderingComponent);
@@ -85,6 +100,9 @@ describe('PlayerOrderingComponent', () => {
     expect(component.orderedPlayers().map(p => p.id)).toEqual(['p3', 'p1', 'p4', 'p2']);
   });
 
+  /**
+   * Verifies team-mode initialization path for a new game setup intended to group players by team.
+   */
   it('should group by teams in team mode if players are not yet ordered (new game)', () => {
     // Reset component for this test
     fixture = TestBed.createComponent(PlayerOrderingComponent);
