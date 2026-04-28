@@ -1,6 +1,8 @@
 Hi, I need to write a web application to keep score for a dice game.
 At the start, users can either create teams and assign players to each team or create a list of players who play individually.
 Next, users can specify how many points need to be rolled; the default value is 10,000 points.
+Users can also set minimum points per turn; the default value is 350.
+
 Then, the starting player is determined.
 Each player rolls the dice, and the number of points rolled must be recorded.
 If a player rolls 0 points in a given round, 0 is recorded and a mark is made for the player.
@@ -17,7 +19,6 @@ A3 does not play in the last round, because team A already reaches `TARGET_POINT
 The game ends when B1 and B2 players finish their turns (also only two players from team B can play in the last round).
 It means that player B3 do not play in the last round.
 
-
 The game must track and display which player is up next and how many dashes they have.
 In the case of a team game, the team’s score must be displayed.
 
@@ -29,8 +30,6 @@ When the "New Game" button is clicked, the user can either keep the existing lis
 
 In the case of a team game, it would be helpful to display the number of points for each team and the number of dashes.
 
-In the beginning, allow setting minimum points per turn; the default value is 350.
-
 Players don't have to sit according to their teams, so before the game starts, there is needed to have the possibility to set the order of players around the table.
 The first player on the list starts the game.
 This should be done as a list of all players (regardless of their team) with drag and drop functionality to reorder players.
@@ -39,3 +38,6 @@ There is also an option: when the game ends and 'Keep Players' is selected,
 it must be possible to either offer to change the player order (player-ordering view)
 or select the player who will start. In this case the player ordering remains unchanged, it is simply shifted, so the chosen player is in the first place.
 (e.g., the current player order is A - B - C - D - E, then D is selected as the player who will start, so the new order is D - E - A - B - C).
+
+---
+

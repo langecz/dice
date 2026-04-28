@@ -156,3 +156,11 @@ implement the restriction that player names and team names cannot be empty and m
 ---
 
 create a general component for editing name and use it instead of window.prompt
+
+---
+
+Add a button 'Reset' on the 'Game Setup' page, which resets the store to the initial state.
+There is needed confirmation before the reset.
+The button will be placed on the same line as the 'Game Setup' header and aligned to the right.
+
+---
