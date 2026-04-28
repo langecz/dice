@@ -1,0 +1,21 @@
+// Responsive breakpoints aligned with Angular CDK Breakpoints.
+// Mobile (Samsung A56 ~360x780): < 600px
+// Tablet: 600px - 1023.98px
+// Laptop: >= 1024px
+
+$bp-mobile-max: 599.98px;
+$bp-tablet-min: 600px;
+$bp-tablet-max: 1023.98px;
+$bp-laptop-min: 1024px;
+
+@mixin mobile {
+  @media (max-width: #{$bp-mobile-max}) { @content; }
+}
+
+@mixin tablet {
+  @media (min-width: #{$bp-tablet-min}) and (max-width: #{$bp-tablet-max}) { @content; }
+}
+
+@mixin laptop {
+  @media (min-width: #{$bp-laptop-min}) { @content; }
+}

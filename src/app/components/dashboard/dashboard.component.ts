@@ -24,6 +24,7 @@ import { Player, Winner } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
 import { PlayerOrderingComponent } from '../setup/player-ordering/player-ordering.component';
 import { CommonModule } from '@angular/common';
+import { LayoutService } from '../../services/layout.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,6 +48,7 @@ export class DashboardComponent {
   store = inject(GameStore);
   router = inject(Router);
   dialog = inject(MatDialog);
+  private layout = inject(LayoutService);
 
   newGameDialogTemplate = viewChild.required('newGameDialog', { read: TemplateRef });
   isReordering = signal(false);
@@ -115,7 +117,13 @@ export class DashboardComponent {
   }
 
   onNewGame(): void {
-    this.dialog.open(this.newGameDialogTemplate());
+    const isMobile = this.layout.isMobile();
+    this.dialog.open(this.newGameDialogTemplate(), {
+      width: isMobile ? '100vw' : '420px',
+      maxWidth: isMobile ? '100vw' : '90vw',
+      position: isMobile ? { top: '0', left: '0' } : undefined,
+      panelClass: isMobile ? 'mobile-fullscreen-dialog' : '',
+    });
   }
 
   resetGame(keepPlayers: boolean): void {

@@ -142,4 +142,12 @@ It means that player B3 do not play in the last round.
 
 ---
 
+Propose a solution to support three main screen resolutions
+- mobile phone (mainly Samsung A56)
+- tablet
+- laptop 
+
+--> implement suggested solution 
+
+---
 
