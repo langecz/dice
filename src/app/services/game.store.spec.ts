@@ -3,7 +3,7 @@ import { GameStore } from './game.store';
 import { DEFAULT_TARGET_POINTS } from '../constants/game.constants';
 
 describe('GameStore', () => {
-  let store: GameStore;
+  let store: InstanceType<typeof GameStore>;
 
   beforeEach(() => {
     // Clear localStorage to ensure a clean state

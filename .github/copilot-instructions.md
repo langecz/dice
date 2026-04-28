@@ -54,3 +54,8 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+### Testing
+- Add test(s) for any new logic.
+- Run tests by this command: `ng test --watch=false`
+- Create comments for each test with a proper description.
