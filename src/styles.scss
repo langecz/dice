@@ -134,6 +134,15 @@ h2 { font-size: clamp(1.10rem, 1.8vw + 0.5rem, 1.5rem); }
   box-sizing: border-box;
 }
 
+/* Full-screen dialog overlay for mobile devices */
+.mobile-fullscreen-dialog {
+  .mat-mdc-dialog-container {
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
+  }
+}
+
 /* WCAG 2.5.5 - minimum 48x48 tap targets on touch-capable devices */
 @media (hover: none) and (pointer: coarse) {
   button[matButton],

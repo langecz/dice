@@ -17,14 +17,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GameStore } from '../../services/game.store';
 import { Router } from '@angular/router';
 import { Player, Winner } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
 import { PlayerOrderingComponent } from '../setup/player-ordering/player-ordering.component';
 import { CommonModule } from '@angular/common';
-import { LayoutService } from '../../services/layout.service';
+import { DialogService } from '../../services/dialog.service';
+import { MatDialogActions, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,9 +36,11 @@ import { LayoutService } from '../../services/layout.service';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatDialogModule,
     PlayerOrderingComponent,
-    CommonModule
+    CommonModule,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogTitle
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -47,8 +49,7 @@ import { LayoutService } from '../../services/layout.service';
 export class DashboardComponent {
   store = inject(GameStore);
   router = inject(Router);
-  dialog = inject(MatDialog);
-  private layout = inject(LayoutService);
+  dialog = inject(DialogService);
 
   newGameDialogTemplate = viewChild.required('newGameDialog', { read: TemplateRef });
   isReordering = signal(false);
@@ -117,13 +118,7 @@ export class DashboardComponent {
   }
 
   onNewGame(): void {
-    const isMobile = this.layout.isMobile();
-    this.dialog.open(this.newGameDialogTemplate(), {
-      width: isMobile ? '100vw' : '420px',
-      maxWidth: isMobile ? '100vw' : '90vw',
-      position: isMobile ? { top: '0', left: '0' } : undefined,
-      panelClass: isMobile ? 'mobile-fullscreen-dialog' : '',
-    });
+    this.dialog.open(this.newGameDialogTemplate());
   }
 
   resetGame(keepPlayers: boolean): void {
@@ -148,10 +143,6 @@ export class DashboardComponent {
     this.store.resetGame(true);
     this.store.reorderPlayers(orderedPlayers);
     this.isReordering.set(false);
-  }
-
-  getTeamName(playerId: string): string {
-    return this.teams().find(t => t.playerIds.includes(playerId))?.name || '';
   }
 
   private getWinnerInfo(winner: {name: string, score: number}): Winner {

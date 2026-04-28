@@ -19,7 +19,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { form } from '@angular/forms/signals';
 import { generateUniqueId } from '../../../utils/uuid';
@@ -28,7 +27,9 @@ import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../con
 import { GameConfig } from '../../../models/config.model';
 import { toSignalMap } from '../../../utils/signal-map';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { EditNameDialogComponent, EditNameDialogData } from '../../shared/edit-name-dialog/edit-name-dialog.component';
 import { showSnackbarError } from '../../../utils/snackbar';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-game-config',
@@ -41,7 +42,6 @@ import { showSnackbarError } from '../../../utils/snackbar';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatDialogModule,
     MatSnackBarModule,
   ],
   templateUrl: './game-config.component.html',
@@ -50,7 +50,7 @@ import { showSnackbarError } from '../../../utils/snackbar';
 })
 export class GameConfigComponent {
 
-  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly dialog: DialogService = inject(DialogService);
   private readonly snackBar: MatSnackBar = inject(MatSnackBar);
 
   initialPlayers: InputSignal<Player[]> = input<Player[]>([]);
@@ -233,33 +233,36 @@ export class GameConfigComponent {
       return;
     }
 
-    const editedName = window.prompt('Edit player name', player.name);
-    if (editedName === null) {
-      return;
-    }
+    const dialogRef = this.dialog.open<EditNameDialogComponent, EditNameDialogData, string | null>(EditNameDialogComponent, {
+      data: {
+        title: 'Edit Player',
+        label: 'Player name',
+        currentName: player.name,
+        confirmText: 'Save',
+        cancelText: 'Cancel',
+      } satisfies EditNameDialogData,
+    });
 
-    const nextName = editedName.trim();
-    if (!nextName) {
-      this.snackBar.open('Player name cannot be empty', 'Close', {
-        duration: 3000,
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      });
-      return;
-    }
+    dialogRef.afterClosed().subscribe((editedName: string | null | undefined) => {
+      if (editedName === null || editedName === undefined) {
+        return;
+      }
 
-    if (this.players().some(p => p.id !== playerId && p.name.toLowerCase() === nextName.toLowerCase())) {
-      this.snackBar.open(`Player "${nextName}" already exists`, 'Close', {
-        duration: 3000,
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      });
-      return;
-    }
+      const nextName = editedName.trim();
+      if (!nextName) {
+        showSnackbarError(this.snackBar, 'Player name cannot be empty');
+        return;
+      }
 
-    this.players.update(players =>
-      players.map(p => (p.id === playerId ? { ...p, name: nextName } : p))
-    );
+      if (this.players().some(p => p.id !== playerId && p.name.toLowerCase() === nextName.toLowerCase())) {
+        showSnackbarError(this.snackBar, `Player "${nextName}" already exists`);
+        return;
+      }
+
+      this.players.update(players =>
+        players.map(p => (p.id === playerId ? { ...p, name: nextName } : p))
+      );
+    });
   }
 
   editTeam(teamId: string): void {
@@ -268,33 +271,36 @@ export class GameConfigComponent {
       return;
     }
 
-    const editedName = window.prompt('Edit team name', team.name);
-    if (editedName === null) {
-      return;
-    }
+    const dialogRef = this.dialog.open<EditNameDialogComponent, EditNameDialogData, string | null>(EditNameDialogComponent, {
+      data: {
+        title: 'Edit Team',
+        label: 'Team name',
+        currentName: team.name,
+        confirmText: 'Save',
+        cancelText: 'Cancel',
+      } satisfies EditNameDialogData,
+    });
 
-    const nextName = editedName.trim();
-    if (!nextName) {
-      this.snackBar.open('Team name cannot be empty', 'Close', {
-        duration: 3000,
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      });
-      return;
-    }
+    dialogRef.afterClosed().subscribe((editedName: string | null | undefined) => {
+      if (editedName === null || editedName === undefined) {
+        return;
+      }
 
-    if (this.teams().some(t => t.id !== teamId && t.name.toLowerCase() === nextName.toLowerCase())) {
-      this.snackBar.open(`Team "${nextName}" already exists`, 'Close', {
-        duration: 3000,
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      });
-      return;
-    }
+      const nextName = editedName.trim();
+      if (!nextName) {
+        showSnackbarError(this.snackBar, 'Team name cannot be empty');
+        return;
+      }
 
-    this.teams.update(teams =>
-      teams.map(t => (t.id === teamId ? { ...t, name: nextName } : t))
-    );
+      if (this.teams().some(t => t.id !== teamId && t.name.toLowerCase() === nextName.toLowerCase())) {
+        showSnackbarError(this.snackBar, `Team "${nextName}" already exists`);
+        return;
+      }
+
+      this.teams.update(teams =>
+        teams.map(t => (t.id === teamId ? { ...t, name: nextName } : t))
+      );
+    });
   }
 
   onNext() {

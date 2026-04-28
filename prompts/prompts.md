@@ -155,3 +155,4 @@ implement the restriction that player names and team names cannot be empty and m
 
 ---
 
+create a general component for editing name and use it instead of window.prompt

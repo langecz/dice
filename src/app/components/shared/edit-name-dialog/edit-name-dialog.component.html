@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ data.label }}</mat-label>
+    <input
+      matInput
+      #nameInput
+      [value]="name()"
+      (input)="name.set(nameInput.value)"
+      [attr.aria-label]="data.label"
+      (keydown.enter)="confirm()"
+    />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton="filled" (click)="cancel()">{{ data.cancelText ?? 'Cancel' }}</button>
+  <button matButton="filled" class="btn-success" (click)="confirm()" [disabled]="!name().trim()">
+    {{ data.confirmText ?? 'Save' }}
+  </button>
+</mat-dialog-actions>
+
