@@ -151,3 +151,7 @@ Propose a solution to support three main screen resolutions
 
 ---
 
+implement the restriction that player names and team names cannot be empty and must be unique.
+
+---
+

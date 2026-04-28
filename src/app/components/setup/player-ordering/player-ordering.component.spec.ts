@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayerOrderingComponent } from './player-ordering.component';
 import { signal } from '@angular/core';
 import { Player, Team } from '../../../models/game.models';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('PlayerOrderingComponent', () => {
   let component: PlayerOrderingComponent;
@@ -17,7 +16,7 @@ describe('PlayerOrderingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayerOrderingComponent, NoopAnimationsModule]
+      imports: [PlayerOrderingComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayerOrderingComponent);

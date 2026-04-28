@@ -96,6 +96,7 @@ loginForm.email().value.set('alice@wonderland.com');
 ### Mandatory Usage
 Angular Material is the required UI component library for this project. All UI components MUST use Angular Material components instead of custom HTML/CSS implementations unless explicitly approved.
 Use the "Azure & Blue" theme as a default theme.
+Use Material Design version 3 for styling and layout.
 
 ### Installation
 

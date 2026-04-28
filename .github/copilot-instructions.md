@@ -55,6 +55,14 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
 
+## Angular Material Requirements
+
+### Mandatory Usage
+Angular Material is the required UI component library for this project. All UI components MUST use Angular Material components instead of custom HTML/CSS implementations unless explicitly approved.
+Use the "Azure & Blue" theme as a default theme.
+Use Material Design version 3 for styling and layout.
+
+
 ### Testing
 - Add test(s) for any new logic.
 - Run tests by this command: `ng test --watch=false`

@@ -20,7 +20,7 @@ $dice-theme: mat.define-theme((
 $color-accent: #fbc02d;
 $color-success: #63920e;
 $color-warn: #ae1111;
-$color-white: #ffffffff;
+$color-white: #ffffff;
 
 $filled-button-opacity: 0.55;
 $filled-button-shape: 8px;
@@ -78,6 +78,15 @@ button[matFab] {
   @include mat.fab-overrides((
     hover-state-layer-opacity: $fab-button-opacity,
   ))
+}
+
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: $color-warn,
+    button-color: $color-white,
+    supporting-text-color: $color-white
+  ))
+
 }
 
 /* ---------- Responsive design tokens (mobile-first) ---------- */

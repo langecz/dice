@@ -20,6 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { form } from '@angular/forms/signals';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
@@ -27,6 +28,7 @@ import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../con
 import { GameConfig } from '../../../models/config.model';
 import { toSignalMap } from '../../../utils/signal-map';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { showSnackbarError } from '../../../utils/snackbar';
 
 @Component({
   selector: 'app-game-config',
@@ -40,6 +42,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     MatIconModule,
     MatListModule,
     MatDialogModule,
+    MatSnackBarModule,
   ],
   templateUrl: './game-config.component.html',
   styleUrl: './game-config.component.scss',
@@ -48,6 +51,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 export class GameConfigComponent {
 
   private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly snackBar: MatSnackBar = inject(MatSnackBar);
 
   initialPlayers: InputSignal<Player[]> = input<Player[]>([]);
   initialTeams: InputSignal<Team[]> = input<Team[]>([]);
@@ -104,20 +108,32 @@ export class GameConfigComponent {
   });
 
   addItem(name: string): void {
-    if (!name) return;
+    const trimmedName = name?.trim();
+    if (!trimmedName) return;
+
     if (this.setupForm.gameMode().value() === 'individual') {
+      const players = this.players();
+      if (players.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
+        showSnackbarError(this.snackBar, `Player "${trimmedName}" already exists`)
+        return;
+      }
       const newPlayer: Player = {
         id: generateUniqueId(),
-        name,
+        name: trimmedName,
         score: 0,
         dashes: 0,
         history: []
       };
       this.players.update(p => [...p, newPlayer]);
     } else {
+      const teams = this.teams();
+      if (teams.some(t => t.name.toLowerCase() === trimmedName.toLowerCase())) {
+        showSnackbarError(this.snackBar, `Team "${trimmedName}" already exists`)
+        return;
+      }
       const newTeam: Team = {
         id: generateUniqueId(),
-        name,
+        name: trimmedName,
         playerIds: [],
         score: 0,
         dashes: 0,
@@ -161,10 +177,21 @@ export class GameConfigComponent {
   }
 
   addPlayerToTeam(teamId: string, playerName: string): void {
-    if (!playerName) return;
+    const trimmedName = playerName?.trim();
+    if (!trimmedName) return;
+
+    if (this.players().some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
+      this.snackBar.open(`Player "${trimmedName}" already exists`, 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
     const newPlayer: Player = {
       id: generateUniqueId(),
-      name: playerName,
+      name: trimmedName,
       score: 0,
       dashes: 0,
       history: []
@@ -213,6 +240,20 @@ export class GameConfigComponent {
 
     const nextName = editedName.trim();
     if (!nextName) {
+      this.snackBar.open('Player name cannot be empty', 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    if (this.players().some(p => p.id !== playerId && p.name.toLowerCase() === nextName.toLowerCase())) {
+      this.snackBar.open(`Player "${nextName}" already exists`, 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
       return;
     }
 
@@ -234,6 +275,20 @@ export class GameConfigComponent {
 
     const nextName = editedName.trim();
     if (!nextName) {
+      this.snackBar.open('Team name cannot be empty', 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    if (this.teams().some(t => t.id !== teamId && t.name.toLowerCase() === nextName.toLowerCase())) {
+      this.snackBar.open(`Team "${nextName}" already exists`, 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
       return;
     }
 
