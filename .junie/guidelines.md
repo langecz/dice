@@ -9,7 +9,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 ## Angular Best Practices
 
-- Always use at least version 21 of Angular.
+- Always use at least Angular version 21 or higher
 - Always use standalone components over NgModules
 - Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
 - Use signals for state management
@@ -64,7 +64,7 @@ const currentEmail = loginForm.email().value();
 loginForm.email().value.set('alice@wonderland.com');
 
 ```
- 
+
 - Do NOT use `ngClass`, use `class` bindings instead
 - Do NOT use `ngStyle`, use `style` bindings instead
 - When using external templates/styles, use paths relative to the component TS file.
@@ -99,10 +99,10 @@ Use the "Azure & Blue" theme as a default theme.
 Use Material Design version 3 for styling and layout.
 
 ### Installation
-
 ```bash
 ng add @angular/material
 ```
+
 ### Buttons
 Generate buttons in way:
 `<button matButton="filled"></button>`
@@ -111,5 +111,5 @@ Generate buttons in way:
 
 ### Testing
 - Add test(s) for any new logic.
-- Run tests by this command: `ng test --watch=false` 
+- Run tests by this command: `ng test --watch=false`
 - Create comments for each test with a proper description.

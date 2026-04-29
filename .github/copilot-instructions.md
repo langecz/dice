@@ -9,6 +9,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 ## Angular Best Practices
 
+- Always use at least Angular version 21 or higher
 - Always use standalone components over NgModules
 - Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
 - Use signals for state management
@@ -29,7 +30,41 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use `computed()` for derived state
 - Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
 - Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
+- Use Signal Forms for new, signal-based applications to take advantage of improved performance and reduced boilerplate.
+- Use Signal forms from angular (@angular/forms, @angular/forms/signals), do not use third-party libraries
+```
+// create form model with signal()
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+const loginModel = signal<LoginData>({
+  email: '',
+  password: '',
+});
+
+// pass the form model to form() to create a FieldTree
+const loginForm = form(loginModel);
+
+// bind HTML inputs with [formField] directive
+<input type="email" [formField]="loginForm.email" />
+<input type="password" [formField]="loginForm.password" />
+
+// read field values with value()
+loginForm.email(); // Returns FieldState with value(), valid(), touched(), etc.
+
+<!-- Render form value that updates automatically as user types -->
+<p>Email: {{ loginForm.email().value() }}</p>
+
+// Get the current value
+const currentEmail = loginForm.email().value();
+
+// Update the value programmatically
+loginForm.email().value.set('alice@wonderland.com');
+
+```
+
 - Do NOT use `ngClass`, use `class` bindings instead
 - Do NOT use `ngStyle`, use `style` bindings instead
 - When using external templates/styles, use paths relative to the component TS file.
@@ -44,6 +79,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 ## Templates
 
 - Keep templates simple and avoid complex logic
+- Always use a separate file for the template.
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
 - Use the async pipe to handle observables
 - Do not assume globals like (`new Date()`) are available.
@@ -62,6 +98,16 @@ Angular Material is the required UI component library for this project. All UI c
 Use the "Azure & Blue" theme as a default theme.
 Use Material Design version 3 for styling and layout.
 
+### Installation
+```bash
+ng add @angular/material
+```
+
+### Buttons
+Generate buttons in way:
+`<button matButton="filled"></button>`
+
+## General rules
 
 ### Testing
 - Add test(s) for any new logic.
