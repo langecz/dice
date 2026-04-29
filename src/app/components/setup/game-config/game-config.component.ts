@@ -1,15 +1,11 @@
 import {
   Component,
-  signal,
   computed,
+  linkedSignal,
   ChangeDetectionStrategy,
-  output,
-  input,
-  InputSignal,
   WritableSignal,
-  effect,
   Signal,
-  inject
+  inject,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -21,15 +17,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { form } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
-import { DEFAULT_MIN_POINTS_PER_TURN, DEFAULT_TARGET_POINTS } from '../../../constants/game.constants';
-import { GameConfig } from '../../../models/config.model';
 import { toSignalMap } from '../../../utils/signal-map';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { EditNameDialogComponent, EditNameDialogData } from '../../shared/edit-name-dialog/edit-name-dialog.component';
 import { showSnackbarError } from '../../../utils/snackbar';
 import { DialogService } from '../../../services/dialog.service';
+import { GameStore } from '../../../services/game.store';
 
 @Component({
   selector: 'app-game-config',
@@ -52,52 +48,23 @@ export class GameConfigComponent {
 
   private readonly dialog: DialogService = inject(DialogService);
   private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly store = inject(GameStore);
+  private readonly router = inject(Router);
 
-  initialPlayers: InputSignal<Player[]> = input<Player[]>([]);
-  initialTeams: InputSignal<Team[]> = input<Team[]>([]);
-  initialConfig: InputSignal<GameConfig> = input<GameConfig>({
-    gameMode: 'individual',
-    targetPoints: DEFAULT_TARGET_POINTS,
-    minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN
-  });
-
-  configComplete = output<{
-    players: Player[];
-    teams: Team[];
-    config: GameConfig;
-  }>();
-
-  players: WritableSignal<Player[]> = signal<Player[]>([]);
-  teams: WritableSignal<Team[]> = signal<Team[]>([]);
+  // Local working state, seeded from (and re-synced with) the store. Persisted back via NEXT.
+  // Using linkedSignal ensures the local state resets when the store changes (e.g. after Reset).
+  players: WritableSignal<Player[]> = linkedSignal<Player[]>(() => [...this.store.players()]);
+  teams: WritableSignal<Team[]> = linkedSignal<Team[]>(() => [...this.store.teams()]);
 
   playerMap: Signal<Map<string, Player>> = toSignalMap(this.players, player => player.id);
 
-  setupModel = signal({
-    gameMode: 'individual' as GameMode,
-    targetPoints: DEFAULT_TARGET_POINTS,
-    minPointsPerTurn: DEFAULT_MIN_POINTS_PER_TURN
-  });
+  setupModel = linkedSignal(() => ({
+    gameMode: this.store.gameMode() as GameMode,
+    targetPoints: this.store.targetPoints(),
+    minPointsPerTurn: this.store.minPointsPerTurn(),
+  }));
 
   setupForm = form(this.setupModel);
-
-  constructor() {
-    effect(() => {
-
-      const initialPlayers = this.initialPlayers();
-      const initialTeams = this.initialTeams();
-      const initialConfig = this.initialConfig();
-
-      if (initialPlayers?.length > 0) {
-        this.players.set(this.initialPlayers());
-      }
-
-      if (initialTeams?.length > 0) {
-        this.teams.set(this.initialTeams());
-      }
-
-      this.setupModel.set(initialConfig);
-    });
-  }
 
   canNext = computed(() => {
     if (this.setupForm.gameMode().value() === 'individual') {
@@ -303,17 +270,16 @@ export class GameConfigComponent {
     });
   }
 
-  onNext() {
-    if (this.canNext()) {
-      this.configComplete.emit({
-        players: this.players(),
-        teams: this.teams(),
-        config: {
-          gameMode: this.setupForm.gameMode().value(),
-          targetPoints: this.setupForm.targetPoints().value(),
-          minPointsPerTurn: this.setupForm.minPointsPerTurn().value()
-        }
-      });
+  onNext(): void {
+    if (!this.canNext()) {
+      return;
     }
+    this.store.setConfig({
+      gameMode: this.setupForm.gameMode().value(),
+      targetPoints: this.setupForm.targetPoints().value(),
+      minPointsPerTurn: this.setupForm.minPointsPerTurn().value(),
+    });
+    this.store.updatePlayersAndTeams(this.players(), this.teams());
+    void this.router.navigate(['/ordering']);
   }
 }

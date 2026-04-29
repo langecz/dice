@@ -154,3 +154,32 @@ h2 { font-size: clamp(1.10rem, 1.8vw + 0.5rem, 1.5rem); }
 }
 
 .spacer { flex: 1 1 auto; }
+
+/* ---------- Reusable page layout (used by all main phases) ---------- */
+.page-container {
+  padding: 5px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  mat-card-title {
+    padding-left: 5px;
+  }
+}
+
+.page-header-row {
+  background-color: var(--mat-expansion-container-background-color);
+  display: flex;
+  align-items: center;
+
+  button {
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

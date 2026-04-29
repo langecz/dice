@@ -1,0 +1,103 @@
+@if (gameMode() === 'individual') {
+  <div class="management-section">
+    <h3>Players</h3>
+    <div class="add-form">
+      <mat-form-field appearance="outline">
+        <mat-label>New Player Name</mat-label>
+        <input matInput #playerInput (keyup.enter)="addPlayer(playerInput.value); playerInput.value=''">
+      </mat-form-field>
+      <button matButton="filled" (click)="addPlayer(playerInput.value); playerInput.value=''">
+        <mat-icon>add</mat-icon>
+        Add
+      </button>
+    </div>
+
+    <mat-list>
+      @for (player of players(); track player.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ player.name }}</span>
+          <div matListItemMeta>
+            <button mat-icon-button (click)="editPlayer(player)" aria-label="Edit player">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removePlayer(player.id)" aria-label="Delete player">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+      }
+    </mat-list>
+  </div>
+} @else {
+  <div class="management-section">
+    <div class="header-with-action">
+      <h3>Teams</h3>
+      <div class="add-form mini">
+        <mat-form-field appearance="outline">
+          <mat-label>New Team Name</mat-label>
+          <input matInput #teamInput (keyup.enter)="addTeam(teamInput.value); teamInput.value=''">
+        </mat-form-field>
+        <button matButton="filled" (click)="addTeam(teamInput.value); teamInput.value=''">
+          <mat-icon>add_box</mat-icon>
+          Add Team
+        </button>
+      </div>
+    </div>
+
+    @for (team of teams(); track team.id) {
+      <div class="team-card">
+        <div class="team-header">
+          <h4>{{ team.name }}</h4>
+          <div class="team-actions">
+            <button mat-icon-button (click)="editTeam(team)" aria-label="Edit team">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removeTeam(team.id)" aria-label="Delete team">
+              <mat-icon>delete_sweep</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="add-form mini">
+          <mat-form-field appearance="outline">
+            <mat-label>New Player for {{ team.name }}</mat-label>
+            <input matInput #tpInput (keyup.enter)="addPlayer(tpInput.value, team.id); tpInput.value=''">
+          </mat-form-field>
+          <button matButton="filled" (click)="addPlayer(tpInput.value, team.id); tpInput.value=''" aria-label="Add player to team">
+            <mat-icon>person_add</mat-icon>
+          </button>
+        </div>
+
+        <mat-list class="dense-list">
+          @for (pid of team.playerIds; track pid) {
+            @if (getPlayerById(pid); as player) {
+              <mat-list-item>
+                <span matListItemTitle>{{ player.name }}</span>
+                <div matListItemMeta>
+                  <mat-form-field appearance="outline" class="move-select">
+                    <mat-select [value]="team.id" (selectionChange)="movePlayer(player.id, $event.value)" aria-label="Move player to team">
+                      @for (t of teams(); track t.id) {
+                        <mat-option [value]="t.id">{{ t.name }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                  <button mat-icon-button (click)="editPlayer(player)" aria-label="Edit player">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="removePlayer(player.id)" aria-label="Remove player from team">
+                    <mat-icon>person_remove</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+            }
+          }
+        </mat-list>
+      </div>
+    }
+  </div>
+}
+
+<div class="page-actions">
+  <button matButton="filled" class="btn-accent" (click)="onCancel()">CANCEL</button>
+  <button matButton="filled" class="btn-success" (click)="onSave()">SAVE CHANGES</button>
+</div>

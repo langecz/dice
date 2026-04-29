@@ -81,11 +81,11 @@ function calcIndividualPoints(s: GameState, points: number): Partial<GameState> 
     isGameOver = true;
 
     const playersWithTarget = players.filter(p => p.score >= s.targetPoints);
-    const maxScore = Math.max(...playersWithTarget.map(p => p.score));
+    const maxScore = Math.max(...playersWithTarget.map(p => p.score), 0);
     const playersWithMaxScore = playersWithTarget.filter(p => p.score === maxScore);
     const firstToReach = playersWithMaxScore.find(p => p.id === firstToReachTargetId);
 
-    winnerId = firstToReach ? firstToReach.id : playersWithMaxScore[0].id;
+    winnerId = firstToReach ? firstToReach.id : (playersWithMaxScore[0]?.id || null);
     winnerType = 'player';
   }
 
@@ -175,11 +175,11 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
     isGameOver = true;
 
     const teamsWithTarget = teams.filter(t => t.score >= s.targetPoints);
-    const maxScore = Math.max(...teamsWithTarget.map(t => t.score));
+    const maxScore = Math.max(...teamsWithTarget.map(t => t.score), 0);
     const teamsWithMaxScore = teamsWithTarget.filter(t => t.score === maxScore);
     const firstToReach = teamsWithMaxScore.find(t => t.id === firstToReachTargetId);
 
-    winnerId = firstToReach ? firstToReach.id : teamsWithMaxScore[0].id;
+    winnerId = firstToReach ? firstToReach.id : (teamsWithMaxScore[0]?.id || null);
     winnerType = 'team';
   }
 
@@ -319,6 +319,26 @@ export const GameStore = signalStore(
         teams,
         currentPlayerIndex: 0,
         currentTeamIndex: s.gameMode === 'team' ? getTeamIndexForPlayer(teams, newPlayers[0].id) : 0,
+      });
+    },
+
+    setConfig(config: { gameMode: GameState['gameMode']; targetPoints: number; minPointsPerTurn: number }): void {
+      patchState(store, {
+        gameMode: config.gameMode,
+        targetPoints: config.targetPoints,
+        minPointsPerTurn: config.minPointsPerTurn,
+      });
+    },
+
+    updatePlayersAndTeams(players: Player[], teams: Team[]): void {
+      const s = getState(store);
+      patchState(store, {
+        players: [...players],
+        teams: [...teams],
+        // Reset current player/team indices if needed, but for management during setup it might be enough to just update the lists
+        // If we are in the middle of a game, this might be tricky, but the component is accessed from Player Ordering.
+        currentPlayerIndex: 0,
+        currentTeamIndex: s.gameMode === 'team' && players.length > 0 ? getTeamIndexForPlayer(teams, players[0].id) : 0,
       });
     },
   })),

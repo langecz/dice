@@ -1,0 +1,73 @@
+.management-section {
+  padding: 16px 0;
+}
+
+.add-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  &.mini {
+    margin-bottom: 8px;
+    mat-form-field {
+      font-size: 0.9em;
+    }
+    button {
+      height: 56px;
+    }
+  }
+}
+
+.header-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.team-card {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  h4 {
+    margin: 0;
+    color: var(--mat-sys-primary);
+  }
+}
+
+.dense-list {
+  mat-list-item {
+    --mdc-list-list-item-leading-avatar-size: 32px;
+    --mdc-list-list-item-container-height: 48px;
+  }
+}
+
+.move-select {
+  width: 120px;
+  margin-right: 8px;
+  font-size: 0.8em;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+

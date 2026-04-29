@@ -1,38 +1,35 @@
-<div class="setup-section">
-  <h3>Set Player Order</h3>
-  <p>Drag and drop players to set their order around the table.</p>
-  <p class="description">Select the starting player for the next game using the radio buttons.</p>
+<p>Drag and drop players to set their order around the table.</p>
+<p class="description">Select the starting player for the next game using the radio buttons.</p>
 
-  <mat-radio-group [value]="selectedStartingPlayerId()" (change)="selectedStartingPlayerId.set($event.value)">
-    <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
-      @for (player of orderedPlayers(); track player.id) {
-        <mat-list-item cdkDrag class="player-item">
-          <div class="player-item-content">
+<mat-radio-group [value]="selectedStartingPlayerId()" (change)="selectedStartingPlayerId.set($event.value)">
+  <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
+    @for (player of orderedPlayers(); track player.id) {
+      <mat-list-item cdkDrag class="player-item">
+        <div class="player-item-content">
 
-            <!--drag icon-->
-            <span class="player-control-cell">
+          <!--drag icon-->
+          <span class="player-control-cell">
               <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
             </span>
 
-            <!--selection, which player starts a game-->
-            <span class="player-control-cell">
+          <!--selection, which player starts a game-->
+          <span class="player-control-cell">
               <mat-radio-button [value]="player.id"></mat-radio-button>
             </span>
 
-            <!--player name/team-->
-            <span class="player-text">
+          <!--player name/team-->
+          <span class="player-text">
               <span class="player-name">{{ player.name }}</span>
 
-              @if (gameMode() === 'team') {
-                <span class="team-hint" matListItemLine>({{ getTeamName(player.id) }})</span>
-              }
+            @if (gameMode() === 'team') {
+              <span class="team-hint" matListItemLine>({{ getTeamName(player.id) }})</span>
+            }
             </span>
-          </div>
-        </mat-list-item>
-      }
-    </mat-list>
-  </mat-radio-group>
-</div>
+        </div>
+      </mat-list-item>
+    }
+  </mat-list>
+</mat-radio-group>
 
 <div class="actions">
   <button matButton="filled" class="btn-accent" (click)="onBack()">BACK</button>

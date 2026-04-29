@@ -2,7 +2,6 @@ import {
   Component,
   inject,
   computed,
-  TemplateRef,
   ChangeDetectionStrategy,
   Signal,
   viewChild,
@@ -10,49 +9,34 @@ import {
   ElementRef,
   WritableSignal,
 } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { CommonModule } from '@angular/common';
 import { GameStore } from '../../services/game.store';
-import { Router } from '@angular/router';
 import { Player, Winner } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
-import { PlayerOrderingComponent } from '../setup/player-ordering/player-ordering.component';
-import { CommonModule } from '@angular/common';
-import { DialogService } from '../../services/dialog.service';
-import { MatDialogActions, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard',
   imports: [
-    MatToolbarModule,
+    CommonModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    PlayerOrderingComponent,
-    CommonModule,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogTitle
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   store = inject(GameStore);
-  router = inject(Router);
-  dialog = inject(DialogService);
-
-  newGameDialogTemplate = viewChild.required('newGameDialog', { read: TemplateRef });
-  isReordering = signal(false);
 
   state = this.store.state;
   players = this.store.players;
@@ -64,7 +48,7 @@ export class DashboardComponent {
   minPointsPerTurn = computed(() => this.state().minPointsPerTurn);
   lastRoundStarted = computed(() => this.state().lastRoundStarted);
 
-  inputPointsElement: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>("inputPointsElement");
+  inputPointsElement: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputPointsElement');
   inputPoints: WritableSignal<number | null> = signal<number | null>(null);
 
   canRecord: Signal<boolean> = computed(() => {
@@ -78,11 +62,11 @@ export class DashboardComponent {
     const gameState = this.state();
     if (!gameState.winnerId) return null;
     if (gameState.winnerType === 'player') {
-      const winner = gameState.players.find(p => p.id === gameState.winnerId);
-      return winner ? this.getWinnerInfo(winner) : null;
+      const w = gameState.players.find(p => p.id === gameState.winnerId);
+      return w ? this.getWinnerInfo(w) : null;
     } else {
-      const winner = gameState.teams.find(p => p.id === gameState.winnerId);
-      return winner ? this.getWinnerInfo(winner) : null;
+      const w = gameState.teams.find(p => p.id === gameState.winnerId);
+      return w ? this.getWinnerInfo(w) : null;
     }
   });
 
@@ -117,35 +101,12 @@ export class DashboardComponent {
     this.clearInputPoints();
   }
 
-  onNewGame(): void {
-    this.dialog.open(this.newGameDialogTemplate());
-  }
-
-  resetGame(keepPlayers: boolean): void {
-    this.store.resetGame(keepPlayers);
-    this.dialog.closeAll();
-    if (!keepPlayers) {
-      void this.router.navigate(['/setup']);
-    }
-  }
-
   onPointsInput(value: number | null | undefined): void {
     const points = Number(value);
     this.inputPoints.set(Number.isNaN(points) ? null : points);
   }
 
-  onKeepPlayers(): void {
-    this.dialog.closeAll();
-    this.isReordering.set(true);
-  }
-
-  onOrderConfirmed(orderedPlayers: Player[]): void {
-    this.store.resetGame(true);
-    this.store.reorderPlayers(orderedPlayers);
-    this.isReordering.set(false);
-  }
-
-  private getWinnerInfo(winner: {name: string, score: number}): Winner {
+  private getWinnerInfo(winner: { name: string; score: number }): Winner {
     return { name: winner.name, score: winner.score };
   }
 
@@ -156,5 +117,4 @@ export class DashboardComponent {
       element.focus();
     }
   }
-
 }

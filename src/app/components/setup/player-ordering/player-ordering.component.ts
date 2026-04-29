@@ -1,18 +1,20 @@
 import {
   Component,
-  input,
-  output,
   signal,
   ChangeDetectionStrategy,
-  InputSignal,
-  OutputEmitterRef, WritableSignal, effect
+  WritableSignal,
+  effect,
+  inject,
+  untracked,
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Player, Team, GameMode } from '../../../models/game.models';
+import { Router } from '@angular/router';
+import { Player } from '../../../models/game.models';
+import { GameStore } from '../../../services/game.store';
 
 @Component({
   selector: 'app-player-ordering',
@@ -28,12 +30,12 @@ import { Player, Team, GameMode } from '../../../models/game.models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlayerOrderingComponent {
-  players: InputSignal<Player[]> = input.required<Player[]>();
-  teams: InputSignal<Team[]> = input.required<Team[]>();
-  gameMode: InputSignal<GameMode> = input.required<GameMode>();
+  private readonly store = inject(GameStore);
+  private readonly router = inject(Router);
 
-  orderConfirmed: OutputEmitterRef<Player[]> = output<Player[]>();
-  backToConfig: OutputEmitterRef<void> = output<void>();
+  readonly players = this.store.players;
+  readonly teams = this.store.teams;
+  readonly gameMode = this.store.gameMode;
 
   orderedPlayers: WritableSignal<Player[]> = signal<Player[]>([]);
   selectedStartingPlayerId: WritableSignal<string> = signal<string>('');
@@ -44,18 +46,19 @@ export class PlayerOrderingComponent {
       const players = this.players();
       const teams = this.teams();
 
-      // Only initialize if we don't have an order yet
-      if (this.orderedPlayers().length === 0) {
+      // Read orderedPlayers without tracking it as a dependency to avoid infinite loops
+      const currentOrderedLength = untracked(() => this.orderedPlayers().length);
+
+      // Only initialize if we don't have an order yet or if the player count changed (from management)
+      if (currentOrderedLength === 0 || currentOrderedLength !== players.length) {
         let initialOrder: Player[] = [];
-        switch(mode) {
+        switch (mode) {
           case 'individual': {
             initialOrder = [...players];
             break;
           }
 
           case 'team': {
-            // In team mode, if we already have players (e.g. from previous game), keep their order.
-            // Otherwise, group them by teams as a starting point.
             if (players.length > 0 && players.every(p => teams.some(t => t.playerIds.includes(p.id)))) {
               initialOrder = [...players];
             } else {
@@ -71,11 +74,15 @@ export class PlayerOrderingComponent {
         }
 
         this.orderedPlayers.set(initialOrder);
-        if (initialOrder.length > 0 && !this.selectedStartingPlayerId()) {
-          this.selectedStartingPlayerId.set(initialOrder[0].id);
+        if (initialOrder.length > 0) {
+          if (!initialOrder.some(p => p.id === untracked(() => this.selectedStartingPlayerId()))) {
+            this.selectedStartingPlayerId.set(initialOrder[0].id);
+          }
+        } else {
+          this.selectedStartingPlayerId.set('');
         }
       }
-    })
+    });
   }
 
   dropOrderedPlayer(event: CdkDragDrop<Player[]>): void {
@@ -89,7 +96,7 @@ export class PlayerOrderingComponent {
   }
 
   onBack(): void {
-    this.backToConfig.emit();
+    void this.router.navigate(['/setup']);
   }
 
   onConfirm(): void {
@@ -97,14 +104,18 @@ export class PlayerOrderingComponent {
     const startingId = this.selectedStartingPlayerId();
     const startIndex = players.findIndex(p => p.id === startingId);
 
-    if (startIndex !== -1 && startIndex !== 0) {
-      const rearranged = [
-        ...players.slice(startIndex),
-        ...players.slice(0, startIndex)
-      ];
-      this.orderConfirmed.emit(rearranged);
-    } else {
-      this.orderConfirmed.emit(players);
-    }
+    const ordered = startIndex > 0
+      ? [...players.slice(startIndex), ...players.slice(0, startIndex)]
+      : players;
+
+    this.store.setupGame({
+      gameMode: this.gameMode(),
+      targetPoints: this.store.targetPoints(),
+      minPointsPerTurn: this.store.minPointsPerTurn(),
+      players: ordered,
+      teams: this.teams(),
+    });
+
+    void this.router.navigate(['/game']);
   }
 }

@@ -164,3 +164,53 @@ There is needed confirmation before the reset.
 The button will be placed on the same line as the 'Game Setup' header and aligned to the right.
 
 ---
+
+Create a new component, which:
+* in individual mode
+  * shows all defined players
+  * allows adding a new player to the list
+  * allows editing player names
+  * allows removing players from the list
+* in teams mode
+  * shows all defined teams and its players
+  * allows adding a new team
+  * allows editing team names
+  * allows removing teams
+  * allows adding players to the teams
+  * allows removing players from the teams
+  * allows moving players between teams
+
+Add a button on the right top corner on the 'Player Ordering' page which accesses this new component.
+
+---
+
+I do not like the behavior of the app. Let’s change it.
+There are four main phases
+* setup (game-config component)
+* ordering (player-ordering component)
+* player-management
+* game (dashboard component)
+
+Each of those components uses different layout.
+Use styling from the 'game-config' and apply it to all other components. 
+Keep as much styling in the `styles.scss` as possible, so the classes are reusable and maintainable.
+There should be one main page, with a header on the left side and a button on the right side.
+The main page should have a mat card header with appropriate header text and button. 
+The header text and the button depend on the phase, where the user is.
+* the setup phase will show the 'Game Setup' and 'Reset' button
+* the ordering phase will show 'Player Ordering' and 'Reset' button
+* the player-management phase will show 'Player Management' and 'Reset' button
+* the game phase will show 'Dice Game' and 'New Game' button
+Then the main page contains mat card content, where will be shown components for each phase
+
+Use router for routing between the components, do not show them inside each other.
+Use store for sharing data and avoid using inputs as much as possible.
+
+The usage of the application is:
+* In the beginning, the user can set up the game.
+* When players/teams are set up, the next step is to order them around the table.
+* From the ordering phase, the user can manage players and teams. From the management phase the user goes back to ordering.
+* From the ordering phase, the user can start the game.
+
+---
+

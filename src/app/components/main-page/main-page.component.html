@@ -1,0 +1,20 @@
+<div class="page-container">
+  <mat-card>
+    <div class="page-header-row">
+      <mat-card-title>{{ phase().title }}</mat-card-title>
+      <span class="spacer"></span>
+      <button
+        matButton="filled"
+        [class]="phase().buttonClass"
+        (click)="onAction()"
+        [attr.aria-label]="phase().buttonLabel"
+      >
+        {{ phase().buttonLabel }}
+      </button>
+    </div>
+
+    <mat-card-content>
+      <router-outlet />
+    </mat-card-content>
+  </mat-card>
+</div>
