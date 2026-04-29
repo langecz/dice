@@ -15,15 +15,18 @@ import {
 interface PhaseConfig {
   title: string;
   buttonLabel: string;
-  buttonAction: 'reset' | 'new-game' | 'manage-players';
+  buttonAction: 'reset' | 'new-game' | 'manage-players' | 'view-log';
   buttonClass?: string;
 }
+
+//type PAGE = 'setup' | 'ordering' | 'management' | 'game' | 'log';
 
 const PHASE_CONFIG: Record<string, PhaseConfig> = {
   setup: { title: 'Game Setup', buttonLabel: 'Reset', buttonAction: 'reset',  buttonClass: 'btn-warn'},
   ordering: { title: 'Player Ordering', buttonLabel: 'Manage Players', buttonAction: 'manage-players' },
   management: { title: 'Player Management', buttonLabel: 'Reset', buttonAction: 'reset', buttonClass: 'btn-warn' },
   game: { title: 'Dice Game', buttonLabel: 'New Game', buttonAction: 'new-game', buttonClass: 'btn-primary' },
+  log: { title: 'Game Log', buttonLabel: 'View Log', buttonAction: 'new-game', buttonClass: 'btn-info' }
 };
 
 const DEFAULT_PHASE: PhaseConfig = PHASE_CONFIG['setup'];
@@ -38,6 +41,8 @@ export class MainPageComponent {
   private readonly router = inject(Router);
   private readonly store = inject(GameStore);
   private readonly dialogService = inject(DialogService);
+
+  // private readonly currentPage = signal<PAGE>('setup');
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -54,6 +59,16 @@ export class MainPageComponent {
     return PHASE_CONFIG[segment] ?? DEFAULT_PHASE;
   });
 
+  // constructor() {
+  //   effect(() => {
+  //     const currentPage = this.currentPage();
+  //     debugger;
+  //     if (currentPage) {
+  //       void this.router.navigate([currentPage], { replaceUrl: true });
+  //     }
+  //   });
+  // }
+
   onAction(): void {
 
     switch(this.phase().buttonAction) {
@@ -67,6 +82,12 @@ export class MainPageComponent {
       }
       case 'manage-players': {
         void this.router.navigate(['/management']);
+        break;
+      }
+      case 'view-log': {
+        console.log('view log');
+        alert('view log');
+        // void this.router.navigate(['/log']);
         break;
       }
     }
@@ -91,6 +112,7 @@ export class MainPageComponent {
       if (confirmed) {
         this.store.resetGame(false);
         void this.router.navigate(['/setup']);
+        // this.currentPage.set('setup');
       }
     });
   }

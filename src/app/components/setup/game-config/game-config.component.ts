@@ -52,17 +52,27 @@ export class GameConfigComponent {
   private readonly router = inject(Router);
 
   // Local working state, seeded from (and re-synced with) the store. Persisted back via NEXT.
-  // Using linkedSignal ensures the local state resets when the store changes (e.g. after Reset).
-  players: WritableSignal<Player[]> = linkedSignal<Player[]>(() => [...this.store.players()]);
-  teams: WritableSignal<Team[]> = linkedSignal<Team[]>(() => [...this.store.teams()]);
+  // Reading store.applicationState().resetId inside each computation ensures the linkedSignal
+  // resets even when the actual data values haven't changed (e.g. reset while still at default state).
+  players: WritableSignal<Player[]> = linkedSignal<Player[]>(() => {
+    this.store.applicationState().resetId; // track reset events
+    return [...this.store.players()];
+  });
+  teams: WritableSignal<Team[]> = linkedSignal<Team[]>(() => {
+    this.store.applicationState().resetId; // track reset events
+    return [...this.store.teams()];
+  });
 
   playerMap: Signal<Map<string, Player>> = toSignalMap(this.players, player => player.id);
 
-  setupModel = linkedSignal(() => ({
-    gameMode: this.store.gameMode() as GameMode,
-    targetPoints: this.store.targetPoints(),
-    minPointsPerTurn: this.store.minPointsPerTurn(),
-  }));
+  setupModel = linkedSignal(() => {
+    this.store.applicationState().resetId; // track reset events
+    return {
+      gameMode: this.store.gameMode() as GameMode,
+      targetPoints: this.store.targetPoints(),
+      minPointsPerTurn: this.store.minPointsPerTurn(),
+    };
+  });
 
   setupForm = form(this.setupModel);
 

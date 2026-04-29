@@ -523,6 +523,33 @@ describe('GameStore', () => {
     });
 
     /**
+     * Test that resetId increments when resetting without keeping players,
+     * so linked signals can detect a reset even if other state values are unchanged.
+     */
+    it('should increment resetId when keepPlayers is false', () => {
+      const initialResetId = store.applicationState().resetId;
+      store.resetGame(false);
+      expect(store.applicationState().resetId).toBe(initialResetId + 1);
+    });
+
+    /**
+     * Test that resetId increments when resetting while keeping players,
+     * so linked signals can detect a reset even if other state values are unchanged.
+     */
+    it('should increment resetId when keepPlayers is true', () => {
+      store.setupGame({
+        gameMode: 'individual',
+        targetPoints: 1000,
+        minPointsPerTurn: 350,
+        players: [{ id: '1', name: 'P1', score: 500, dashes: 1, history: [500] }],
+        teams: []
+      });
+      const resetIdBefore = store.applicationState().resetId;
+      store.resetGame(true);
+      expect(store.applicationState().resetId).toBe(resetIdBefore + 1);
+    });
+
+    /**
      * Test that scores are reset but player configurations are preserved when keepPlayers is true.
      */
     it('should reset scores but keep players when keepPlayers is true', () => {

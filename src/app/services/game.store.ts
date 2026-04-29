@@ -10,6 +10,7 @@ import {
 } from '@ngrx/signals';
 import { DASHES_FOR_PENALTY, PENALTY_POINTS } from '../constants/game.constants';
 import { GameState, INITIAL_GAME_STATE, Player, Team } from '../models/game.models';
+import { INITIAL_APPLICATION_STATE } from '../models/app.models';
 import { withDevtools } from '../utils/with-devtools';
 
 // ---------------------------------------------------------------------------
@@ -20,7 +21,10 @@ const STORAGE_KEY = 'dice_game_state';
 
 function loadFromStorage(): GameState {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? (JSON.parse(stored) as GameState) : INITIAL_GAME_STATE;
+  if (!stored) return INITIAL_GAME_STATE;
+  // Merge with INITIAL_GAME_STATE so that new fields get default values when
+  // loading persisted state that predates those fields.
+  return { ...INITIAL_GAME_STATE, ...(JSON.parse(stored) as Partial<GameState>) };
 }
 
 // ---------------------------------------------------------------------------
@@ -207,8 +211,13 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
 export const GameStore = signalStore(
   { providedIn: 'root' },
 
+  // Game domain state — loaded from / persisted to localStorage
   // Factory function ensures loadFromStorage() is called fresh per instance (important for tests)
   withState<GameState>(() => loadFromStorage()),
+
+  // Application-level state — never persisted; resets with each page session.
+  // Nested under `applicationState` so it appears as a distinct group in Redux DevTools.
+  withState(() => ({ applicationState: { ...INITIAL_APPLICATION_STATE } })),
 
   withComputed((store) => ({
     currentPlayer: computed<Player | null>(() => store.players()[store.currentPlayerIndex()] ?? null),
@@ -276,6 +285,7 @@ export const GameStore = signalStore(
     },
 
     resetGame(keepPlayers: boolean): void {
+      const nextResetId = store.applicationState().resetId + 1;
       if (keepPlayers) {
         const s = getState(store);
         patchState(store, {
@@ -288,9 +298,10 @@ export const GameStore = signalStore(
           lastRoundStarted: false,
           firstToReachTargetId: null,
           winnerTeamPlayerCount: null,
+          applicationState: { resetId: nextResetId },
         });
       } else {
-        patchState(store, INITIAL_GAME_STATE);
+        patchState(store, { ...INITIAL_GAME_STATE, applicationState: { resetId: nextResetId } });
       }
     },
 
@@ -345,9 +356,9 @@ export const GameStore = signalStore(
 
   withHooks({
     onInit(store) {
-      // Persist state to localStorage whenever any slice changes
+      // Persist only game state to localStorage — application state is intentionally excluded
       effect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(getState(store)));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(store.state()));
       });
     },
   }),
