@@ -237,3 +237,15 @@ The list of player names with edit and delete buttons is shown.
 Could be template `playerActions` separated from 'player-management' component and used in both components?
 
 ---
+
+There is a bug in the logic. In the 'team' mode, there are teams A with players A1, A2, A3; and team B with players B1, B2, B3.
+Players sit around the table in order: A1 -A2 - A3 - B1 - B2 - B3. Player B1 starts the game.
+Player B1 rolls 9000 points, player B2 rolls 1100 points.
+In the current implementation the game ends now, and there is shown info that team B won with 10100 points and team A has 0 points.
+The correct result should be: When player B2 rolls 1100 points, there should be shown info that the last round starts,
+and players A1 and A2 must be allowed to play their turns.
+
+Fix this bug and create a test for this case. 
+
+---
+

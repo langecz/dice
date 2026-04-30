@@ -24,7 +24,7 @@
   </div>
 } @else {
   <div class="page-section">
-    <mat-card>
+    <mat-card  class="current-turn">
       <mat-card-header>
         <mat-card-title>
           Current Turn
@@ -35,7 +35,7 @@
         <mat-card-subtitle>
           @if (gameMode() === 'team') {
             <div class="team-info-header">
-              Team: {{ currentTeam()?.name }}
+              Team: <span class="current-turn-name">{{ currentTeam()?.name }}</span>
               <div class="dashes inline-dashes">
                 @for (i of [1,2,3]; track i) {
                   <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''">
@@ -49,7 +49,7 @@
       </mat-card-header>
       <mat-card-content>
         <div class="player-info">
-          <h2>{{ currentPlayer()?.name }}</h2>
+          <h2 class="current-turn-name">{{ currentPlayer()?.name }}</h2>
           @if (gameMode() === 'individual') {
             <div class="dashes">
               @for (i of [1,2,3]; track i) {

@@ -139,7 +139,7 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
     lastRoundStarted = true;
     firstToReachTargetId = team.id;
     // How many players of this team have already played in this round (including current)
-    const firstPlayerOfTeamIndex = s.players.findIndex(p => team.playerIds.includes(p.id));
+    const firstPlayerOfTeamIndex = players.findIndex(p => team.playerIds.includes(p.id));
     winnerTeamPlayerCount = s.currentPlayerIndex - firstPlayerOfTeamIndex + 1;
   }
 
@@ -149,27 +149,18 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
   if (lastRoundStarted) {
     const winnerTeam = teams.find(t => t.id === firstToReachTargetId);
     if (winnerTeam) {
-      const firstOfWinnerIdx = s.players.findIndex(p => winnerTeam.playerIds.includes(p.id));
+      const firstOfWinnerIdx = players.findIndex(p => winnerTeam.playerIds.includes(p.id));
       const lastOfWinnerIdx = firstOfWinnerIdx + (winnerTeamPlayerCount ?? 0) - 1;
 
       if (s.currentPlayerIndex === lastOfWinnerIdx) {
         // Skip remaining winner-team players; jump to first player of next team
-        const nextTeamIdx = (s.currentTeamIndex + 1) % teams.length;
-        nextPlayerIndex =
-          nextTeamIdx === 0
-            ? 0
-            : s.players.findIndex(p => teams[nextTeamIdx].playerIds.includes(p.id));
+        nextPlayerIndex = (s.currentPlayerIndex + (winnerTeam.playerIds.length - (winnerTeamPlayerCount ?? 0)) + 1) % players.length;
       } else {
         // Check if current team has used up its quota
-        const firstOfCurrentTeamIdx = s.players.findIndex(p => team.playerIds.includes(p.id));
+        const firstOfCurrentTeamIdx = players.findIndex(p => team.playerIds.includes(p.id));
         const playedInTeam = s.currentPlayerIndex - firstOfCurrentTeamIdx + 1;
-        if (playedInTeam === winnerTeamPlayerCount) {
-          const nextTeamIdx = (s.currentTeamIndex + 1) % teams.length;
-          if (nextTeamIdx === 0) {
-            isGameOver = true;
-          } else {
-            nextPlayerIndex = s.players.findIndex(p => teams[nextTeamIdx].playerIds.includes(p.id));
-          }
+        if (playedInTeam === (winnerTeamPlayerCount ?? 0) && team.id !== winnerTeam.id) {
+           nextPlayerIndex = (s.currentPlayerIndex + (team.playerIds.length - (winnerTeamPlayerCount ?? 0)) + 1) % players.length;
         }
       }
     }
@@ -177,7 +168,6 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
 
   if (isGameOver || (lastRoundStarted && nextPlayerIndex === 0)) {
     isGameOver = true;
-
     const teamsWithTarget = teams.filter(t => t.score >= s.targetPoints);
     const maxScore = Math.max(...teamsWithTarget.map(t => t.score), 0);
     const teamsWithMaxScore = teamsWithTarget.filter(t => t.score === maxScore);

@@ -36,6 +36,7 @@
 .winner-card {
   text-align: center;
   border: 2px solid #4caf50;
+  background: lightgoldenrodyellow;
 
   .rankings {
     text-align: left;
@@ -47,6 +48,15 @@
       margin-bottom: 8px;
       color: #666;
     }
+  }
+}
+
+.current-turn {
+  //background-color: #e6f8d1;
+  background-color: lightgray;
+
+  .current-turn-name {
+    color: #007bff;
   }
 }
 
