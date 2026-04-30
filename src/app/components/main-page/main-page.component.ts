@@ -12,21 +12,27 @@ import {
   ConfirmDialogData,
 } from '../shared/confirm-dialog/confirm-dialog.component';
 
+type buttonAction = 'reset' | 'new-game' | 'manage-players' | 'view-log' | 'game';
+
+interface ButtonConfig {
+  label: string;
+  action: buttonAction;
+  class?: string;
+}
+
 interface PhaseConfig {
   title: string;
-  buttonLabel: string;
-  buttonAction: 'reset' | 'new-game' | 'manage-players' | 'view-log';
-  buttonClass?: string;
+  actionButtons?: ButtonConfig[];
 }
 
 //type PAGE = 'setup' | 'ordering' | 'management' | 'game' | 'log';
 
 const PHASE_CONFIG: Record<string, PhaseConfig> = {
-  setup: { title: 'Game Setup', buttonLabel: 'Reset', buttonAction: 'reset',  buttonClass: 'btn-warn'},
-  ordering: { title: 'Player Ordering', buttonLabel: 'Manage Players', buttonAction: 'manage-players' },
-  management: { title: 'Player Management', buttonLabel: 'Reset', buttonAction: 'reset', buttonClass: 'btn-warn' },
-  game: { title: 'Dice Game', buttonLabel: 'New Game', buttonAction: 'new-game', buttonClass: 'btn-primary' },
-  log: { title: 'Game Log', buttonLabel: 'View Log', buttonAction: 'new-game', buttonClass: 'btn-info' }
+  setup: { title: 'Game Setup', actionButtons: [{ label: 'Reset', action: 'reset',  class: 'btn-warn'}]},
+  ordering: { title: 'Player Ordering', actionButtons: [{ label: 'Manage Players', action: 'manage-players' }] },
+  management: { title: 'Player Management' /*, actionButtons: [{ label: 'Reset', action: 'reset', class: 'btn-warn' }]*/ },
+  game: { title: 'Dice Game', actionButtons: [{ label: 'Log', action: 'view-log' }, { label: 'New Game', action: 'new-game', class: 'btn-warn' }] },
+  log: { title: 'Game Log', actionButtons: [{ label: 'Back', action: 'game' }]}
 };
 
 const DEFAULT_PHASE: PhaseConfig = PHASE_CONFIG['setup'];
@@ -69,9 +75,9 @@ export class MainPageComponent {
   //   });
   // }
 
-  onAction(): void {
+  onAction(action: buttonAction): void {
 
-    switch(this.phase().buttonAction) {
+    switch(action) {
       case 'reset': {
         this.confirmReset();
         break;

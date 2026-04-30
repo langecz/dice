@@ -3,14 +3,18 @@
     <div class="page-header-row">
       <mat-card-title>{{ phase().title }}</mat-card-title>
       <span class="spacer"></span>
-      <button
-        matButton="filled"
-        [class]="phase().buttonClass"
-        (click)="onAction()"
-        [attr.aria-label]="phase().buttonLabel"
-      >
-        {{ phase().buttonLabel }}
-      </button>
+      <div>
+        @for (button of phase().actionButtons; track button) {
+                <button
+                    matButton="filled"
+                    [class]="button.class"
+                    (click)="onAction(button.action)"
+                    [attr.aria-label]="button.label"
+                  >
+                    {{ button.label }}
+                  </button>
+        }
+      </div>
     </div>
 
     <mat-card-content>
