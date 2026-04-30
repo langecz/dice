@@ -1,19 +1,5 @@
-@use '../../../styles/player-item';
-
-.setup-section {
-  margin-bottom: 24px;
-}
-
-.header-with-action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-
-  h3 {
-    margin: 0;
-  }
-}
+/* Component-specific styles only.
+   Shared classes (page-section, page-actions, team-hint, player-item, ...) live in the global styles.scss. */
 
 .cdk-drag-preview {
   box-sizing: border-box;
@@ -40,7 +26,7 @@
   color: rgba(0, 0, 0, 0.54);
 }
 
-.player-item {
+mat-list-item.player-item {
   height: auto;
   min-height: 56px;
   cursor: move;
@@ -85,13 +71,6 @@
   margin-bottom: 12px;
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
-}
-
 .player-text {
   display: flex;
   flex-direction: column;
@@ -109,11 +88,11 @@
   white-space: nowrap;
 }
 
+/* Override the global .team-hint with single-line layout used inside .player-text */
 .team-hint {
   display: block;
   line-height: 16px;
   font-size: 13px;
-  color: #666;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

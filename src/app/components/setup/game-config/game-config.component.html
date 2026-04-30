@@ -1,4 +1,4 @@
-<div class="setup-section">
+<div class="page-section">
   <h3>Game Mode</h3>
   <mat-radio-group [value]="setupForm.gameMode().value()" (change)="setupForm.gameMode().value.set($event.value)">
     <mat-radio-button value="individual">Individual</mat-radio-button>
@@ -6,7 +6,7 @@
   </mat-radio-group>
 </div>
 
-<mat-accordion>
+<mat-accordion class="page-section">
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -14,7 +14,7 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    <div class="setup-section">
+    <div class="page-section">
       <h3>Target Points</h3>
       <mat-form-field>
         <mat-label>Points to win</mat-label>
@@ -27,7 +27,7 @@
       </mat-form-field>
     </div>
 
-    <div class="setup-section">
+    <div class="page-section">
       <h3>Minimum Points per Turn</h3>
       <mat-form-field>
         <mat-label>Minimum points</mat-label>
@@ -42,10 +42,10 @@
   </mat-expansion-panel>
 </mat-accordion>
 
-<div class="setup-section">
+<div class="page-section">
   <h3>{{ setupForm.gameMode().value() === 'individual' ? 'Players' : 'Teams & Players' }}</h3>
 
-  <div class="add-player-form">
+  <div class="add-form">
     <mat-form-field>
       <mat-label>{{ setupForm.gameMode().value() === 'individual' ? 'Player Name' : 'Team Name' }}</mat-label>
       <input matInput #nameInput (keyup.enter)="addItem(nameInput.value); nameInput.value = ''" [aria-label]="setupForm.gameMode().value() === 'individual' ? 'Enter Player Name' : 'Enter Team Name'">
@@ -62,50 +62,27 @@
     <mat-list>
       @for (player of players(); track player.id) {
         <mat-list-item class="player-item">
-          <span matListItemTitle>{{ player.name }}</span>
-          <span matListItemMeta class="player-actions">
-            <button
-              matIconButton
-              class="btn-accent"
-              aria-label="Edit player"
-              (click)="editPlayer(player.id)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              matIconButton
-              class="btn-warn"
-              aria-label="Delete player"
-              (click)="removeItem(player.id)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </span>
+          <app-player-actions
+            matListItemTitle
+            [player]="player"
+            [players]="players">
+          </app-player-actions>
         </mat-list-item>
       }
     </mat-list>
   } @else {
     @for (team of teams(); track team.id) {
       <mat-card class="team-card">
-        <mat-card-header>
-          <mat-card-title>{{ team.name }}</mat-card-title>
-          <div>
-            <button
-              matIconButton
-              class="btn-accent"
-              aria-label="Edit team"
-              (click)="editTeam(team.id)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              matIconButton
-              class="btn-warn"
-              aria-label="Delete team"
-              (click)="removeItem(team.id)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </mat-card-header>
+          <mat-card-header>
+            <mat-card-title>{{ team.name }}</mat-card-title>
+            <app-team-actions
+              [team]="team"
+              [teams]="teams"
+              [players]="players">
+            </app-team-actions>
+          </mat-card-header>
         <mat-card-content>
-          <div class="add-player-to-team">
+          <div class="add-form">
             <mat-form-field>
               <mat-label>Player Name</mat-label>
               <input
@@ -113,32 +90,24 @@
                 #playerInput
                 (keyup.enter)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''">
             </mat-form-field>
-            <button matFab class="btn-success" (click)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''; playerInput.focus()">
+            <button matFab class="btn-success"
+                    (click)="addPlayerToTeam(team.id, playerInput.value); playerInput.value = ''; playerInput.focus()"
+                    aria-label="Add player to team">
               <mat-icon>add</mat-icon>
             </button>
-
           </div>
           <mat-list>
             @for (playerId of team.playerIds; track playerId) {
-              <mat-list-item class="player-item">
-                <span matListItemTitle>{{ playerMap().get(playerId)?.name }}</span>
-                <span matListItemMeta class="player-actions">
-                  <button
-                    matIconButton
-                    class="btn-accent"
-                    aria-label="Edit player"
-                    (click)="editPlayer(playerId)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                  <button
-                    matIconButton
-                    class="btn-warn"
-                    aria-label="Delete player"
-                    (click)="removePlayerFromTeam(team.id, playerId)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </span>
-              </mat-list-item>
+              @if (playerMap().get(playerId); as player) {
+                <mat-list-item class="player-item">
+                  <app-player-actions
+                    matListItemTitle
+                    [player]="player"
+                    [players]="players"
+                    [teams]="teams">
+                  </app-player-actions>
+                </mat-list-item>
+              }
             }
           </mat-list>
         </mat-card-content>
@@ -147,7 +116,7 @@
   }
 </div>
 
-<div class="actions">
+<div class="page-actions">
   <button matButton="filled" [disabled]="!canNext()" (click)="onNext()">
     NEXT: SET ORDER
   </button>

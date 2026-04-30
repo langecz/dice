@@ -1,25 +1,24 @@
-@use '../../styles/player-item';
+/* Component-specific styles only.
+   Shared classes (page-section, player-item, team-card, ...) live in the global styles.scss. */
 
-.dashboard-container {
-  padding: 16px;
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 .player-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
-.dashes { display: flex; gap: 4px; }
+
+.dashes {
+  display: flex;
+  gap: 4px;
+}
+
 .team-info-header {
   display: flex;
   align-items: center;
   gap: 12px;
 }
+
 .inline-dashes {
   mat-icon {
     font-size: 20px;
@@ -27,8 +26,13 @@
     height: 20px;
   }
 }
-.current { border-left: 4px solid #3f51b5; background: #f5f5f5; }
-.team-score-card { margin-bottom: 8px; }
+
+/* Highlight the active player/team row across both list and team-card. */
+.current {
+  border-left: 4px solid #3f51b5;
+  background: #f5f5f5;
+}
+
 .winner-card {
   text-align: center;
   border: 2px solid #4caf50;
@@ -45,6 +49,7 @@
     }
   }
 }
+
 .last-round-badge {
   font-size: 0.6em;
   background-color: #f44336;
@@ -53,25 +58,4 @@
   border-radius: 4px;
   margin-left: 8px;
   vertical-align: middle;
-}
-
-.dialog-actions-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 16px;
-
-  .action-row {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    gap: 8px;
-  }
-}
-
-.team-hint {
-  font-size: 0.8em;
-  color: #666;
-  margin-left: 8px;
 }

@@ -154,6 +154,7 @@ h2 { font-size: clamp(1.10rem, 1.8vw + 0.5rem, 1.5rem); }
 }
 
 .spacer { flex: 1 1 auto; }
+.full-width { width: 100%; }
 
 /* ---------- Reusable page layout (used by all main phases) ---------- */
 .page-container {
@@ -177,9 +178,98 @@ h2 { font-size: clamp(1.10rem, 1.8vw + 0.5rem, 1.5rem); }
   }
 }
 
+/* Vertical stack of sections inside a page card */
+.page-section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Header row inside a page section: title + inline action(s) */
+.page-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  h3, h4 {
+    margin: 0;
+  }
+}
+
+/* Inline form: a single input followed by an add (FAB) button.
+   1. .mat-mdc-form-field-subscript-wrapper is targeted with a plain descendant
+      selector (not ::ng-deep, which is invalid in global stylesheets and ignored
+      by browsers), ensuring it truly has no layout footprint.
+   2. margin-bottom: 0 on the mat-form-field host cancels the bottom margin Angular
+      Material reserves for subscript text, which would otherwise inflate the flex
+      item's outer box and shift the field above the button in align-items:center. */
+.add-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  mat-form-field {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+/* Trailing buttons row at the bottom of a page (Next, Cancel, Save, ...) */
 .page-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
 }
+
+/* Unified visual style for a player row in any list */
+mat-list-item.player-item {
+  margin-bottom: 8px;
+  border: 1px solid #d6e8ff;
+  border-radius: 8px;
+  background-color: #edf5ff;
+}
+
+/* Unified team card (used in setup, management, ...) */
+mat-card.team-card {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #eee;
+  background: #f5fbff;
+
+  mat-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 2px;
+  }
+
+  mat-card-content {
+    padding-top: 12px;
+  }
+
+  mat-card-title {
+    margin: 0;
+  }
+}
+
+/* Inline icon-button group placed next to a list item */
+.player-actions {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Subtle hint text shown next to a player (e.g. their team name) */
+.team-hint {
+  font-size: 0.85em;
+  color: var(--mat-sys-on-surface-variant, #666);
+}
+

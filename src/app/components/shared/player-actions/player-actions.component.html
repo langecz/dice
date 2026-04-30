@@ -1,0 +1,9 @@
+<span class="player-name">{{ player().name }}</span>
+<span class="player-actions">
+  <button matIconButton class="btn-accent" [attr.aria-label]="editAriaLabel()" (click)="handleEdit()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button matIconButton class="btn-warn" [attr.aria-label]="deleteAriaLabel()" (click)="handleDelete()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</span>

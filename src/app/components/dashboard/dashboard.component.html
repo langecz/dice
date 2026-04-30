@@ -1,5 +1,5 @@
-<div class="dashboard-container">
-  @if (isGameOver()) {
+@if (isGameOver()) {
+  <div class="page-section">
     <mat-card class="winner-card">
       <mat-card-header>
         <mat-card-title>Game Over!</mat-card-title>
@@ -21,8 +21,10 @@
         </div>
       </mat-card-content>
     </mat-card>
-  } @else {
-    <mat-card class="current-turn-card">
+  </div>
+} @else {
+  <div class="page-section">
+    <mat-card>
       <mat-card-header>
         <mat-card-title>
           Current Turn
@@ -75,38 +77,38 @@
         <button matButton="filled" (click)="submitPoints()" [disabled]="!canRecord()">RECORD</button>
       </mat-card-actions>
     </mat-card>
-  }
-
-  <div class="scores-section">
-    <h3>Scores (Target: {{ state().targetPoints }})</h3>
-
-    @if (gameMode() === 'individual') {
-      <mat-list>
-        @for (player of players(); track player.id) {
-          <mat-list-item [class.current]="player.id === currentPlayer()?.id">
-            <span matListItemTitle>{{ player.name }}</span>
-            <span matListItemLine>Points: {{ player.score }} | Dashes: {{ player.dashes }}</span>
-          </mat-list-item>
-        }
-      </mat-list>
-    } @else {
-      @for (team of teams(); track team.id) {
-        <mat-card class="team-score-card" [class.current]="team.id === currentTeam()?.id">
-          <mat-card-header>
-            <mat-card-title>{{ team.name }}: {{ team.score }} pts</mat-card-title>
-            <mat-card-subtitle>Team Dashes: {{ team.dashes }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-list>
-              @for (playerId of team.playerIds; track playerId) {
-                <mat-list-item [class.current]="playerId === currentPlayer()?.id">
-                  <span matListItemTitle>{{ playerMap().get(playerId)?.name }}</span>
-                </mat-list-item>
-              }
-            </mat-list>
-          </mat-card-content>
-        </mat-card>
-      }
-    }
   </div>
+}
+
+<div class="page-section">
+  <h3>Scores (Target: {{ state().targetPoints }})</h3>
+
+  @if (gameMode() === 'individual') {
+    <mat-list>
+      @for (player of players(); track player.id) {
+        <mat-list-item class="player-item" [class.current]="player.id === currentPlayer()?.id">
+          <span matListItemTitle>{{ player.name }}</span>
+          <span matListItemLine>Points: {{ player.score }} | Dashes: {{ player.dashes }}</span>
+        </mat-list-item>
+      }
+    </mat-list>
+  } @else {
+    @for (team of teams(); track team.id) {
+      <mat-card class="team-card" [class.current]="team.id === currentTeam()?.id">
+        <mat-card-header>
+          <mat-card-title>{{ team.name }}: {{ team.score }} pts</mat-card-title>
+          <mat-card-subtitle>Team Dashes: {{ team.dashes }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            @for (playerId of team.playerIds; track playerId) {
+              <mat-list-item class="player-item" [class.current]="playerId === currentPlayer()?.id">
+                <span matListItemTitle>{{ playerMap().get(playerId)?.name }}</span>
+              </mat-list-item>
+            }
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
 </div>

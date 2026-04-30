@@ -213,4 +213,27 @@ The usage of the application is:
 * From the ordering phase, the user can start the game.
 
 ---
+/*GitHub Copilot; Claude Opus 4.7*/
+Each component uses its own sets of styles.
+E.g., the 'Game Setup' component uses its own styles for the `mat-card`, which differs from the 'Dashboard' or 'Player Management' components.
+Takes the style (alignment, colors, etc.) from the 'game-config' component and applies it to all other components. Move as many possible classes to the `styles.scss` file as possible.
+Check the usage of all classes for each component and remove unused ones.
+Also, some components are wrapped in their own divs with their own class while some others are not. Unify it across whole applications.
 
+Try to find out also other usages of the stylings which is defined in each component separatey and unify them and move them to the `styles.scss` file.
+
+---
+
+Player name is not shown in player management in 'team' mode.
+In this case, split content of `mat-list-item` to two lines.
+First line shows player name with edit and delete buttons (like in 'individual' mode),
+the second line contains `mat-select` with team selection._
+
+
+---
+/*GitHub Copilot; Claude Sonet 4.6*/
+Now, in the 'game-config' component and in the 'player-management' component, there is similar behavior.
+The list of player names with edit and delete buttons is shown.
+Could be template `playerActions` separated from 'player-management' component and used in both components?
+
+---

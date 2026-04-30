@@ -5,9 +5,9 @@ import {
   linkedSignal,
   WritableSignal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,15 +18,15 @@ import { GameStore } from '../../../services/game.store';
 import { Player, Team } from '../../../models/game.models';
 import { generateUniqueId } from '../../../utils/uuid';
 import { showSnackbarError } from '../../../utils/snackbar';
-import { DialogService } from '../../../services/dialog.service';
-import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
-import { EditNameDialogComponent, EditNameDialogData } from '../../shared/edit-name-dialog/edit-name-dialog.component';
-
+import { PlayerActionsComponent } from '../../shared/player-actions/player-actions.component';
+import { TeamActionsComponent } from '../../shared/team-actions/team-actions.component';
 @Component({
   selector: 'app-player-management',
   imports: [
-    CommonModule,
+    PlayerActionsComponent,
+    TeamActionsComponent,
     MatButtonModule,
+    MatCardModule,
     MatIconModule,
     MatListModule,
     MatFormFieldModule,
@@ -41,7 +41,6 @@ import { EditNameDialogComponent, EditNameDialogData } from '../../shared/edit-n
 export class PlayerManagementComponent {
   private readonly store = inject(GameStore);
   private readonly router = inject(Router);
-  private readonly dialog = inject(DialogService);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly gameMode = this.store.gameMode;
@@ -74,54 +73,6 @@ export class PlayerManagementComponent {
     }
   }
 
-  editPlayer(player: Player): void {
-    const dialogRef = this.dialog.open<EditNameDialogComponent, EditNameDialogData, string | null>(EditNameDialogComponent, {
-      data: {
-        title: 'Edit Player',
-        label: 'Player name',
-        currentName: player.name,
-        confirmText: 'Save',
-        cancelText: 'Cancel',
-      } satisfies EditNameDialogData,
-    });
-
-    dialogRef.afterClosed().subscribe(newName => {
-      if (newName && newName.trim()) {
-        const trimmed = newName.trim();
-        if (this.players().some(p => p.id !== player.id && p.name.toLowerCase() === trimmed.toLowerCase())) {
-          showSnackbarError(this.snackBar, `Player "${trimmed}" already exists`);
-          return;
-        }
-        this.players.update(ps => ps.map(p => p.id === player.id ? { ...p, name: trimmed } : p));
-      }
-    });
-  }
-
-  removePlayer(playerId: string): void {
-    const player = this.players().find(p => p.id === playerId);
-    if (!player) return;
-
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Delete Player',
-        message: `Are you sure you want to delete player "${player.name}"?`,
-        confirmText: 'Delete',
-        cancelText: 'Cancel',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.players.update(ps => ps.filter(p => p.id !== playerId));
-        if (this.gameMode() === 'team') {
-          this.teams.update(ts => ts.map(t => ({
-            ...t,
-            playerIds: t.playerIds.filter(id => id !== playerId)
-          })));
-        }
-      }
-    });
-  }
 
   addTeam(name: string): void {
     const trimmedName = name.trim();
@@ -144,50 +95,6 @@ export class PlayerManagementComponent {
     this.teams.update(ts => [...ts, newTeam]);
   }
 
-  editTeam(team: Team): void {
-    const dialogRef = this.dialog.open<EditNameDialogComponent, EditNameDialogData, string | null>(EditNameDialogComponent, {
-      data: {
-        title: 'Edit Team',
-        label: 'Team name',
-        currentName: team.name,
-        confirmText: 'Save',
-        cancelText: 'Cancel',
-      } satisfies EditNameDialogData,
-    });
-
-    dialogRef.afterClosed().subscribe(newName => {
-      if (newName && newName.trim()) {
-        const trimmed = newName.trim();
-        if (this.teams().some(t => t.id !== team.id && t.name.toLowerCase() === trimmed.toLowerCase())) {
-          showSnackbarError(this.snackBar, `Team "${trimmed}" already exists`);
-          return;
-        }
-        this.teams.update(ts => ts.map(t => t.id === team.id ? { ...t, name: trimmed } : t));
-      }
-    });
-  }
-
-  removeTeam(teamId: string): void {
-    const team = this.teams().find(t => t.id === teamId);
-    if (!team) return;
-
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Delete Team',
-        message: `Are you sure you want to delete team "${team.name}" and all its players?`,
-        confirmText: 'Delete',
-        cancelText: 'Cancel',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        const playerIdsToRemove = team.playerIds;
-        this.teams.update(ts => ts.filter(t => t.id !== teamId));
-        this.players.update(ps => ps.filter(p => !playerIdsToRemove.includes(p.id)));
-      }
-    });
-  }
 
   movePlayer(playerId: string, targetTeamId: string): void {
     this.teams.update(ts => ts.map(t => {
