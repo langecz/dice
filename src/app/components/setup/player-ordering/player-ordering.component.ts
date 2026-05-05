@@ -104,7 +104,6 @@ export class PlayerOrderingComponent {
     const startingId = this.selectedStartingPlayerId();
     const startIndex = players.findIndex(p => p.id === startingId);
 
-    debugger;
     const ordered = startIndex > 0
       ? [...players.slice(startIndex), ...players.slice(0, startIndex)]
       : players;

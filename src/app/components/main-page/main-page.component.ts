@@ -65,16 +65,6 @@ export class MainPageComponent {
     return PHASE_CONFIG[segment] ?? DEFAULT_PHASE;
   });
 
-  // constructor() {
-  //   effect(() => {
-  //     const currentPage = this.currentPage();
-  //     debugger;
-  //     if (currentPage) {
-  //       void this.router.navigate([currentPage], { replaceUrl: true });
-  //     }
-  //   });
-  // }
-
   onAction(action: buttonAction): void {
 
     switch(action) {

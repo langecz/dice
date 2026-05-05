@@ -9,6 +9,7 @@ import {
   ElementRef,
   WritableSignal,
   afterNextRender,
+  TemplateRef,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,8 +19,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
 import { GameStore } from '../../services/game.store';
-import { Player } from '../../models/game.models';
+import { Player, PlayerTurnRecord, Team } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
+import { DialogService } from '../../services/dialog.service';
 
 interface Winner {
   name: string;
@@ -43,6 +45,7 @@ interface Winner {
 })
 export class DashboardComponent {
   store = inject(GameStore);
+  dialog = inject(DialogService);
 
   state = this.store.state;
   players = this.store.players;
@@ -144,6 +147,58 @@ export class DashboardComponent {
     if (element) {
       element.focus();
     }
+  }
+
+  playerListTemplate = viewChild.required<TemplateRef<unknown>>("playerList");
+
+  protected showPlayers(): void {
+    const data: {name: string, teamName: string | undefined, currentGameScore: number, totalScore: number}[] = [];
+
+    const players = this.players();
+    const teams = this.playerTeamMap();
+
+    // current game scores
+    const currentScoreRecords = [
+      ...this.state().currentRound,
+      ...this.state().currentGame.flatMap(game => game.turns)
+    ]
+    const playerCurrentScores = this.getPlayersScore(currentScoreRecords);
+
+    // totalScore
+    const allGameRecords =this.state().gameHistory.flatMap(game => game.rounds.flatMap(turn => turn.turns));
+    const playerTotalScores = this.getPlayersScore(allGameRecords);
+
+    players.forEach(player => {
+      data.push({
+        name: player.name,
+        teamName: teams.get(player.id)?.name ?? undefined,
+        currentGameScore: playerCurrentScores.get(player.id) ?? 0,
+        totalScore: playerTotalScores.get(player.id) ?? 0,
+      });
+    });
+
+    this.dialog.open(this.playerListTemplate(), {data: data});
+  }
+
+  private playerTeamMap(): Map<string, Team> {
+    const map = new Map<string, Team>();
+    for (const team of this.teams()) {
+      for (const playerId of team.playerIds) {
+        map.set(playerId, team);
+      }
+    }
+    return map;
+  };
+
+  private getPlayersScore(records: PlayerTurnRecord[]): Map<string, number> {
+    const scores: Map<string, number> = new Map();
+    records.forEach(round => {
+      const score = scores.get(round.playerId) ?? 0;
+      const pointsNr = Number(round?.points ?? 0);
+      const points = isNaN(pointsNr) ? 0 : pointsNr;
+      scores.set(round.playerId, score + points);
+    });
+    return scores;
   }
 }
 

@@ -30,7 +30,8 @@
 /* Highlight the active player/team row across both list and team-card. */
 .current {
   border-left: 4px solid #3f51b5;
-  background: #f5f5f5;
+  //background: #f5f5f5;
+  background: #e6f8d1;
 }
 
 .winner-card {
@@ -52,8 +53,8 @@
 }
 
 .current-turn {
-  //background-color: #e6f8d1;
-  background-color: lightgray;
+  background-color: #e6f8d1;
+  //background-color: lightgray;
 
   .current-turn-name {
     color: #007bff;
@@ -68,4 +69,9 @@
   border-radius: 4px;
   margin-left: 8px;
   vertical-align: middle;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
 }

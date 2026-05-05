@@ -84,7 +84,9 @@
                  aria-label="Enter points rolled">
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions align="end">
+      <mat-card-actions class="action-buttons">
+        <button matButton="filled" (click)="showPlayers()">TABLE</button>
+        <span class="spacer"></span>
         <button matButton="filled" class="btn-warn" (click)="setZeroPoints()">ZERO</button>
         <button matButton="filled" (click)="submitPoints()" [disabled]="!canRecord()">RECORD</button>
       </mat-card-actions>
@@ -124,3 +126,24 @@
     }
   }
 </div>
+
+<!-- shows players around table -->
+<ng-template #playerList let-players>
+  <h1 style="align-self: center">List of players around the table</h1>
+  <span style="margin: 5px 10px">The first number is current game score, the second number is total score of previous games</span>
+
+  <div style="overflow-y: auto; max-height: 80vh;">
+  <mat-list>
+    @for (player of players; track player) {
+      <mat-list-item class="player-item">
+        <span matListItemTitle>{{ player.name }} ({{player.currentGameScore ?? 0}} / {{player.totalScore ?? 0}})</span>
+        @if(player.teamName) {
+          <span matListItemLine>({{ player.teamName }})</span>
+        }
+      </mat-list-item>
+    }
+  </mat-list>
+  </div>
+  <button matButton="filled" class="btn-warn"  (click)="dialog.closeAll()">BACK</button>
+</ng-template>
+

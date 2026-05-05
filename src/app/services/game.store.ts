@@ -356,7 +356,6 @@ export const GameStore = signalStore(
     },
 
     addPoints(points: number): void {
-      debugger;
       const state = getState(store);
       if (state.isGameOver) return;
 
