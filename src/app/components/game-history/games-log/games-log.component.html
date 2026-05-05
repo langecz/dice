@@ -1,0 +1,49 @@
+<!--<div>-->
+  @if (gameHistory().length === 0) {
+    <p>No games played yet.</p>
+  } @else {
+<!--    <mat-accordion multi>-->
+      @for (game of gameHistory(); track game.id; let idx = $index) {
+
+        <mat-card class="team-card">
+          <mat-card-header>
+            <mat-card-title>
+              <span>Game #{{ idx + 1 }}: {{ game.winnerName }} won, score is {{ game.finalScores }}</span>
+              <span>{{ game.timestamp | date:'MM.dd.yyyy hh:mm' }}</span>
+            </mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <mat-accordion multi>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Rounds
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <mat-accordion multi>
+                @for (round of game.rounds; track round.roundNumber) {
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Round {{ round.roundNumber }}</mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <mat-list>
+                      @for (turn of round.turns; track turn.playerId) {
+                        <mat-list-item>
+                          <span matListItemTitle>{{ turn.playerName }}: {{ turn.points }} points</span>
+                        </mat-list-item>
+                      }
+                    </mat-list>
+                  </mat-expansion-panel>
+                }
+              </mat-accordion>
+            </mat-expansion-panel>
+              </mat-accordion>
+          </mat-card-content>
+        </mat-card>
+      }
+<!--    </mat-accordion>-->
+  }
+<!--</div>-->

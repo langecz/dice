@@ -8,6 +8,7 @@ import {
   signal,
   ElementRef,
   WritableSignal,
+  afterNextRender,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,8 +18,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
 import { GameStore } from '../../services/game.store';
-import { Player, Winner } from '../../models/game.models';
+import { Player } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
+
+interface Winner {
+  name: string;
+  score: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -48,7 +54,8 @@ export class DashboardComponent {
   minPointsPerTurn = computed(() => this.state().minPointsPerTurn);
   lastRoundStarted = computed(() => this.state().lastRoundStarted);
 
-  inputPointsElement: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputPointsElement');
+  // inputPointsElement: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputPointsElement');
+  inputPointsElement: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('inputPointsElement');
   inputPoints: WritableSignal<number | null> = signal<number | null>(null);
 
   canRecord: Signal<boolean> = computed(() => {
@@ -85,7 +92,28 @@ export class DashboardComponent {
     }
   });
 
+  winsRanking = computed(() => {
+    const s = this.state();
+    if (!s.isGameOver) return [];
+
+    if (s.gameMode === 'individual') {
+      return [...s.players].sort((a, b) => b.wins - a.wins);
+    } else {
+      return [...s.teams].sort((a, b) => b.wins - a.wins);
+    }
+  });
+
   playerMap: Signal<Map<string, Player>> = toSignalMap(this.players, player => player.id);
+
+  constructor() {
+
+    afterNextRender(() => {
+      const input = this.inputPointsElement();
+      if (input) {
+        input.nativeElement.focus();
+      }
+    });
+  }
 
   setZeroPoints(): void {
     this.store.addPoints(0);
@@ -118,3 +146,4 @@ export class DashboardComponent {
     }
   }
 }
+

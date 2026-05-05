@@ -1,0 +1,18 @@
+mat-card-title {
+  font-size: small;
+  //font-weight: 500;
+  display: flex;
+  flex-direction: column;
+}
+
+mat-accordion {
+  margin-bottom: 16px;
+}
+
+mat-panel-title {
+  font-weight: 500;
+}
+
+mat-expansion-panel {
+  margin-bottom: 8px;
+}

@@ -9,9 +9,10 @@ import {
   withState,
 } from '@ngrx/signals';
 import { DASHES_FOR_PENALTY, PENALTY_POINTS } from '../constants/game.constants';
-import { GameState, INITIAL_GAME_STATE, Player, Team } from '../models/game.models';
+import { GameState, INITIAL_GAME_STATE, Player, Team, PlayerTurnRecord, GameRecord } from '../models/game.models';
 import { INITIAL_APPLICATION_STATE } from '../models/app.models';
 import { withDevtools } from '../utils/with-devtools';
+import { generateUniqueId } from '../utils/uuid';
 
 // ---------------------------------------------------------------------------
 // Storage helpers
@@ -24,8 +25,33 @@ function loadFromStorage(): GameState {
   if (!stored) return INITIAL_GAME_STATE;
   // Merge with INITIAL_GAME_STATE so that new fields get default values when
   // loading persisted state that predates those fields.
-  return { ...INITIAL_GAME_STATE, ...(JSON.parse(stored) as Partial<GameState>) };
+  const parsed = JSON.parse(stored) as Partial<GameState>;
+  return {
+    ...INITIAL_GAME_STATE,
+    ...parsed,
+    players: (parsed.players || []).map(p => ({ ...INITIAL_PLAYER, ...p })),
+    teams: (parsed.teams || []).map(t => ({ ...INITIAL_TEAM, ...t })),
+  };
 }
+
+const INITIAL_PLAYER: Player = {
+  id: '',
+  name: '',
+  score: 0,
+  dashes: 0,
+  history: [],
+  wins: 0,
+};
+
+const INITIAL_TEAM: Team = {
+  id: '',
+  name: '',
+  playerIds: [],
+  score: 0,
+  dashes: 0,
+  history: [],
+  wins: 0,
+};
 
 // ---------------------------------------------------------------------------
 // Pure helper functions (no side-effects, easy to unit-test independently)
@@ -46,9 +72,9 @@ function updateTeamsPlayerOrder(teams: Team[], orderedPlayers: Player[]): Team[]
   }));
 }
 
-function calcIndividualPoints(s: GameState, points: number): Partial<GameState> {
-  const players = [...s.players];
-  const player = { ...players[s.currentPlayerIndex] };
+function calcIndividualPoints(state: GameState, points: number): Partial<GameState> {
+  const players = [...state.players];
+  const player = { ...players[state.currentPlayerIndex] };
 
   player.history = [...player.history, points];
 
@@ -64,33 +90,63 @@ function calcIndividualPoints(s: GameState, points: number): Partial<GameState> 
     player.dashes = 0;
   }
 
-  players[s.currentPlayerIndex] = player;
+  players[state.currentPlayerIndex] = player;
 
-  let isGameOver = s.isGameOver;
-  let winnerId = s.winnerId;
-  let winnerType = s.winnerType;
-  let lastRoundStarted = s.lastRoundStarted;
-  let firstToReachTargetId = s.firstToReachTargetId;
-  const winnerTeamPlayerCount = s.winnerTeamPlayerCount;
+  let isGameOver = state.isGameOver;
+  let winnerId = state.winnerId;
+  let winnerType = state.winnerType;
+  let lastRoundStarted = state.lastRoundStarted;
+  let firstToReachTargetId = state.firstToReachTargetId;
+  const winnerTeamPlayerCount = state.winnerTeamPlayerCount;
 
-  if (player.score >= s.targetPoints && !lastRoundStarted) {
+  // Record turn
+  const turnRecord: PlayerTurnRecord = {
+    playerId: player.id,
+    playerName: player.name,
+    points: points,
+  };
+  const currentRound = [...state.currentRound, turnRecord];
+
+  if (player.score >= state.targetPoints && !lastRoundStarted) {
     lastRoundStarted = true;
     firstToReachTargetId = player.id;
   }
 
-  const nextPlayerIndex = (s.currentPlayerIndex + 1) % players.length;
+  const nextPlayerIndex = (state.currentPlayerIndex + 1) % players.length;
+
+  let currentGame = [...state.currentGame];
+  let currentRoundNumber = state.currentRoundNumber;
+  let finalTurnRecords = currentRound;
+  let nextRoundNumber = currentRoundNumber;
+
+  // Round completion
+  if (nextPlayerIndex === 0) {
+    currentGame.push({
+      roundNumber: currentRoundNumber,
+      turns: currentRound,
+    });
+    nextRoundNumber = currentRoundNumber + 1;
+    finalTurnRecords = [];
+  }
 
   // If last round was started and we are back to the first player, game is over
   if (lastRoundStarted && nextPlayerIndex === 0) {
     isGameOver = true;
 
-    const playersWithTarget = players.filter(p => p.score >= s.targetPoints);
+    const playersWithTarget = players.filter(p => p.score >= state.targetPoints);
     const maxScore = Math.max(...playersWithTarget.map(p => p.score), 0);
     const playersWithMaxScore = playersWithTarget.filter(p => p.score === maxScore);
     const firstToReach = playersWithMaxScore.find(p => p.id === firstToReachTargetId);
 
     winnerId = firstToReach ? firstToReach.id : (playersWithMaxScore[0]?.id || null);
     winnerType = 'player';
+
+    if (winnerId) {
+      const winnerIdx = players.findIndex(p => p.id === winnerId);
+      if (winnerIdx !== -1) {
+        players[winnerIdx] = { ...players[winnerIdx], wins: players[winnerIdx].wins + 1 };
+      }
+    }
   }
 
   return {
@@ -102,6 +158,9 @@ function calcIndividualPoints(s: GameState, points: number): Partial<GameState> 
     lastRoundStarted,
     firstToReachTargetId,
     winnerTeamPlayerCount,
+    currentRound: finalTurnRecords,
+    currentGame: currentGame,
+    currentRoundNumber: nextRoundNumber,
   };
 }
 
@@ -135,6 +194,14 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
   let firstToReachTargetId = s.firstToReachTargetId;
   let winnerTeamPlayerCount = s.winnerTeamPlayerCount;
 
+  // Record turn
+  const turnRecord: PlayerTurnRecord = {
+    playerId: player.id,
+    playerName: player.name,
+    points: points,
+  };
+  const currentTurnRecords = [...s.currentRound, turnRecord];
+
   if (team.score >= s.targetPoints && !lastRoundStarted) {
     lastRoundStarted = true;
     firstToReachTargetId = team.id;
@@ -166,6 +233,20 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
     }
   }
 
+  let currentRounds = [...s.currentGame];
+  let currentRoundNumber = s.currentRoundNumber;
+  let finalTurnRecords = currentTurnRecords;
+  let nextRoundNumber = currentRoundNumber;
+
+  if (nextPlayerIndex === 0) {
+    currentRounds.push({
+      roundNumber: currentRoundNumber,
+      turns: currentTurnRecords,
+    });
+    nextRoundNumber = currentRoundNumber + 1;
+    finalTurnRecords = [];
+  }
+
   if (isGameOver || (lastRoundStarted && nextPlayerIndex === 0)) {
     isGameOver = true;
     const teamsWithTarget = teams.filter(t => t.score >= s.targetPoints);
@@ -175,6 +256,13 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
 
     winnerId = firstToReach ? firstToReach.id : (teamsWithMaxScore[0]?.id || null);
     winnerType = 'team';
+
+    if (winnerId) {
+      const winnerIdx = teams.findIndex(t => t.id === winnerId);
+      if (winnerIdx !== -1) {
+        teams[winnerIdx] = { ...teams[winnerIdx], wins: teams[winnerIdx].wins + 1 };
+      }
+    }
   }
 
   const nextPlayer = players[nextPlayerIndex];
@@ -191,6 +279,9 @@ function calcTeamPoints(s: GameState, points: number): Partial<GameState> {
     lastRoundStarted,
     firstToReachTargetId,
     winnerTeamPlayerCount,
+    currentRound: finalTurnRecords,
+    currentGame: currentRounds,
+    currentRoundNumber: nextRoundNumber,
   };
 }
 
@@ -229,6 +320,10 @@ export const GameStore = signalStore(
       lastRoundStarted: store.lastRoundStarted(),
       firstToReachTargetId: store.firstToReachTargetId(),
       winnerTeamPlayerCount: store.winnerTeamPlayerCount(),
+      gameHistory: store.gameHistory(),
+      currentRound: store.currentRound(),
+      currentGame: store.currentGame(),
+      currentRoundNumber: store.currentRoundNumber(),
     })),
   })),
 
@@ -261,23 +356,48 @@ export const GameStore = signalStore(
     },
 
     addPoints(points: number): void {
-      const s = getState(store);
-      if (s.isGameOver) return;
+      debugger;
+      const state = getState(store);
+      if (state.isGameOver) return;
 
       // Points below minimum count as zero (dash)
-      const effectivePoints = points > 0 && points < s.minPointsPerTurn ? 0 : points;
-      patchState(
-        store,
-        s.gameMode === 'individual'
-          ? calcIndividualPoints(s, effectivePoints)
-          : calcTeamPoints(s, effectivePoints),
-      );
+      const effectivePoints = points > 0 && points < state.minPointsPerTurn ? 0 : points;
+      const updates = state.gameMode === 'individual'
+        ? calcIndividualPoints(state, effectivePoints)
+        : calcTeamPoints(state, effectivePoints);
+
+      // If game just ended, finalize the GameRecord
+      if (updates.isGameOver && !state.isGameOver) {
+        const winnerName = state.gameMode === 'individual'
+          ? (updates.players?.find(p => p.id === updates.winnerId)?.name || 'Unknown')
+          : (updates.teams?.find(t => t.id === updates.winnerId)?.name || 'Unknown');
+
+        let finalScores = '';
+        if (state.gameMode === 'individual') {
+          finalScores = updates.players?.map(p => `${p.name}: ${p.wins}`).join(', ') || '';
+        } else {
+          finalScores = updates.teams?.map(t => `${t.name}: ${t.wins}`).join(', ') || '';
+        }
+
+        // The last round is already in currentRounds because isGameOver only happens at nextPlayerIndex === 0
+        const gameRecord: GameRecord = {
+          id: generateUniqueId(),
+          timestamp: Date.now(),
+          winnerName,
+          finalScores,
+          rounds: updates.currentGame || state.currentGame,
+        };
+
+        updates.gameHistory = [...state.gameHistory, gameRecord];
+      }
+
+      patchState(store, updates);
     },
 
     resetGame(keepPlayers: boolean): void {
       const nextResetId = store.applicationState().resetId + 1;
+      const s = getState(store);
       if (keepPlayers) {
-        const s = getState(store);
         patchState(store, {
           ...INITIAL_GAME_STATE,
           gameMode: s.gameMode,
@@ -285,9 +405,7 @@ export const GameStore = signalStore(
           minPointsPerTurn: s.minPointsPerTurn,
           players: s.players.map(p => ({ ...p, score: 0, dashes: 0, history: [] })),
           teams: s.teams.map(t => ({ ...t, score: 0, dashes: 0, history: [] })),
-          lastRoundStarted: false,
-          firstToReachTargetId: null,
-          winnerTeamPlayerCount: null,
+          gameHistory: s.gameHistory,
           applicationState: { resetId: nextResetId },
         });
       } else {

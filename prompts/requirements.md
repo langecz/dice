@@ -41,3 +41,74 @@ or select the player who will start. In this case the player ordering remains un
 
 ---
 
+
+### Rules added
+
+## Game history
+There is a need to log all the player turns till the game is reset.
+It is necessary to remember teams/players turns, so it is possible to show the history of all games.
+It is necessary to count winning games of each player (in individual mode) or team (in team mode).
+The count of wins should be displayed after each game finishes.
+So, on the winner-card will be shown, just under 'Final Rankings' also the count of wins per player/team, sorted by wins.
+
+Also, a new component that will show the history of all games is needed. 
+The component will be called 'Game History' and will be accessible via the 'Log' button.
+The component will show the history in this way:
+
+There will be a list of each played game, each list item will be the expansion panel.
+Inside the 'Game' expansion panel, there will be a list of turns, each turn will be also an expansion panel.
+Inside the 'Turn' expansion panel, there will be a list of players and their scores.
+
+Example, there are two teams, A (players A1, A2, A3) and B (players B1, B2, B3).
+The first game starts by A1.
+In the first round, A1 rolls 1000 points; A2 rolls 1000 points; A3 rolls 0.
+Then B1 rolls 5000; B2 rolls 0, B3 rolls 0.
+In the second round, A1 rolls 1000 points; A2 rolls 0 points; A3 rolls 1000.
+Then B1 rolls 2000; B2 rolls 3100. The game ends, and the winner is team B.
+
+The second game starts by B1.
+In the first round, B1 rolls 0 points; B2 rolls 1000 points; B3 rolls 0.
+Then A1 rolls 5000; A2 rolls 0, A3 rolls 1000.
+In the second round, B1 rolls 0 points; B2 rolls 0 points; B3 rolls 1000.
+Then A1 rolls 2000; A2 rolls 0; A3 rolls 0.
+In the third round, B1 rolls 2100 points; B2 rolls 7000. The last round starts.
+Then A1 rolls 2000; A2 rolls 1000. The game ends, and the winner is team A.
+
+In the log, there will be shown:
+
+(expansion panel) Game 1 (B won, score is A: 0, B: 1)
+  (expansion panel) Round 1
+    A1: 1000 points
+    A2: 1000 points
+    A3: 0 points
+    B1: 5000 points
+    B2: 0 points
+    B3: 0 points
+  (expansion panel) Round 2
+    A1: 1000 points
+    A2: 0 points
+    A3: 1000 points
+    B1: 2000 points
+    B2: 3100 points
+(expansion panel) Game 2 (A won, score is A: 1, B: 1)
+  (expansion panel) Round 1
+    B1: 0 points
+    B2: 1000 points
+    B3: 0 points
+    A1: 5000 points
+    A2: 0 points
+    A3: 1000 points
+  (expansion panel) Round 2
+    B1: 0 points
+    B2: 0 points
+    B3: 1000 points
+    A1: 2000 points
+    A2: 0 points
+    A3: 0 points
+  (expansion panel) Round 3
+    B1: 2100 points
+    B2: 7000 points
+    B3: -
+    A1: 2000 points
+    A2: 1000 points
+    A3: -  

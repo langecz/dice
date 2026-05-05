@@ -62,6 +62,7 @@ export class PlayerManagementComponent {
       score: 0,
       dashes: 0,
       history: [],
+      wins: 0
     };
 
     this.players.update(ps => [...ps, newPlayer]);
@@ -90,6 +91,7 @@ export class PlayerManagementComponent {
       score: 0,
       dashes: 0,
       history: [],
+      wins: 0
     };
 
     this.teams.update(ts => [...ts, newTeam]);

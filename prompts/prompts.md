@@ -248,4 +248,3 @@ and players A1 and A2 must be allowed to play their turns.
 Fix this bug and create a test for this case. 
 
 ---
-

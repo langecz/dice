@@ -32,7 +32,7 @@ const PHASE_CONFIG: Record<string, PhaseConfig> = {
   ordering: { title: 'Player Ordering', actionButtons: [{ label: 'Manage Players', action: 'manage-players' }] },
   management: { title: 'Player Management' /*, actionButtons: [{ label: 'Reset', action: 'reset', class: 'btn-warn' }]*/ },
   game: { title: 'Dice Game', actionButtons: [{ label: 'Log', action: 'view-log' }, { label: 'New Game', action: 'new-game', class: 'btn-warn' }] },
-  log: { title: 'Game Log', actionButtons: [{ label: 'Back', action: 'game' }]}
+  history: { title: 'Game History', actionButtons: [{ label: 'Back', action: 'game' }]}
 };
 
 const DEFAULT_PHASE: PhaseConfig = PHASE_CONFIG['setup'];
@@ -91,9 +91,11 @@ export class MainPageComponent {
         break;
       }
       case 'view-log': {
-        console.log('view log');
-        alert('view log');
-        // void this.router.navigate(['/log']);
+        void this.router.navigate(['/history']);
+        break;
+      }
+      case 'game': {
+        void this.router.navigate(['/game']);
         break;
       }
     }

@@ -99,7 +99,8 @@ export class GameConfigComponent {
         name: trimmedName,
         score: 0,
         dashes: 0,
-        history: []
+        history: [],
+        wins: 0
       };
       this.players.update(p => [...p, newPlayer]);
     } else {
@@ -114,7 +115,8 @@ export class GameConfigComponent {
         playerIds: [],
         score: 0,
         dashes: 0,
-        history: []
+        history: [],
+        wins: 0
       };
       this.teams.update(t => [...t, newTeam]);
     }
@@ -139,7 +141,8 @@ export class GameConfigComponent {
       name: trimmedName,
       score: 0,
       dashes: 0,
-      history: []
+      history: [],
+      wins: 0
     };
     this.players.update(p => [...p, newPlayer]);
     this.teams.update(teams => teams.map(t =>

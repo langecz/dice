@@ -32,6 +32,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
       },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./components/game-history/game-history.component').then(m => m.GameHistoryComponent),
+      },
       { path: '', redirectTo: 'setup', pathMatch: 'full' },
     ],
   },

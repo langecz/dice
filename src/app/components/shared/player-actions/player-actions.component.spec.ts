@@ -7,11 +7,11 @@ import { DialogService } from '../../../services/dialog.service';
 import { Player, Team } from '../../../models/game.models';
 
 const makePlayer = (id: string, name: string): Player => ({
-  id, name, score: 0, dashes: 0, history: [],
+  id, name, score: 0, dashes: 0, history: [], wins: 0,
 });
 
 const makeTeam = (id: string, playerIds: string[]): Team => ({
-  id, name: `Team ${id}`, playerIds, score: 0, dashes: 0, history: [],
+  id, name: `Team ${id}`, playerIds, score: 0, dashes: 0, history: [], wins: 0,
 });
 
 describe('PlayerActionsComponent', () => {

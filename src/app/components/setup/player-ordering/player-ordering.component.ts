@@ -95,7 +95,7 @@ export class PlayerOrderingComponent {
     return this.teams().find(t => t.playerIds.includes(playerId))?.name || '';
   }
 
-  onBack(): void {
+  onBackToSetup(): void {
     void this.router.navigate(['/setup']);
   }
 
@@ -104,6 +104,7 @@ export class PlayerOrderingComponent {
     const startingId = this.selectedStartingPlayerId();
     const startIndex = players.findIndex(p => p.id === startingId);
 
+    debugger;
     const ordered = startIndex > 0
       ? [...players.slice(startIndex), ...players.slice(0, startIndex)]
       : players;

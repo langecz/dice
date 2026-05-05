@@ -10,8 +10,8 @@ describe('PlayerOrderingComponent', () => {
   let store: InstanceType<typeof GameStore>;
 
   const mockPlayers: Player[] = [
-    { id: '1', name: 'Player 1', score: 0, dashes: 0, history: [] },
-    { id: '2', name: 'Player 2', score: 0, dashes: 0, history: [] },
+    { id: '1', name: 'Player 1', score: 0, dashes: 0, history: [], wins: 0 },
+    { id: '2', name: 'Player 2', score: 0, dashes: 0, history: [], wins: 0 },
   ];
 
   beforeEach(async () => {

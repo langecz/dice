@@ -19,6 +19,18 @@
             }
           </mat-list>
         </div>
+
+        <div class="rankings wins-rankings">
+          <h3>Total Wins</h3>
+          <mat-list>
+            @for (result of winsRanking(); track result.id; let i = $index) {
+              <mat-list-item>
+                <span matListItemTitle>{{ i + 1 }}. {{ result.name }}</span>
+                <span matListItemLine>{{ result.wins }} wins</span>
+              </mat-list-item>
+            }
+          </mat-list>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

@@ -14,7 +14,7 @@ describe('PlayerManagementComponent', () => {
     mockStore = {
       gameMode: signal('individual'),
       players: signal([
-        { id: '1', name: 'Player 1', score: 0, dashes: 0, history: [] },
+        { id: '1', name: 'Player 1', score: 0, dashes: 0, history: [], wins: 0 },
       ]),
       teams: signal([]),
       updatePlayersAndTeams: vi.fn(),
@@ -62,7 +62,7 @@ describe('PlayerManagementComponent', () => {
    */
   it('should handle team mode operations', () => {
     mockStore.gameMode.set('team');
-    mockStore.teams.set([{ id: 't1', name: 'Team 1', playerIds: [], score: 0, dashes: 0, history: [] }]);
+    mockStore.teams.set([{ id: 't1', name: 'Team 1', playerIds: [], score: 0, dashes: 0, history: [], wins: 0 }]);
 
     component.players.set([...mockStore.players()]);
     component.teams.set([...mockStore.teams()]);
@@ -80,9 +80,9 @@ describe('PlayerManagementComponent', () => {
    * Verifies moving a player between teams.
    */
   it('should move player between teams', () => {
-    const p1 = { id: 'p1', name: 'P1', score: 0, dashes: 0, history: [] };
-    const t1 = { id: 't1', name: 'T1', playerIds: ['p1'], score: 0, dashes: 0, history: [] };
-    const t2 = { id: 't2', name: 'T2', playerIds: [], score: 0, dashes: 0, history: [] };
+    const p1 = { id: 'p1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 };
+    const t1 = { id: 't1', name: 'T1', playerIds: ['p1'], score: 0, dashes: 0, history: [], wins: 0 };
+    const t2 = { id: 't2', name: 'T2', playerIds: [], score: 0, dashes: 0, history: [], wins: 0 };
 
     component.players.set([p1]);
     component.teams.set([t1, t2]);

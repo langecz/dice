@@ -8,6 +8,7 @@ export interface Player {
   score: number;
   dashes: number; // consecutive zeros
   history: number[];
+  wins: number;
 }
 
 export interface Team {
@@ -17,11 +18,26 @@ export interface Team {
   score: number;
   dashes: number; // team dashes logic: three consecutive players in a row on the same team roll 0 points
   history: number[];
+  wins: number;
 }
 
-export interface Winner {
-  name: string;
-  score: number;
+export interface PlayerTurnRecord {
+  playerId: string;
+  playerName: string;
+  points: number | '-';
+}
+
+export interface RoundRecord {
+  roundNumber: number;
+  turns: PlayerTurnRecord[];
+}
+
+export interface GameRecord {
+  id: string;
+  timestamp: number;
+  winnerName: string;
+  finalScores: string; // e.g. "A: 1, B: 1" as requested in requirements
+  rounds: RoundRecord[];
 }
 
 export interface GameState {
@@ -39,6 +55,10 @@ export interface GameState {
   lastRoundStarted: boolean;
   firstToReachTargetId: string | null;
   winnerTeamPlayerCount: number | null;
+  gameHistory: GameRecord[];
+  currentRound: PlayerTurnRecord[];
+  currentGame: RoundRecord[];
+  currentRoundNumber: number;
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -56,4 +76,8 @@ export const INITIAL_GAME_STATE: GameState = {
   lastRoundStarted: false,
   firstToReachTargetId: null,
   winnerTeamPlayerCount: null,
+  gameHistory: [],
+  currentRound: [],
+  currentGame: [],
+  currentRoundNumber: 1,
 }

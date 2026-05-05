@@ -24,16 +24,16 @@ describe('GameStore - Team Mode Bug Reproduction', () => {
    */
   it('should allow other teams to play their turns when a team reaches target points in the middle of their turn', () => {
     const players = [
-      { id: 'A1', name: 'A1', score: 0, dashes: 0, history: [] },
-      { id: 'A2', name: 'A2', score: 0, dashes: 0, history: [] },
-      { id: 'A3', name: 'A3', score: 0, dashes: 0, history: [] },
-      { id: 'B1', name: 'B1', score: 0, dashes: 0, history: [] },
-      { id: 'B2', name: 'B2', score: 0, dashes: 0, history: [] },
-      { id: 'B3', name: 'B3', score: 0, dashes: 0, history: [] },
+      { id: 'A1', name: 'A1', score: 0, dashes: 0, history: [], wins: 0 },
+      { id: 'A2', name: 'A2', score: 0, dashes: 0, history: [], wins: 0 },
+      { id: 'A3', name: 'A3', score: 0, dashes: 0, history: [], wins: 0 },
+      { id: 'B1', name: 'B1', score: 0, dashes: 0, history: [], wins: 0 },
+      { id: 'B2', name: 'B2', score: 0, dashes: 0, history: [], wins: 0 },
+      { id: 'B3', name: 'B3', score: 0, dashes: 0, history: [], wins: 0 },
     ];
     const teams = [
-      { id: 'T_A', name: 'Team A', playerIds: ['A1', 'A2', 'A3'], score: 0, dashes: 0, history: [] },
-      { id: 'T_B', name: 'Team B', playerIds: ['B1', 'B2', 'B3'], score: 0, dashes: 0, history: [] },
+      { id: 'T_A', name: 'Team A', playerIds: ['A1', 'A2', 'A3'], score: 0, dashes: 0, history: [], wins: 0 },
+      { id: 'T_B', name: 'Team B', playerIds: ['B1', 'B2', 'B3'], score: 0, dashes: 0, history: [], wins: 0 },
     ];
 
     store.setupGame({

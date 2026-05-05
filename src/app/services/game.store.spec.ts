@@ -41,8 +41,8 @@ describe('GameStore', () => {
      */
     it('should setup individual game', () => {
       const players = [
-        { id: '1', name: 'Player 1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'Player 2', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'Player 1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'Player 2', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'individual',
@@ -65,11 +65,11 @@ describe('GameStore', () => {
      */
     it('should setup team game', () => {
       const players = [
-        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       const teams = [
-        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] }
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'team',
@@ -96,8 +96,8 @@ describe('GameStore', () => {
         targetPoints: 1000,
         minPointsPerTurn: 350,
         players: [
-          { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-          { id: '2', name: 'P2', score: 0, dashes: 0, history: [] }
+          { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+          { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
         ],
         teams: []
       });
@@ -145,8 +145,8 @@ describe('GameStore', () => {
         targetPoints: 10000,
         minPointsPerTurn: 350,
         players: [
-          { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-          { id: '2', name: 'P2', score: 0, dashes: 0, history: [] }
+          { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+          { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
         ],
         teams: []
       });
@@ -251,8 +251,8 @@ describe('GameStore', () => {
         targetPoints: 1000,
         minPointsPerTurn: 350,
         players: [
-          { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-          { id: '2', name: 'P2', score: 0, dashes: 0, history: [] }
+          { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+          { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
         ],
         teams: []
       });
@@ -269,14 +269,14 @@ describe('GameStore', () => {
   describe('Point Calculation - Team Mode', () => {
     beforeEach(() => {
       const players = [
-        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
-        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] },
-        { id: '4', name: 'P4', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '4', name: 'P4', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       const teams = [
-        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] },
-        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [] }
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'team',
@@ -303,14 +303,14 @@ describe('GameStore', () => {
     it('should apply team penalty after 3 consecutive zero-point turns from team members', () => {
       // Set high target to avoid early game over
       const players = [
-        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
-        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] },
-        { id: '4', name: 'P4', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '4', name: 'P4', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       const teams = [
-        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] },
-        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [] }
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'team',
@@ -367,16 +367,16 @@ describe('GameStore', () => {
      */
     it('should finish the game when the same count of players as in winner team finishes their turn (3-player teams)', () => {
       const players = [
-        { id: 'A1', name: 'A1', score: 0, dashes: 0, history: [] },
-        { id: 'A2', name: 'A2', score: 0, dashes: 0, history: [] },
-        { id: 'A3', name: 'A3', score: 0, dashes: 0, history: [] },
-        { id: 'B1', name: 'B1', score: 0, dashes: 0, history: [] },
-        { id: 'B2', name: 'B2', score: 0, dashes: 0, history: [] },
-        { id: 'B3', name: 'B3', score: 0, dashes: 0, history: [] }
+        { id: 'A1', name: 'A1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 'A2', name: 'A2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 'A3', name: 'A3', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 'B1', name: 'B1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 'B2', name: 'B2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 'B3', name: 'B3', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       const teams = [
-        { id: 'TA', name: 'Team A', playerIds: ['A1', 'A2', 'A3'], score: 0, dashes: 0, history: [] },
-        { id: 'TB', name: 'Team B', playerIds: ['B1', 'B2', 'B3'], score: 0, dashes: 0, history: [] }
+        { id: 'TA', name: 'Team A', playerIds: ['A1', 'A2', 'A3'], score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 'TB', name: 'Team B', playerIds: ['B1', 'B2', 'B3'], score: 0, dashes: 0, history: [], wins: 0 }
       ];
 
       store.setupGame({
@@ -494,7 +494,7 @@ describe('GameStore', () => {
 
       store.setupGame({
         gameMode: 'individual',
-        players: [{ id: '1', name: 'P1', score: 0, dashes: 0, history: [] }]
+        players: [{ id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 }]
       });
 
       expect(store.state().winnerTeamPlayerCount).toBeNull();
@@ -513,7 +513,7 @@ describe('GameStore', () => {
         gameMode: 'individual',
         targetPoints: 1000,
         minPointsPerTurn: 350,
-        players: [{ id: '1', name: 'P1', score: 0, dashes: 0, history: [] }],
+        players: [{ id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 }],
         teams: []
       });
       store.resetGame(false);
@@ -541,7 +541,7 @@ describe('GameStore', () => {
         gameMode: 'individual',
         targetPoints: 1000,
         minPointsPerTurn: 350,
-        players: [{ id: '1', name: 'P1', score: 500, dashes: 1, history: [500] }],
+        players: [{ id: '1', name: 'P1', score: 500, dashes: 1, history: [500], wins: 0 }],
         teams: []
       });
       const resetIdBefore = store.applicationState().resetId;
@@ -557,7 +557,7 @@ describe('GameStore', () => {
         gameMode: 'individual',
         targetPoints: 1000,
         minPointsPerTurn: 350,
-        players: [{ id: '1', name: 'P1', score: 500, dashes: 1, history: [500, 0] }],
+        players: [{ id: '1', name: 'P1', score: 500, dashes: 1, history: [500, 0], wins: 0 }],
         teams: []
       });
       store.resetGame(true);
@@ -576,9 +576,9 @@ describe('GameStore', () => {
   describe('Post-Game Reordering', () => {
     beforeEach(() => {
       const players = [
-        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
-        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'individual',
@@ -625,11 +625,11 @@ describe('GameStore', () => {
      */
     it('should shift player order correctly with more players', () => {
       const players = [
-        { id: '1', name: 'A', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'B', score: 0, dashes: 0, history: [] },
-        { id: '3', name: 'C', score: 0, dashes: 0, history: [] },
-        { id: '4', name: 'D', score: 0, dashes: 0, history: [] },
-        { id: '5', name: 'E', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'A', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'B', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '3', name: 'C', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '4', name: 'D', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '5', name: 'E', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'individual',
@@ -656,14 +656,14 @@ describe('GameStore', () => {
      */
     it('should update team playerIds order when reordering in team mode', () => {
       const players = [
-        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
-        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] },
-        { id: '4', name: 'P4', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '4', name: 'P4', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       const teams = [
-        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] },
-        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [] }
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [], wins: 0 }
       ];
       store.setupGame({
         gameMode: 'team',
@@ -692,14 +692,14 @@ describe('GameStore', () => {
      */
     it('should update team playerIds order when setupGame is called in team mode', () => {
       const players = [
-        { id: '1', name: 'P1', score: 0, dashes: 0, history: [] },
-        { id: '2', name: 'P2', score: 0, dashes: 0, history: [] },
-        { id: '3', name: 'P3', score: 0, dashes: 0, history: [] },
-        { id: '4', name: 'P4', score: 0, dashes: 0, history: [] }
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '3', name: 'P3', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '4', name: 'P4', score: 0, dashes: 0, history: [], wins: 0 }
       ];
       const teams = [
-        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [] },
-        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [] }
+        { id: 't1', name: 'Team 1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [], wins: 0 },
+        { id: 't2', name: 'Team 2', playerIds: ['3', '4'], score: 0, dashes: 0, history: [], wins: 0 }
       ];
 
       // New player order: P2, P4, P1, P3
@@ -721,6 +721,61 @@ describe('GameStore', () => {
       expect(state.teams[1].playerIds).toEqual(['4', '3']);
       // Current team should be Team 1 because P2 (first player) is in Team 1
       expect(state.currentTeamIndex).toBe(0);
+    });
+  });
+  /**
+   * Tests for game history and win count persistence.
+   */
+  describe('Game History and Wins', () => {
+    beforeEach(() => {
+      store.setupGame({
+        gameMode: 'individual',
+        targetPoints: 500,
+        minPointsPerTurn: 100,
+        players: [
+          { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+          { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
+        ],
+        teams: []
+      });
+    });
+
+    it('should track turns in currentTurnRecords', () => {
+      store.addPoints(200);
+      expect(store.state().currentRound.length).toBe(1);
+      expect(store.state().currentRound[0].points).toBe(200);
+      expect(store.state().currentRound[0].playerName).toBe('P1');
+    });
+
+    it('should archive rounds when all players have played', () => {
+      store.addPoints(200); // P1
+      store.addPoints(300); // P2
+      expect(store.state().currentGame.length).toBe(1);
+      expect(store.state().currentGame[0].turns.length).toBe(2);
+      expect(store.state().currentRound.length).toBe(0);
+      expect(store.state().currentRoundNumber).toBe(2);
+    });
+
+    it('should archive game to gameHistory and increment wins when game ends', () => {
+      store.addPoints(500); // P1 reaches target
+      store.addPoints(200); // P2 finishes last round
+
+      const state = store.state();
+      expect(state.isGameOver).toBe(true);
+      expect(state.gameHistory.length).toBe(1);
+      expect(state.gameHistory[0].winnerName).toBe('P1');
+      expect(state.players.find(p => p.id === '1')?.wins).toBe(1);
+    });
+
+    it('should preserve wins and history when resetting with keepPlayers=true', () => {
+      store.addPoints(500); // P1 reaches target
+      store.addPoints(200); // P2 finishes last round
+
+      store.resetGame(true);
+      const state = store.state();
+      expect(state.gameHistory.length).toBe(1);
+      expect(state.players.find(p => p.id === '1')?.wins).toBe(1);
+      expect(state.players.find(p => p.id === '1')?.score).toBe(0);
     });
   });
 });
