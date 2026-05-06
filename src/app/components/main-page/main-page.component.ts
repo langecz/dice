@@ -11,6 +11,10 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData,
 } from '../shared/confirm-dialog/confirm-dialog.component';
+import {
+  ResetGameConfirmDialogComponent,
+  ResetGameConfirmDialogData, ResetGameConfirmDialogResult
+} from '../shared/reset-game-confirm-dialog/reset-game-confirm-dialog.component';
 
 type buttonAction = 'reset' | 'new-game' | 'manage-players' | 'view-log' | 'game' | 'ordering';
 
@@ -95,25 +99,17 @@ export class MainPageComponent {
 
   private confirmReset(): void {
     const dialogRef = this.dialogService.open<
-      ConfirmDialogComponent,
-      ConfirmDialogData,
-      boolean
-    >(ConfirmDialogComponent, {
+      ResetGameConfirmDialogComponent,
+      ResetGameConfirmDialogData,
+      ResetGameConfirmDialogResult
+    >(ResetGameConfirmDialogComponent, {
       data: {
-        title: 'Reset Game',
-        message:
-          'Are you sure you want to reset everything to the initial state? All current setup will be lost.',
-        confirmText: 'Reset',
-        cancelText: 'Cancel',
+        hasGameHistory: this.store.gameHistory().length > 0,
       },
     });
 
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.store.resetGame(false);
-        void this.router.navigate(['/setup']);
-        // this.currentPage.set('setup');
-      }
+    dialogRef.afterClosed().subscribe(result => {
+      void this.handleResetDialogResult(result);
     });
   }
 
@@ -138,5 +134,14 @@ export class MainPageComponent {
         void this.router.navigate(['/ordering']);
       }
     });
+  }
+
+  private async handleResetDialogResult(
+    result: ResetGameConfirmDialogResult | undefined,
+  ): Promise<void> {
+    if (result === 'reset') {
+      this.store.resetGame(false);
+      void this.router.navigate(['/setup']);
+    }
   }
 }

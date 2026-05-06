@@ -6,7 +6,7 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/m
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GameStore } from '../../../services/game.store';
-import { SnackbarService } from '../../../services/snackbar.service';
+import { GameLogExportService } from '../../../services/game-log-export';
 
 @Component({
   selector: 'games-log',
@@ -26,63 +26,12 @@ import { SnackbarService } from '../../../services/snackbar.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GamesLogComponent {
-  store = inject(GameStore);
-  private readonly snackbarService = inject(SnackbarService);
-  gameHistory = this.store.gameHistory;
+  readonly #store = inject(GameStore);
+  readonly #gameLogExportService = inject(GameLogExportService);
+
+  gameHistory = this.#store.gameHistory;
 
   async saveGameLog(): Promise<void> {
-    const dataToSave = {
-      gameHistory: this.store.gameHistory(),
-      players: this.store.players(),
-      teams: this.store.teams(),
-    };
-
-    const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: 'application/json' });
-
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-
-    const fileName = `dice-game-${year}-${month}-${day}_${hours}-${minutes}.json`;
-
-    // Try to use File System Access API for "Save As" dialog
-    if ('showSaveFilePicker' in window) {
-      try {
-        const handle = await (window as any).showSaveFilePicker({
-          suggestedName: fileName,
-          startIn: 'downloads',
-          types: [{
-            description: 'JSON Files',
-            accept: { 'application/json': ['.json'] },
-          }],
-        });
-
-        const writable = await handle.createWritable();
-        await writable.write(blob);
-        await writable.close();
-        this.snackbarService.showSuccess(`File '${fileName}' has been saved`)
-        return;
-      } catch (err: any) {
-        // If user cancels, we just return
-        if (err.name === 'AbortError') {
-          return;
-        }
-        console.error('Save as dialog failed', err);
-        this.snackbarService.showError(`Error: file '${fileName}' has NOT been saved`)
-        // Fallback to direct download if something else went wrong
-      }
-    }
-
-    // Fallback: Direct download
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    window.URL.revokeObjectURL(url);
-    this.snackbarService.showSuccess(`File '${fileName}' has been saved to 'Downloads'`)
+    await this.#gameLogExportService.saveGameLog();
   }
 }

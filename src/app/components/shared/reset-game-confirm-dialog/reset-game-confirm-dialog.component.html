@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Reset Game</h2>
+
+<mat-dialog-content>
+  <p>
+    Are you sure you want to reset everything to the initial state?
+    All current setup will be lost.
+  </p>
+
+  @if (data.hasGameHistory) {
+    <mat-card class="history-card" appearance="outlined">
+      <mat-card-content>
+        <p class="emphasized-text">
+          There exists game history. You can save it before resetting.
+        </p>
+        <div class="card-actions">
+          <button matButton="filled" class="btn-success" (click)="save()">
+            Save The Log
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="filled" (click)="cancel()">Cancel</button>
+
+  <button matButton="filled" class="btn-warn" (click)="reset()">
+    Reset
+  </button>
+</mat-dialog-actions>

@@ -1,32 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GamesLogComponent } from './games-log.component';
+import { GameLogExportService } from '../../../services/game-log-export';
 import { GameStore } from '../../../services/game.store';
 import { signal } from '@angular/core';
-import { SnackbarService } from '../../../services/snackbar.service';
 
 describe('GamesLogComponent', () => {
   let component: GamesLogComponent;
   let fixture: ComponentFixture<GamesLogComponent>;
   let mockGameStore: any;
-  let mockSnackbarService: any;
+  let mockGameLogExportService: any;
 
   beforeEach(async () => {
     mockGameStore = {
       gameHistory: signal([]),
-      players: signal([]),
-      teams: signal([]),
     };
 
-    mockSnackbarService = {
-      showSuccess: vi.fn(),
-      showError: vi.fn(),
+    mockGameLogExportService = {
+      saveGameLog: vi.fn().mockResolvedValue(true),
     };
 
     await TestBed.configureTestingModule({
       imports: [GamesLogComponent],
       providers: [
         { provide: GameStore, useValue: mockGameStore },
-        { provide: SnackbarService, useValue: mockSnackbarService },
+        { provide: GameLogExportService, useValue: mockGameLogExportService },
       ]
     }).compileComponents();
 
@@ -57,43 +54,9 @@ describe('GamesLogComponent', () => {
     expect(button).toBeTruthy();
   });
 
-  // Test that saveGameLog triggers showSaveFilePicker when available
-  it('should use showSaveFilePicker when available', async () => {
-    const mockWritable = {
-      write: vi.fn().mockResolvedValue(undefined),
-      close: vi.fn().mockResolvedValue(undefined),
-    };
-    const mockHandle = {
-      createWritable: vi.fn().mockResolvedValue(mockWritable),
-    };
-    const showSaveFilePickerSpy = vi.fn().mockResolvedValue(mockHandle);
-    (window as any).showSaveFilePicker = showSaveFilePickerSpy;
-
+  // Test that saveGameLog calls GameLogExportService.saveGameLog
+  it('should call GameLogExportService.saveGameLog when saveGameLog is called', async () => {
     await component.saveGameLog();
-
-    expect(showSaveFilePickerSpy).toHaveBeenCalled();
-    expect(mockWritable.write).toHaveBeenCalled();
-    expect(mockWritable.close).toHaveBeenCalled();
-
-    delete (window as any).showSaveFilePicker;
-  });
-
-  // Test that saveGameLog fallbacks to direct download when showSaveFilePicker is not available
-  it('should fallback to direct download when showSaveFilePicker is not available', async () => {
-    delete (window as any).showSaveFilePicker;
-    const createObjectURLSpy = vi.spyOn(window.URL, 'createObjectURL').mockReturnValue('blob:url');
-    const revokeObjectURLSpy = vi.spyOn(window.URL, 'revokeObjectURL').mockImplementation(() => {});
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
-
-    await component.saveGameLog();
-
-    expect(createObjectURLSpy).toHaveBeenCalled();
-    expect(clickSpy).toHaveBeenCalled();
-    expect(revokeObjectURLSpy).toHaveBeenCalled();
-    expect(mockSnackbarService.showSuccess).toHaveBeenCalled();
-
-    createObjectURLSpy.mockRestore();
-    revokeObjectURLSpy.mockRestore();
-    clickSpy.mockRestore();
+    expect(mockGameLogExportService.saveGameLog).toHaveBeenCalled();
   });
 });

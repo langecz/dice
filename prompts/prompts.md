@@ -286,3 +286,8 @@ This service will contain `showSuccess` and `showError` methods. The service wil
 All the components will use this service to show snackbars and will NOT inject `MatSnackBar` directly.
 
 ---
+
+I need to add a check when the user wants to RESET a configuration.
+In case that there exists no empty gameHistory in the store, it is necessary to show also an option to save the history.
+There should be used the same handling as when the user clicks on the 'Save Game Log' button in the 'games-log' component.
+How to handle this case?
