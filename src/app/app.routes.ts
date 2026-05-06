@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { hasUnsavedChangesGuard } from './guards/unsaved-changes.guard';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,7 @@ export const routes: Routes = [
           import('./components/setup/player-management/player-management.component').then(
             m => m.PlayerManagementComponent,
           ),
+        canDeactivate: [hasUnsavedChangesGuard],
       },
       {
         path: 'game',

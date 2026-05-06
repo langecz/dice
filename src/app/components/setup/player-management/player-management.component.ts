@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   linkedSignal,
   WritableSignal,
@@ -20,6 +21,7 @@ import { generateUniqueId } from '../../../utils/uuid';
 import { showSnackbarError } from '../../../utils/snackbar';
 import { PlayerActionsComponent } from '../../shared/player-actions/player-actions.component';
 import { TeamActionsComponent } from '../../shared/team-actions/team-actions.component';
+import { HasUnsavedChanges } from '../../../interfaces/unsaved-changes.interface';
 @Component({
   selector: 'app-player-management',
   imports: [
@@ -38,7 +40,7 @@ import { TeamActionsComponent } from '../../shared/team-actions/team-actions.com
   styleUrl: './player-management.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerManagementComponent {
+export class PlayerManagementComponent implements HasUnsavedChanges {
   private readonly store = inject(GameStore);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
@@ -46,6 +48,37 @@ export class PlayerManagementComponent {
   readonly gameMode = this.store.gameMode;
   readonly players: WritableSignal<Player[]> = linkedSignal<Player[]>(() => [...this.store.players()]);
   readonly teams: WritableSignal<Team[]> = linkedSignal<Team[]>(() => [...this.store.teams()]);
+
+  readonly hasUnsavedChanges = computed(() => {
+
+    /*
+    * complex check used, instead of just dirty and touched check
+    *  - It checks if the number of players/teams has changed.
+    *  - It checks if any names have been modified.
+    *  - It checks if the composition of teams (playerIds) has changed.
+    * */
+
+    const originalPlayers = this.store.players();
+    const currentPlayers = this.players();
+    const originalTeams = this.store.teams();
+    const currentTeams = this.teams();
+
+    if (originalPlayers.length !== currentPlayers.length || originalTeams.length !== currentTeams.length) {
+      return true;
+    }
+
+    const playersChanged = currentPlayers.some((p, i) =>
+      p.id !== originalPlayers[i].id || p.name !== originalPlayers[i].name
+    );
+    if (playersChanged) return true;
+
+    return currentTeams.some((t, i) =>
+      t.id !== originalTeams[i].id ||
+      t.name !== originalTeams[i].name ||
+      t.playerIds.length !== originalTeams[i].playerIds.length ||
+      t.playerIds.some((id, j) => id !== originalTeams[i].playerIds[j])
+    );
+  });
 
   addPlayer(name: string, teamId?: string): void {
     const trimmedName = name.trim();
@@ -113,10 +146,6 @@ export class PlayerManagementComponent {
 
   onSave(): void {
     this.store.updatePlayersAndTeams(this.players(), this.teams());
-    void this.router.navigate(['/ordering']);
-  }
-
-  onCancel(): void {
     void this.router.navigate(['/ordering']);
   }
 

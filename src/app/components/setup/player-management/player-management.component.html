@@ -1,4 +1,7 @@
 <p>Manage teams and players. It is possible to change team/player name; remove team/player; move players between teams.</p>
+<div class="page-actions">
+  <button matButton="filled" class="btn-success" (click)="onSave()" [disabled]="!hasUnsavedChanges()">SAVE CHANGES</button>
+</div>
 @if (gameMode() === 'individual') {
   <div class="page-section">
     <div class="page-section-header">
@@ -80,8 +83,6 @@
                     [teams]="teams"
                     deleteAriaLabel="Remove player from team">
                   </app-player-actions>
-<!--                  <span matListItemLine class="move-line flex-row flex-align-center">-->
-<!--                    <mat-form-field class="move-select text-small">-->
                     <mat-form-field class="team-select">
                       <mat-label>Team</mat-label>
                       <mat-select [value]="team.id" (selectionChange)="movePlayer(player.id, $event.value)" aria-label="Move player to team">
@@ -90,7 +91,6 @@
                         }
                       </mat-select>
                     </mat-form-field>
-<!--                  </span>-->
                 </mat-list-item>
               }
             }
@@ -100,8 +100,3 @@
     }
   </div>
 }
-
-<div class="page-actions">
-  <button matButton="filled" class="btn-accent" (click)="onCancel()">CANCEL</button>
-  <button matButton="filled" class="btn-success" (click)="onSave()">SAVE CHANGES</button>
-</div>

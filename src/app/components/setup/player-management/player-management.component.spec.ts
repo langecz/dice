@@ -92,4 +92,23 @@ describe('PlayerManagementComponent', () => {
     expect(component.teams().find(t => t.id === 't1')?.playerIds).not.toContain('p1');
     expect(component.teams().find(t => t.id === 't2')?.playerIds).toContain('p1');
   });
+
+  /**
+   * Verifies detecting unsaved changes.
+   */
+  it('should detect unsaved changes when a player is added', () => {
+    expect(component.hasUnsavedChanges()).toBe(false);
+    component.addPlayer('New Player');
+    expect(component.hasUnsavedChanges()).toBe(true);
+  });
+
+  /**
+   * Verifies detecting unsaved changes when a team is added.
+   */
+  it('should detect unsaved changes when a team is added', () => {
+    mockStore.gameMode.set('team');
+    expect(component.hasUnsavedChanges()).toBe(false);
+    component.addTeam('New Team');
+    expect(component.hasUnsavedChanges()).toBe(true);
+  });
 });

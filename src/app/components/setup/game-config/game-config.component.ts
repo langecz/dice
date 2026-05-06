@@ -122,7 +122,6 @@ export class GameConfigComponent {
     }
   }
 
-
   addPlayerToTeam(teamId: string, playerName: string): void {
     const trimmedName = playerName?.trim();
     if (!trimmedName) return;

@@ -12,7 +12,7 @@ import {
   ConfirmDialogData,
 } from '../shared/confirm-dialog/confirm-dialog.component';
 
-type buttonAction = 'reset' | 'new-game' | 'manage-players' | 'view-log' | 'game';
+type buttonAction = 'reset' | 'new-game' | 'manage-players' | 'view-log' | 'game' | 'ordering';
 
 interface ButtonConfig {
   label: string;
@@ -25,12 +25,10 @@ interface PhaseConfig {
   actionButtons?: ButtonConfig[];
 }
 
-//type PAGE = 'setup' | 'ordering' | 'management' | 'game' | 'log';
-
 const PHASE_CONFIG: Record<string, PhaseConfig> = {
   setup: { title: 'Game Setup', actionButtons: [{ label: 'Reset', action: 'reset',  class: 'btn-warn'}]},
   ordering: { title: 'Player Ordering', actionButtons: [{ label: 'Manage Players', action: 'manage-players' }] },
-  management: { title: 'Player Management' /*, actionButtons: [{ label: 'Reset', action: 'reset', class: 'btn-warn' }]*/ },
+  management: { title: 'Player Management' , actionButtons: [{ label: 'Back', action: 'ordering', class: 'btn-warn' }] },
   game: { title: 'Dice Game', actionButtons: [{ label: 'Log', action: 'view-log' }, { label: 'New Game', action: 'new-game', class: 'btn-warn' }] },
   history: { title: 'Game History', actionButtons: [{ label: 'Back', action: 'game' }]}
 };
@@ -86,6 +84,10 @@ export class MainPageComponent {
       }
       case 'game': {
         void this.router.navigate(['/game']);
+        break;
+      }
+      case 'ordering': {
+        void this.router.navigate(['/ordering']);
         break;
       }
     }

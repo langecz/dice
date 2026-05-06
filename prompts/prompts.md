@@ -267,3 +267,8 @@ Use as many as possible classes from the `styles.scss` file.
 Use classes from the `component styles` only when it is necessary.
 
 ---
+
+On the 'Player Management' page, when a user makes any change and then clicks on the 'Back' button, 
+the config dialog will be shown, with information that there are unsaved changes on the page.
+
+---
