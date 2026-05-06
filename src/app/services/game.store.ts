@@ -328,6 +328,106 @@ export const GameStore = signalStore(
   })),
 
   withMethods((store) => ({
+    updateLastRoll(playerId: string, newPoints: number): void {
+      const state = getState(store);
+      // We need to find all rolls in chronological order, update the last one for playerId, and re-run the game.
+      // 1. Collect all turns from currentGame and currentRound
+      const allTurns: PlayerTurnRecord[] = [];
+      state.currentGame.forEach(r => allTurns.push(...r.turns));
+      allTurns.push(...state.currentRound);
+
+      // 2. Find the last turn for this player
+      const lastPlayerTurnIndex = [...allTurns].reverse().findIndex(t => t.playerId === playerId);
+      if (lastPlayerTurnIndex === -1) return;
+
+      const actualIndex = allTurns.length - 1 - lastPlayerTurnIndex;
+      allTurns[actualIndex] = { ...allTurns[actualIndex], points: newPoints };
+
+      // 3. Reset game state to the point BEFORE any turns were made, but KEEPING configurations and players
+      // We need to know who the STARTING player was.
+      // In this implementation, when game starts, the player list is already ordered.
+      // So we can start from index 0.
+
+      // IMPORTANT: We must NOT reset the wins that were already incremented if the game had ended.
+      // But actually, re-running everything WILL re-increment wins if the game ends again.
+      // So we should probably reset wins to what they were BEFORE this game started if we want full consistency.
+      // However, the current resetGame(true) resets scores but keeps wins?
+      // Let's check resetGame.
+
+      const initialPlayers = state.players.map(p => ({ ...p, score: 0, dashes: 0, history: [] }));
+      const initialTeams = state.teams.map(t => ({ ...t, score: 0, dashes: 0, history: [] }));
+
+      let currentState: GameState = {
+        ...state,
+        players: initialPlayers,
+        teams: initialTeams,
+        currentPlayerIndex: 0,
+        currentTeamIndex: state.gameMode === 'team' ? getTeamIndexForPlayer(initialTeams, initialPlayers[0].id) : 0,
+        isStarted: true,
+        isGameOver: false,
+        winnerId: null,
+        winnerType: null,
+        lastRoundStarted: false,
+        firstToReachTargetId: null,
+        winnerTeamPlayerCount: null,
+        currentRound: [],
+        currentGame: [],
+        currentRoundNumber: 1,
+        // We should NOT touch gameHistory or wins of previous games here,
+        // but if the game just finished and we are updating it, we might need to remove the last entry from gameHistory.
+      };
+
+      // If the game was over, it added an entry to gameHistory. We should remove it before re-calculating.
+      let newGameHistory = [...state.gameHistory];
+      if (state.isGameOver) {
+        newGameHistory.pop();
+        // Also decrement wins for the winner of that game because re-running will increment it again
+        if (state.winnerId) {
+          if (state.winnerType === 'player') {
+            const idx = currentState.players.findIndex(p => p.id === state.winnerId);
+            if (idx !== -1) currentState.players[idx].wins--;
+          } else {
+            const idx = currentState.teams.findIndex(t => t.id === state.winnerId);
+            if (idx !== -1) currentState.teams[idx].wins--;
+          }
+        }
+      }
+      currentState.gameHistory = newGameHistory;
+
+      // 4. Re-apply all turns
+      allTurns.forEach(turn => {
+        const points = typeof turn.points === 'number' ? turn.points : 0;
+        const effectivePoints = points > 0 && points < currentState.minPointsPerTurn ? 0 : points;
+        const updates = currentState.gameMode === 'individual'
+          ? calcIndividualPoints(currentState, effectivePoints)
+          : calcTeamPoints(currentState, effectivePoints);
+
+        currentState = { ...currentState, ...updates };
+
+        // Handle game completion inside the loop if it happens
+        if (updates.isGameOver) {
+           const winnerName = currentState.gameMode === 'individual'
+            ? (currentState.players.find(p => p.id === currentState.winnerId)?.name || 'Unknown')
+            : (currentState.teams.find(t => t.id === currentState.winnerId)?.name || 'Unknown');
+
+          const finalScores = currentState.gameMode === 'individual'
+            ? currentState.players.map(p => `${p.name}: ${p.wins}`).join(', ') || ''
+            : currentState.teams.map(t => `${t.name}: ${t.wins}`).join(', ') || '';
+
+          const gameRecord: GameRecord = {
+            id: generateUniqueId(),
+            timestamp: Date.now(),
+            winnerName,
+            finalScores,
+            rounds: currentState.currentGame,
+          };
+          currentState.gameHistory = [...currentState.gameHistory, gameRecord];
+        }
+      });
+
+      patchState(store, currentState);
+    },
+
     setupGame(config: Partial<GameState>): void {
       const s = getState(store);
       const merged = { ...s, ...config };

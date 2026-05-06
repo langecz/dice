@@ -5,7 +5,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Team, Player } from '../../../models/game.models';
 import { DialogService } from '../../../services/dialog.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { EditNameDialogComponent, EditNameDialogData } from '../edit-name-dialog/edit-name-dialog.component';
+import { InputDialogComponent, InputDialogData } from '../input-dialog/input-dialog.component';
 import { showSnackbarError } from '../../../utils/snackbar';
 
 @Component({
@@ -33,16 +33,17 @@ export class TeamActionsComponent {
   handleEdit(): void {
     const team = this.team();
 
-    const dialogRef = this.dialog.open<EditNameDialogComponent, EditNameDialogData, string | null>(
-      EditNameDialogComponent,
+    const dialogRef = this.dialog.open<InputDialogComponent, InputDialogData, string | null>(
+      InputDialogComponent,
       {
         data: {
           title: 'Edit Team',
           label: 'Team name',
-          currentName: team.name,
+          value: team.name,
           confirmText: 'Save',
           cancelText: 'Cancel',
-        } satisfies EditNameDialogData,
+          required: true,
+        } satisfies InputDialogData,
       },
     );
 

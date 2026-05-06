@@ -248,3 +248,10 @@ and players A1 and A2 must be allowed to play their turns.
 Fix this bug and create a test for this case. 
 
 ---
+
+Implement 'Current game log' into `current-game` component. There will be shown:
+* list of rolls from GameStore.currentRound. The header of this section is "Current Round"
+* list of rounds from GameStore.currentGame, sorted by round number descending. The header of each round is "Round #".
+* each round contains a list of rolls belonging to the round showing the player name, team name, points rolled
+
+It is also possible to update ONLY the last roll of each player. After the update, all relevant states must be recalculated.  

@@ -1,0 +1,39 @@
+.current-game-log {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 1px;
+}
+
+.round-card {
+  width: 100%;
+}
+
+.turn-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.turn-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.player-name {
+  font-weight: bold;
+}
+
+.team-name {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9em;
+  margin-left: 4px;
+}
+
+.turn-points {
+  color: var(--mat-sys-on-surface-variant, #666);
+}

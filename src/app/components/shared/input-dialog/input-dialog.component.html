@@ -1,12 +1,15 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 <mat-dialog-content>
-  <mat-form-field appearance="outline" class="full-width">
+  @if (data.description) {
+    <p>{{ data.description }}</p>
+  }
+  <mat-form-field class="full-width">
     <mat-label>{{ data.label }}</mat-label>
     <input
       matInput
-      #nameInput
-      [value]="name()"
-      (input)="name.set(nameInput.value)"
+      [type]="data.type || 'text'"
+      [value]="value()"
+      (input)="onInput($event)"
       [attr.aria-label]="data.label"
       (keydown.enter)="confirm()"
     />
@@ -14,8 +17,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button matButton="filled" (click)="cancel()">{{ data.cancelText ?? 'Cancel' }}</button>
-  <button matButton="filled" class="btn-success" (click)="confirm()" [disabled]="!name().trim()">
+  <button matButton="filled" class="btn-success" (click)="confirm()" [disabled]="!isValid">
     {{ data.confirmText ?? 'Save' }}
   </button>
 </mat-dialog-actions>
-

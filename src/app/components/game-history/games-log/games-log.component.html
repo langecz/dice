@@ -1,8 +1,6 @@
-<!--<div>-->
   @if (gameHistory().length === 0) {
     <p>No games played yet.</p>
   } @else {
-<!--    <mat-accordion multi>-->
       @for (game of gameHistory(); track game.id; let idx = $index) {
 
         <mat-card class="team-card">
@@ -25,7 +23,8 @@
               <mat-accordion multi>
                 @for (round of game.rounds; track round.roundNumber) {
                   <mat-expansion-panel>
-                    <mat-expansion-panel-header>
+                    <mat-expansion-panel-header class="expansion-panel-header">
+<!--                    <mat-expansion-panel-header>-->
                       <mat-panel-title>Round {{ round.roundNumber }}</mat-panel-title>
                     </mat-expansion-panel-header>
 

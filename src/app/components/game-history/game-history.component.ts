@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { GamesLogComponent } from './games-log/games-log.component';
+import { CurrentGame } from './current-game/current-game';
 
 @Component({
   selector: 'game-history',
@@ -8,6 +9,7 @@ import { GamesLogComponent } from './games-log/games-log.component';
     MatTabGroup,
     MatTab,
     GamesLogComponent,
+    CurrentGame,
   ],
   templateUrl: './game-history.component.html',
   styleUrl: './game-history.component.scss',

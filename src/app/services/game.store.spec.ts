@@ -778,4 +778,85 @@ describe('GameStore', () => {
       expect(state.players.find(p => p.id === '1')?.score).toBe(0);
     });
   });
+
+  describe('updateLastRoll', () => {
+    beforeEach(() => {
+      store.setupGame({
+        gameMode: 'individual',
+        targetPoints: 500,
+        minPointsPerTurn: 100,
+        players: [
+          { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+          { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
+        ],
+        teams: []
+      });
+    });
+
+    it('should update the last roll and recalculate scores', () => {
+      store.addPoints(200); // P1: 200
+      store.addPoints(100); // P2: 100
+      store.addPoints(100); // P1: 100 -> Total 300
+
+      expect(store.state().players[0].score).toBe(300);
+
+      // Update P1's last roll from 100 to 200
+      store.updateLastRoll('1', 200);
+
+      expect(store.state().players[0].score).toBe(400);
+      expect(store.state().players[0].history).toEqual([200, 200]);
+    });
+
+    it('should handle game over recalculation if update triggers it', () => {
+      store.addPoints(400); // P1: 400
+      store.addPoints(100); // P2: 100
+      store.addPoints(50);  // P1: 50 -> counts as 0, Total 400
+
+      expect(store.state().isGameOver).toBe(false);
+
+      // Update P1's last roll from 50 to 100
+      store.updateLastRoll('1', 100); // P1: 400 + 100 = 500 -> triggers last round
+
+      expect(store.state().lastRoundStarted).toBe(true);
+      expect(store.state().currentPlayerIndex).toBe(1); // Still P2's turn to finish round
+    });
+
+    it('should handle game over reversal if update removes win', () => {
+      store.addPoints(500); // P1: 500
+      store.addPoints(100); // P2: 100 -> Game Over!
+
+      expect(store.state().isGameOver).toBe(true);
+      expect(store.state().gameHistory.length).toBe(1);
+      expect(store.state().players[0].wins).toBe(1);
+
+      // Update P1's last roll from 500 to 400
+      store.updateLastRoll('1', 400);
+
+      expect(store.state().isGameOver).toBe(false);
+      expect(store.state().gameHistory.length).toBe(0);
+      expect(store.state().players[0].wins).toBe(0);
+      expect(store.state().players[0].score).toBe(400);
+    });
+
+    it('should handle team mode recalculation', () => {
+      const players = [
+        { id: '1', name: 'P1', score: 0, dashes: 0, history: [], wins: 0 },
+        { id: '2', name: 'P2', score: 0, dashes: 0, history: [], wins: 0 }
+      ];
+      const teams = [
+        { id: 't1', name: 'T1', playerIds: ['1', '2'], score: 0, dashes: 0, history: [], wins: 0 }
+      ];
+      store.setupGame({ gameMode: 'team', targetPoints: 500, minPointsPerTurn: 100, players, teams });
+
+      store.addPoints(200); // P1 -> Team score 200
+      store.addPoints(200); // P2 -> Team score 400
+
+      expect(store.state().teams[0].score).toBe(400);
+
+      store.updateLastRoll('2', 300); // P2 from 200 to 300 -> Team score 500
+
+      expect(store.state().teams[0].score).toBe(500);
+      expect(store.state().lastRoundStarted).toBe(true);
+    });
+  });
 });
