@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';import { PlayerActionsComponent } from './player-actions.component';
 import { DialogService } from '../../../services/dialog.service';
+import { SnackbarService } from '../../../services/snackbar.service';
 import { Player, Team } from '../../../models/game.models';
 
 const makePlayer = (id: string, name: string): Player => ({
@@ -18,6 +18,7 @@ describe('PlayerActionsComponent', () => {
   let component: PlayerActionsComponent;
   let fixture: ComponentFixture<PlayerActionsComponent>;
   let dialogService: { open: ReturnType<typeof vi.fn> };
+  let mockSnackbarService: any;
   let afterClosedSubject: Subject<unknown>;
 
   const player1 = makePlayer('p1', 'Alice');
@@ -31,11 +32,16 @@ describe('PlayerActionsComponent', () => {
       } as Partial<MatDialogRef<unknown>>),
     };
 
+    mockSnackbarService = {
+      showError: vi.fn(),
+      showSuccess: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [PlayerActionsComponent],
       providers: [
         { provide: DialogService, useValue: dialogService },
-        { provide: MatSnackBar, useValue: { open: vi.fn().mockReturnValue({}) } },
+        { provide: SnackbarService, useValue: mockSnackbarService },
       ],
     }).compileComponents();
 

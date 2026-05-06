@@ -1,23 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GameConfigComponent } from './game-config.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideRouter } from '@angular/router';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 describe('GameConfigComponent', () => {
   let component: GameConfigComponent;
   let fixture: ComponentFixture<GameConfigComponent>;
+  let mockSnackbarService: any;
 
   beforeEach(async () => {
     // Reset persisted state so the store starts fresh per test
     localStorage.clear();
+
+    mockSnackbarService = {
+      showError: vi.fn(),
+      showSuccess: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [GameConfigComponent],
       providers: [
         provideRouter([]),
         {
-          provide: MatSnackBar,
-          useValue: { open: vi.fn().mockImplementation(() => ({})) },
+          provide: SnackbarService,
+          useValue: mockSnackbarService,
         },
       ],
     }).compileComponents();

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, input, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Team, Player } from '../../../models/game.models';
 import { DialogService } from '../../../services/dialog.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { InputDialogComponent, InputDialogData } from '../input-dialog/input-dialog.component';
-import { showSnackbarError } from '../../../utils/snackbar';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-team-actions',
@@ -18,7 +18,7 @@ import { showSnackbarError } from '../../../utils/snackbar';
 })
 export class TeamActionsComponent {
   private readonly dialog = inject(DialogService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly snackbarService = inject(SnackbarService);
 
   /** The team to act upon. */
   readonly team = input.required<Team>();
@@ -51,7 +51,7 @@ export class TeamActionsComponent {
       if (!newName?.trim()) return;
       const trimmed = newName.trim();
       if (this.teams()().some(t => t.id !== team.id && t.name.toLowerCase() === trimmed.toLowerCase())) {
-        showSnackbarError(this.snackBar, `Team "${trimmed}" already exists`);
+        this.snackbarService.showError(`Team "${trimmed}" already exists`);
         return;
       }
       this.teams().update(ts => ts.map(t => t.id === team.id ? { ...t, name: trimmed } : t));

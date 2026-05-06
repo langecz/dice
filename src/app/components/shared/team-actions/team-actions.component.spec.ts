@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { TeamActionsComponent } from './team-actions.component';
 import { DialogService } from '../../../services/dialog.service';
+import { SnackbarService } from '../../../services/snackbar.service';
 import { Player, Team } from '../../../models/game.models';
 
 const makePlayer = (id: string, name: string): Player => ({
@@ -18,6 +19,7 @@ describe('TeamActionsComponent', () => {
   let component: TeamActionsComponent;
   let fixture: ComponentFixture<TeamActionsComponent>;
   let dialogService: { open: ReturnType<typeof vi.fn> };
+  let mockSnackbarService: any;
   let afterClosedSubject: Subject<unknown>;
 
   const team1 = makeTeam('t1', 'Alpha', ['p1', 'p2']);
@@ -33,10 +35,16 @@ describe('TeamActionsComponent', () => {
       } as Partial<MatDialogRef<unknown>>),
     };
 
+    mockSnackbarService = {
+      showError: vi.fn(),
+      showSuccess: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [TeamActionsComponent],
       providers: [
         { provide: DialogService, useValue: dialogService },
+        { provide: SnackbarService, useValue: mockSnackbarService },
       ],
     }).compileComponents();
 

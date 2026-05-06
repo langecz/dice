@@ -14,11 +14,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { GameStore } from '../../../services/game.store';
 import { Player, Team } from '../../../models/game.models';
 import { generateUniqueId } from '../../../utils/uuid';
-import { showSnackbarError } from '../../../utils/snackbar';
+import { SnackbarService } from '../../../services/snackbar.service';
 import { PlayerActionsComponent } from '../../shared/player-actions/player-actions.component';
 import { TeamActionsComponent } from '../../shared/team-actions/team-actions.component';
 import { HasUnsavedChanges } from '../../../interfaces/unsaved-changes.interface';
@@ -43,7 +43,7 @@ import { HasUnsavedChanges } from '../../../interfaces/unsaved-changes.interface
 export class PlayerManagementComponent implements HasUnsavedChanges {
   private readonly store = inject(GameStore);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly snackbarService = inject(SnackbarService);
 
   readonly gameMode = this.store.gameMode;
   readonly players: WritableSignal<Player[]> = linkedSignal<Player[]>(() => [...this.store.players()]);
@@ -85,7 +85,7 @@ export class PlayerManagementComponent implements HasUnsavedChanges {
     if (!trimmedName) return;
 
     if (this.players().some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
-      showSnackbarError(this.snackBar, `Player "${trimmedName}" already exists`);
+      this.snackbarService.showError(`Player "${trimmedName}" already exists`);
       return;
     }
 
@@ -113,7 +113,7 @@ export class PlayerManagementComponent implements HasUnsavedChanges {
     if (!trimmedName) return;
 
     if (this.teams().some(t => t.name.toLowerCase() === trimmedName.toLowerCase())) {
-      showSnackbarError(this.snackBar, `Team "${trimmedName}" already exists`);
+      this.snackbarService.showError(`Team "${trimmedName}" already exists`);
       return;
     }
 

@@ -280,3 +280,9 @@ The file should contain all games logs, the list of players and teams.
 There should be shown a `Save as` dialog, which allows the user to choose the save location (default is the `Downloads` folder) and the file name (default is `dice-game-yyyy-MM-dd_hh-mm.json`).
 
 ---
+
+There are global functions `showSnackbarSuccess` and `showSnackbarError`. Move them to the snackbar service, which will be `providedIn: root`.
+This service will contain `showSuccess` and `showError` methods. The service will inject own `MatSnackBar` instance.
+All the components will use this service to show snackbars and will NOT inject `MatSnackBar` directly.
+
+---

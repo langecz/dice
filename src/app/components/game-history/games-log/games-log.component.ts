@@ -6,8 +6,7 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/m
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GameStore } from '../../../services/game.store';
-import { showSnackbarError, showSnackbarSuccess } from '../../../utils/snackbar';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'games-log',
@@ -28,7 +27,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class GamesLogComponent {
   store = inject(GameStore);
-  private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly snackbarService = inject(SnackbarService);
   gameHistory = this.store.gameHistory;
 
   async saveGameLog(): Promise<void> {
@@ -64,7 +63,7 @@ export class GamesLogComponent {
         const writable = await handle.createWritable();
         await writable.write(blob);
         await writable.close();
-        showSnackbarSuccess(this.snackBar, `File '${fileName}' has been saved`)
+        this.snackbarService.showSuccess(`File '${fileName}' has been saved`)
         return;
       } catch (err: any) {
         // If user cancels, we just return
@@ -72,7 +71,7 @@ export class GamesLogComponent {
           return;
         }
         console.error('Save as dialog failed', err);
-        showSnackbarError(this.snackBar, `Error: file '${fileName}' has NOT been saved`)
+        this.snackbarService.showError(`Error: file '${fileName}' has NOT been saved`)
         // Fallback to direct download if something else went wrong
       }
     }
@@ -84,6 +83,6 @@ export class GamesLogComponent {
     link.download = fileName;
     link.click();
     window.URL.revokeObjectURL(url);
-    showSnackbarSuccess(this.snackBar, `File '${fileName}' has been saved to 'Downloads'`)
+    this.snackbarService.showSuccess(`File '${fileName}' has been saved to 'Downloads'`)
   }
 }

@@ -2,13 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GamesLogComponent } from './games-log.component';
 import { GameStore } from '../../../services/game.store';
 import { signal } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 describe('GamesLogComponent', () => {
   let component: GamesLogComponent;
   let fixture: ComponentFixture<GamesLogComponent>;
   let mockGameStore: any;
-  let mockSnackBar: any;
+  let mockSnackbarService: any;
 
   beforeEach(async () => {
     mockGameStore = {
@@ -17,15 +17,16 @@ describe('GamesLogComponent', () => {
       teams: signal([]),
     };
 
-    mockSnackBar = {
-      open: vi.fn(),
+    mockSnackbarService = {
+      showSuccess: vi.fn(),
+      showError: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [GamesLogComponent],
       providers: [
         { provide: GameStore, useValue: mockGameStore },
-        { provide: MatSnackBar, useValue: mockSnackBar },
+        { provide: SnackbarService, useValue: mockSnackbarService },
       ]
     }).compileComponents();
 
@@ -89,7 +90,7 @@ describe('GamesLogComponent', () => {
     expect(createObjectURLSpy).toHaveBeenCalled();
     expect(clickSpy).toHaveBeenCalled();
     expect(revokeObjectURLSpy).toHaveBeenCalled();
-    // expect(mockSnackBar.open).toHaveBeenCalled();
+    expect(mockSnackbarService.showSuccess).toHaveBeenCalled();
 
     createObjectURLSpy.mockRestore();
     revokeObjectURLSpy.mockRestore();

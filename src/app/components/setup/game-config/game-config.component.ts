@@ -15,14 +15,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { form } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
 import { toSignalMap } from '../../../utils/signal-map';
-import { showSnackbarError } from '../../../utils/snackbar';
 import { GameStore } from '../../../services/game.store';
+import { SnackbarService } from '../../../services/snackbar.service';
 import { PlayerActionsComponent } from '../../shared/player-actions/player-actions.component';
 import { TeamActionsComponent } from '../../shared/team-actions/team-actions.component';
 
@@ -47,7 +47,7 @@ import { TeamActionsComponent } from '../../shared/team-actions/team-actions.com
 })
 export class GameConfigComponent {
 
-  private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly snackbarService = inject(SnackbarService);
   private readonly store = inject(GameStore);
   private readonly router = inject(Router);
 
@@ -91,7 +91,7 @@ export class GameConfigComponent {
     if (this.setupForm.gameMode().value() === 'individual') {
       const players = this.players();
       if (players.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
-        showSnackbarError(this.snackBar, `Player "${trimmedName}" already exists`)
+        this.snackbarService.showError(`Player "${trimmedName}" already exists`)
         return;
       }
       const newPlayer: Player = {
@@ -106,7 +106,7 @@ export class GameConfigComponent {
     } else {
       const teams = this.teams();
       if (teams.some(t => t.name.toLowerCase() === trimmedName.toLowerCase())) {
-        showSnackbarError(this.snackBar, `Team "${trimmedName}" already exists`)
+        this.snackbarService.showError(`Team "${trimmedName}" already exists`)
         return;
       }
       const newTeam: Team = {
@@ -127,11 +127,7 @@ export class GameConfigComponent {
     if (!trimmedName) return;
 
     if (this.players().some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
-      this.snackBar.open(`Player "${trimmedName}" already exists`, 'Close', {
-        duration: 3000,
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      });
+      this.snackbarService.showError(`Player "${trimmedName}" already exists`);
       return;
     }
 
