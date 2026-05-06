@@ -1,60 +1,8 @@
-/* Component-specific styles only.
-   Shared classes (page-section, page-section-header, add-form, team-card,
-   player-item, player-actions, page-actions) live in the global styles.scss. */
-
-/* Two-row player row in team mode.
-   No matListItemMeta is used — everything stays inside the normal content column
-   so nothing overflows the team-card boundary on narrow phones. */
-mat-list-item.team-player-item {
-  --mdc-list-list-item-two-line-container-height: auto;
+.mdc-list-item.mdc-list-item--with-two-lines {
   height: auto !important;
-  min-height: 96px;
-  padding-top: 4px;
-  padding-bottom: 8px;
-
-  ::ng-deep {
-    .mdc-list-item__content,
-    .mat-mdc-list-item-unscoped-content {
-      overflow: visible;
-      align-self: stretch;
-    }
-
-    /* Allow the team-selector line to grow beyond MDC's default single-line height. */
-    .mdc-list-item__secondary-text,
-    .mat-mdc-list-item-line {
-      display: block;
-      overflow: visible !important;
-      white-space: normal !important;
-      text-overflow: clip !important;
-      -webkit-line-clamp: unset !important;
-      line-clamp: unset !important;
-      height: auto !important;
-    }
-
-    /* Title slot must flex so name + buttons sit side-by-side. */
-    .mdc-list-item__primary-text {
-      display: flex !important;
-      align-items: center;
-      overflow: visible;
-      white-space: normal;
-    }
-  }
 }
 
-
-/* Row 2: team selector line */
-.move-line {
-  //display: flex !important;
-  display: flex;
-  align-items: center;
-  padding-top: 16px;
-}
-
-.move-select {
-  width: 180px;
-  font-size: 0.85em;
-
-  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-  }
+.team-select {
+  margin-top: 20px;
+  width: 100%;
 }

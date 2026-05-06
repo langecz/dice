@@ -255,3 +255,15 @@ Implement 'Current game log' into `current-game` component. There will be shown:
 * each round contains a list of rolls belonging to the round showing the player name, team name, points rolled
 
 It is also possible to update ONLY the last roll of each player. After the update, all relevant states must be recalculated.  
+
+---
+
+Go through the application and check all the style files. Check that all style classes are used.
+Suggest simplification of the style classes. E.g. `display: flex;` is used in many places, also `padding` and `margins`.
+Suggest simplification of the style rules.
+Use class names that are descriptive and follow a consistent naming convention.
+Suggest how to avoid using `!important` and `::ng-deep`.
+Use as many as possible classes from the `styles.scss` file.
+Use classes from the `component styles` only when it is necessary.
+
+---

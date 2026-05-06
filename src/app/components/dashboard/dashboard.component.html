@@ -46,11 +46,11 @@
         </mat-card-title>
         <mat-card-subtitle>
           @if (gameMode() === 'team') {
-            <div class="team-info-header">
+            <div class="flex-row flex-align-center flex-gap-md">
               Team: <span class="current-turn-name">{{ currentTeam()?.name }}</span>
-              <div class="dashes inline-dashes">
+              <div class="flex-row flex-gap-xs">
                 @for (i of [1,2,3]; track i) {
-                  <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''">
+                  <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''" style="font-size: 20px; width: 20px; height: 20px;">
                     {{ (currentTeam()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
                   </mat-icon>
                 }
@@ -60,10 +60,10 @@
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <div class="player-info">
+        <div class="flex-row flex-align-center flex-justify-between">
           <h2 class="current-turn-name">{{ currentPlayer()?.name }}</h2>
           @if (gameMode() === 'individual') {
-            <div class="dashes">
+            <div class="flex-row flex-gap-xs">
               @for (i of [1,2,3]; track i) {
                 <mat-icon [color]="(currentPlayer()?.dashes || 0) >= i ? 'warn' : ''">
                   {{ (currentPlayer()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
@@ -84,7 +84,7 @@
                  aria-label="Enter points rolled">
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions class="action-buttons">
+      <mat-card-actions class="flex-row flex-align-center">
         <button matButton="filled" (click)="showPlayers()">TABLE</button>
         <span class="spacer"></span>
         <button matButton="filled" class="btn-warn" (click)="setZeroPoints()">ZERO</button>
@@ -129,8 +129,8 @@
 
 <!-- shows players around table -->
 <ng-template #playerList let-players>
-  <h1 style="align-self: center">List of players around the table</h1>
-  <span style="margin: 5px 10px">The first number is current game score, the second number is total score of previous games</span>
+  <h2 class="self-align-center">List of players around the table</h2>
+  <span class="m-0 mb-sm p-sm text-small">The first number is current game score, the second number is total score of previous games</span>
 
   <div style="overflow-y: auto; max-height: 80vh;">
   <mat-list>
@@ -138,7 +138,7 @@
       <mat-list-item class="player-item">
         <span matListItemTitle>{{ player.name }} ({{player.currentGameScore ?? 0}} / {{player.totalScore ?? 0}})</span>
         @if(player.teamName) {
-          <span matListItemLine>({{ player.teamName }})</span>
+          <span matListItemLine class="text-secondary text-italic">({{ player.teamName }})</span>
         }
       </mat-list-item>
     }

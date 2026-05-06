@@ -8,16 +8,16 @@
         <mat-list>
           @for (turn of round.turns; track turn) {
             <mat-list-item class="player-item">
-              <div class="turn-item">
-                <div class="turn-info">
-                  <div class="turn-header">
-                    <span class="player-name">{{ turn.playerName }}</span>
+              <div class="flex-row flex-align-center flex-justify-between full-width">
+                <div class="flex-col flex-gap-xs">
+                  <div>
+                    <span class="text-bold">{{ turn.playerName }}</span>
                     @if (turn.teamName) {
-                      <span class="team-name">({{ turn.teamName }})</span>
+                      <span class="text-secondary text-italic mb-xs" style="margin-left: 4px">({{ turn.teamName }})</span>
                     }
                   </div>
-                  <div class="turn-points">
-                    <span class="points-rolled">{{ turn.points }} points</span>
+                  <div class="text-secondary">
+                    <span>{{ turn.points }} points</span>
                   </div>
                 </div>
 

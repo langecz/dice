@@ -4,25 +4,25 @@
 <mat-radio-group [value]="selectedStartingPlayerId()" (change)="selectedStartingPlayerId.set($event.value)">
   <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
     @for (player of orderedPlayers(); track player.id) {
-      <mat-list-item cdkDrag class="player-item">
+      <mat-list-item cdkDrag class="player-item" style="cursor: move">
         <div class="player-item-content">
 
           <!--drag icon-->
-          <span class="player-control-cell">
+          <span class="player-control-cell flex-row flex-align-center flex-justify-center">
               <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
             </span>
 
           <!--selection, which player starts a game-->
-          <span class="player-control-cell">
+          <span class="player-control-cell flex-row flex-align-center flex-justify-center">
               <mat-radio-button [value]="player.id"></mat-radio-button>
             </span>
 
           <!--player name/team-->
-          <span class="player-text">
-              <span class="player-name">{{ player.name }}</span>
+          <span class="player-text flex-col flex-justify-center" style="flex: 1">
+              <span class="player-name text-ellipsis">{{ player.name }}</span>
 
             @if (gameMode() === 'team') {
-              <span class="team-hint" matListItemLine>({{ getTeamName(player.id) }})</span>
+              <span class="team-hint text-ellipsis">({{ getTeamName(player.id) }})</span>
             }
             </span>
         </div>

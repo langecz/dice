@@ -48,8 +48,8 @@ describe('CurrentGame', () => {
   });
 
   it('should display player name and points', () => {
-    const playerName = fixture.debugElement.query(By.css('.player-name')).nativeElement;
-    const points = fixture.debugElement.query(By.css('.points-rolled')).nativeElement;
+    const playerName = fixture.debugElement.query(By.css('.text-bold')).nativeElement;
+    const points = fixture.debugElement.query(By.css('.text-secondary span')).nativeElement;
 
     expect(playerName.textContent).toContain('Player 1');
     expect(points.textContent).toContain('100 points');

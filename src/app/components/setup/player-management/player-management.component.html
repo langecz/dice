@@ -80,8 +80,9 @@
                     [teams]="teams"
                     deleteAriaLabel="Remove player from team">
                   </app-player-actions>
-                  <span matListItemLine class="move-line">
-                    <mat-form-field class="move-select">
+<!--                  <span matListItemLine class="move-line flex-row flex-align-center">-->
+<!--                    <mat-form-field class="move-select text-small">-->
+                    <mat-form-field class="team-select">
                       <mat-label>Team</mat-label>
                       <mat-select [value]="team.id" (selectionChange)="movePlayer(player.id, $event.value)" aria-label="Move player to team">
                         @for (t of teams(); track t.id) {
@@ -89,7 +90,7 @@
                         }
                       </mat-select>
                     </mat-form-field>
-                  </span>
+<!--                  </span>-->
                 </mat-list-item>
               }
             }

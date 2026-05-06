@@ -26,42 +26,20 @@
   color: rgba(0, 0, 0, 0.54);
 }
 
-mat-list-item.player-item {
-  height: auto;
-  min-height: 56px;
-  cursor: move;
-
-  ::ng-deep {
-    .mdc-list-item__content {
-      align-self: stretch;
-      overflow: visible;
-    }
-
-    .mat-mdc-list-item-unscoped-content {
-      width: 100%;
-      display: flex;
-      align-items: center;
-    }
-  }
-}
-
 .player-item-content {
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 56px;
-  padding: 10px 0;
+  min-height: 48px;
+  padding: 4px 0;
   gap: 4px;
   box-sizing: border-box;
 }
 
 .player-control-cell {
-  width: 32px;
+  width: 40px;
   height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 32px;
+  flex: 0 0 40px;
 }
 
 .description {
@@ -72,9 +50,6 @@ mat-list-item.player-item {
 }
 
 .player-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   min-width: 0;
   gap: 1px;
 }
@@ -83,9 +58,6 @@ mat-list-item.player-item {
   display: block;
   line-height: 18px;
   font-size: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* Override the global .team-hint with single-line layout used inside .player-text */
@@ -93,7 +65,4 @@ mat-list-item.player-item {
   display: block;
   line-height: 16px;
   font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
