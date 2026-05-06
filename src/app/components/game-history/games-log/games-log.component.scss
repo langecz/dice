@@ -9,3 +9,10 @@ mat-panel-title {
 mat-expansion-panel {
   margin-bottom: 8px;
 }
+
+.save-button-container {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+}

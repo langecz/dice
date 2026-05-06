@@ -93,7 +93,14 @@ button[matFab] {
     button-color: $color-white,
     supporting-text-color: $color-white
   ))
+}
 
+.success-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: $color-success,
+    button-color: $color-white,
+    supporting-text-color: $color-white
+  ))
 }
 
 /* ---------- Responsive design tokens (mobile-first) ---------- */

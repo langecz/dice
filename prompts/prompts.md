@@ -272,3 +272,11 @@ On the 'Player Management' page, when a user makes any change and then clicks on
 the config dialog will be shown, with information that there are unsaved changes on the page.
 
 ---
+
+Add a button to the 'games-log' component to save the current game log to a JSON file.
+The button will be visible only if there are already played games.
+The button will be placed on the right top corner of the page.
+The file should contain all games logs, the list of players and teams.
+There should be shown a `Save as` dialog, which allows the user to choose the save location (default is the `Downloads` folder) and the file name (default is `dice-game-yyyy-MM-dd_hh-mm.json`).
+
+---
