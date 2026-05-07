@@ -8,8 +8,7 @@
     <input
       matInput
       [type]="data.type || 'text'"
-      [value]="value()"
-      (input)="onInput($event)"
+      [formField]="form.value"
       [attr.aria-label]="data.label"
       (keydown.enter)="confirm()"
     />

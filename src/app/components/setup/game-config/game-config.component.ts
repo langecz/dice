@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { form } from '@angular/forms/signals';
+import { form, FormField } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { generateUniqueId } from '../../../utils/uuid';
 import { GameMode, Player, Team } from '../../../models/game.models';
@@ -40,6 +40,7 @@ import { TeamActionsComponent } from '../../shared/team-actions/team-actions.com
     MatIconModule,
     MatListModule,
     MatSnackBarModule,
+    FormField,
   ],
   templateUrl: './game-config.component.html',
   styleUrl: './game-config.component.scss',

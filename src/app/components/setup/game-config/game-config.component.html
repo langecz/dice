@@ -1,6 +1,6 @@
 <div class="page-section">
   <h3>Game Mode</h3>
-  <mat-radio-group [value]="setupForm.gameMode().value()" (change)="setupForm.gameMode().value.set($event.value)">
+  <mat-radio-group [formField]="setupForm.gameMode">
     <mat-radio-button value="individual">Individual</mat-radio-button>
     <mat-radio-button value="team">Team</mat-radio-button>
   </mat-radio-group>
@@ -19,10 +19,8 @@
       <mat-form-field>
         <mat-label>Points to win</mat-label>
         <input matInput
-               #pointsToWin
                type="number"
-               [value]="setupForm.targetPoints().value()"
-               (input)="setupForm.targetPoints().value.set(pointsToWin.valueAsNumber)"
+               [formField]="setupForm.targetPoints"
                aria-label="Target points to win">
       </mat-form-field>
     </div>
@@ -32,10 +30,8 @@
       <mat-form-field>
         <mat-label>Minimum points</mat-label>
         <input matInput
-               #minPointsPerTurn
                type="number"
-               [value]="setupForm.minPointsPerTurn().value()"
-               (input)="setupForm.minPointsPerTurn().value.set(minPointsPerTurn.valueAsNumber)"
+               [formField]="setupForm.minPointsPerTurn"
                aria-label="Minimum points per turn">
       </mat-form-field>
     </div>
