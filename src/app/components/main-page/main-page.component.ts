@@ -136,9 +136,7 @@ export class MainPageComponent {
     });
   }
 
-  private async handleResetDialogResult(
-    result: ResetGameConfirmDialogResult | undefined,
-  ): Promise<void> {
+  private handleResetDialogResult(result: ResetGameConfirmDialogResult | undefined): void {
     if (result === 'reset') {
       this.store.resetGame(false);
       void this.router.navigate(['/setup']);

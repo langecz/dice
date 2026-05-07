@@ -50,7 +50,7 @@
               Team: <span class="current-turn-name">{{ currentTeam()?.name }}</span>
               <div class="flex-row flex-gap-xs">
                 @for (i of [1,2,3]; track i) {
-                  <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''" style="font-size: 20px; width: 20px; height: 20px;">
+                  <mat-icon [color]="(currentTeam()?.dashes || 0) >= i ? 'warn' : ''" class="dash-icon">
                     {{ (currentTeam()?.dashes || 0) >= i ? 'remove_circle' : 'remove_circle_outline' }}
                   </mat-icon>
                 }
@@ -132,7 +132,7 @@
   <h2 class="self-align-center">List of players around the table</h2>
   <span class="m-0 mb-sm p-sm text-small">The first number is current game score, the second number is total score of previous games</span>
 
-  <div style="overflow-y: auto; max-height: 80vh;">
+  <div class="player-table-container">
   <mat-list>
     @for (player of players; track player) {
       <mat-list-item class="player-item">
@@ -146,4 +146,5 @@
   </div>
   <button matButton="filled" class="btn-warn"  (click)="dialog.closeAll()">BACK</button>
 </ng-template>
+
 

@@ -9,7 +9,7 @@ import { GameLogExportService } from '../../../services/game-log-export';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'games-log',
+  selector: 'dice-games-log',
   imports: [
     MatExpansionModule,
     MatListModule,

@@ -8,7 +8,7 @@ import { InputDialogComponent, InputDialogData } from '../../shared/input-dialog
 import { MatFabButton } from '@angular/material/button';
 
 @Component({
-  selector: 'current-game',
+  selector: 'dice-current-game',
   imports: [
     MatCard,
     MatCardHeader,

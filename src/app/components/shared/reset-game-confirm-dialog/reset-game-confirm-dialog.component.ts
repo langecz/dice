@@ -12,7 +12,7 @@ export interface ResetGameConfirmDialogData {
 export type ResetGameConfirmDialogResult = 'reset' | 'save' | 'cancel';
 
 @Component({
-  selector: 'reset-game-confirm-dialog',
+  selector: 'dice-reset-game-confirm-dialog',
   imports: [MatDialogModule, MatButtonModule, MatCardModule],
   templateUrl: './reset-game-confirm-dialog.component.html',
   styleUrl: './reset-game-confirm-dialog.component.scss',

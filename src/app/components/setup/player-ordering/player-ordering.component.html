@@ -4,7 +4,7 @@
 <mat-radio-group [value]="selectedStartingPlayerId()" (change)="selectedStartingPlayerId.set($event.value)">
   <mat-list cdkDropList (cdkDropListDropped)="dropOrderedPlayer($event)">
     @for (player of orderedPlayers(); track player.id) {
-      <mat-list-item cdkDrag class="player-item" style="cursor: move">
+      <mat-list-item cdkDrag class="player-item draggable">
         <div class="player-item-content">
 
           <!--drag icon-->
@@ -18,7 +18,7 @@
             </span>
 
           <!--player name/team-->
-          <span class="player-text flex-col flex-justify-center" style="flex: 1">
+          <span class="player-text flex-col flex-justify-center" >
               <span class="player-name text-ellipsis">{{ player.name }}</span>
 
             @if (gameMode() === 'team') {
@@ -35,3 +35,4 @@
   <button matButton="filled" class="btn-accent" (click)="onBackToSetup()">SETUP</button>
   <button matButton="filled" class="btn-success" (click)="onConfirm()">START GAME</button>
 </div>
+
