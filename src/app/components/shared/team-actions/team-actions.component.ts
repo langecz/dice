@@ -9,7 +9,7 @@ import { InputDialogComponent, InputDialogData } from '../input-dialog/input-dia
 import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
-  selector: 'app-team-actions',
+  selector: 'dice-team-actions',
   imports: [MatButtonModule, MatIconModule, MatSnackBarModule],
   templateUrl: './team-actions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

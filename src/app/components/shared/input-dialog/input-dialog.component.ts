@@ -17,7 +17,7 @@ export interface InputDialogData {
 }
 
 @Component({
-  selector: 'app-input-dialog',
+  selector: 'dice-input-dialog',
   imports: [MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormField],
   templateUrl: './input-dialog.component.html',
   styleUrl: './input-dialog.component.scss',

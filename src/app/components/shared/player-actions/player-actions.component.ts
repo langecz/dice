@@ -9,7 +9,7 @@ import { InputDialogComponent, InputDialogData } from '../input-dialog/input-dia
 import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
-  selector: 'app-player-actions',
+  selector: 'dice-player-actions',
   imports: [MatButtonModule, MatIconModule, MatSnackBarModule],
   templateUrl: './player-actions.component.html',
   styleUrl: './player-actions.component.scss',

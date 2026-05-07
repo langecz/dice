@@ -1,5 +1,4 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -7,11 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GameStore } from '../../../services/game.store';
 import { GameLogExportService } from '../../../services/game-log-export';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'games-log',
   imports: [
-    CommonModule,
     MatExpansionModule,
     MatListModule,
     MatCard,
@@ -20,6 +19,7 @@ import { GameLogExportService } from '../../../services/game-log-export';
     MatCardTitle,
     MatButtonModule,
     MatIconModule,
+    DatePipe,
   ],
   templateUrl: './games-log.component.html',
   styleUrl: './games-log.component.scss',

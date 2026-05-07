@@ -17,7 +17,7 @@ import { Player } from '../../../models/game.models';
 import { GameStore } from '../../../services/game.store';
 
 @Component({
-  selector: 'app-player-ordering',
+  selector: 'dice-player-ordering',
   imports: [
     MatListModule,
     MatIconModule,

@@ -17,7 +17,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { CommonModule } from '@angular/common';
 import { GameStore } from '../../services/game.store';
 import { Player, PlayerTurnRecord, Team } from '../../models/game.models';
 import { toSignalMap } from '../../utils/signal-map';
@@ -29,9 +28,8 @@ interface Winner {
 }
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'dice-dashboard',
   imports: [
-    CommonModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,

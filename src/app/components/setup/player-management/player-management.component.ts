@@ -23,7 +23,7 @@ import { PlayerActionsComponent } from '../../shared/player-actions/player-actio
 import { TeamActionsComponent } from '../../shared/team-actions/team-actions.component';
 import { HasUnsavedChanges } from '../../../interfaces/unsaved-changes.interface';
 @Component({
-  selector: 'app-player-management',
+  selector: 'dice-player-management',
   imports: [
     PlayerActionsComponent,
     TeamActionsComponent,

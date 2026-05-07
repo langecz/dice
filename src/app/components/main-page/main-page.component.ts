@@ -40,7 +40,7 @@ const PHASE_CONFIG: Record<string, PhaseConfig> = {
 const DEFAULT_PHASE: PhaseConfig = PHASE_CONFIG['setup'];
 
 @Component({
-  selector: 'app-main-page',
+  selector: 'dice-main-page',
   imports: [MatCardModule, MatButtonModule, MatIconModule, RouterOutlet],
   templateUrl: './main-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

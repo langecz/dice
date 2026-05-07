@@ -3,7 +3,6 @@ import { GameStore } from '../../../services/game.store';
 import { MatCard, MatCardHeader, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
 import { DialogService } from '../../../services/dialog.service';
 import { InputDialogComponent, InputDialogData } from '../../shared/input-dialog/input-dialog.component';
 import { MatFabButton } from '@angular/material/button';
@@ -11,7 +10,6 @@ import { MatFabButton } from '@angular/material/button';
 @Component({
   selector: 'current-game',
   imports: [
-    CommonModule,
     MatCard,
     MatCardHeader,
     MatCardContent,

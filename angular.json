@@ -15,7 +15,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "dice",
       "architect": {
         "build": {
           "builder": "@angular/build:application",

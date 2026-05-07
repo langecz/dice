@@ -22,11 +22,11 @@
     <mat-list>
       @for (player of players(); track player.id) {
         <mat-list-item class="player-item">
-          <app-player-actions
+          <dice-player-actions
             matListItemTitle
             [player]="player"
             [players]="players">
-          </app-player-actions>
+          </dice-player-actions>
         </mat-list-item>
       }
     </mat-list>
@@ -53,11 +53,11 @@
       <mat-card class="team-card">
         <mat-card-header>
           <mat-card-title>{{ team.name }}</mat-card-title>
-          <app-team-actions
+          <dice-team-actions
             [team]="team"
             [teams]="teams"
             [players]="players">
-          </app-team-actions>
+          </dice-team-actions>
         </mat-card-header>
         <mat-card-content>
           <div class="add-form">
@@ -76,13 +76,13 @@
             @for (pid of team.playerIds; track pid) {
               @if (getPlayerById(pid); as player) {
                 <mat-list-item class="player-item team-player-item">
-                  <app-player-actions
+                  <dice-player-actions
                     matListItemTitle
                     [player]="player"
                     [players]="players"
                     [teams]="teams"
                     deleteAriaLabel="Remove player from team">
-                  </app-player-actions>
+                  </dice-player-actions>
                     <mat-form-field class="team-select">
                       <mat-label>Team</mat-label>
                       <mat-select [value]="team.id" (selectionChange)="movePlayer(player.id, $event.value)" aria-label="Move player to team">

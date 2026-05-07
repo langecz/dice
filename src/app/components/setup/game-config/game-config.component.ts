@@ -27,7 +27,7 @@ import { PlayerActionsComponent } from '../../shared/player-actions/player-actio
 import { TeamActionsComponent } from '../../shared/team-actions/team-actions.component';
 
 @Component({
-  selector: 'app-game-config',
+  selector: 'dice-game-config',
   imports: [
     PlayerActionsComponent,
     TeamActionsComponent,
@@ -75,7 +75,7 @@ export class GameConfigComponent {
     };
   });
 
-  setupForm = form(this.setupModel);
+  readonly setupForm = form(this.setupModel);
 
   canNext = computed(() => {
     if (this.setupForm.gameMode().value() === 'individual') {
